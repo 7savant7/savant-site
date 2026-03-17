@@ -8,6 +8,7 @@ import { SavantButton } from '../components/ui/SavantButton';
 import { GlassCard } from '../components/ui/GlassCard';
 import { supabase } from '../supabase';
 import { toast } from 'sonner';
+import { Send, Mail, MessageSquare, Shield, Globe, Zap } from 'lucide-react';
 
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,123 +61,128 @@ export default function Contact() {
   };
 
   return (
-    <div className="savant-page-container">
-      <div className="savant-stack">
-        <motion.h1 
-          initial={{ opacity: 0, y: 100 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-          className="font-display font-black text-8xl md:text-[12rem] text-white tracking-tighter leading-[0.8]"
-        >
-          <TextScramble text="Establish_" /> <br />
-          <span className="text-white italic font-serif text-[0.7em]">Uplink.</span>
-        </motion.h1>
-
-        <ZoomBlock className="savant-grid lg:grid-cols-12">
-          <div className="lg:col-span-6 savant-stack">
-            <div className="h-[2px] bg-white/5 w-full relative overflow-hidden">
-              <motion.div 
-                initial={{ x: '-100%' }}
-                whileInView={{ x: '100%' }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-crimson to-transparent"
-              />
+    <div className="savant-page-container bg-obsidian">
+      <div className="noise-overlay opacity-5" />
+      
+      <div className="relative z-10">
+        <header className="min-h-[60vh] flex flex-col justify-center mb-20">
+          <motion.div 
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
+            className="savant-stack !gap-10"
+          >
+            <div className="flex items-center gap-6">
+              <div className="w-20 h-[1px] bg-crimson" />
+              <span className="font-mono text-xs text-crimson tracking-[0.8em] uppercase font-bold">UPLINK_PROTOCOL</span>
             </div>
             
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 1 }}
-              className="savant-stack !gap-12"
-            >
-              <p className="text-3xl md:text-5xl text-white/90 leading-[1.1] font-display font-bold tracking-tight">
-                Initiate a secure connection to the <span className="text-crimson italic font-serif">Savant Core</span>.
+            <h1 className="text-massive font-display">
+              ESTABLISH<br/>
+              <span className="text-crimson italic font-serif font-light text-[0.7em]">Connection.</span>
+            </h1>
+          </motion.div>
+        </header>
+
+        <div className="savant-grid lg:grid-cols-12 items-start">
+          <div className="lg:col-span-5 savant-stack !gap-20">
+            <div className="savant-stack !gap-10">
+              <h2 className="text-4xl md:text-6xl font-display leading-[1.1] text-white">
+                INITIATE_SECURE_UPLINK_TO_THE_<span className="text-crimson">SAVANT_CORE</span>.
+              </h2>
+              <p className="text-xl text-white/40 font-light leading-relaxed max-w-lg">
+                Our sovereign architecture ensures that all communications are encrypted and decentralized. We do not track, store, or analyze your data without explicit consent.
               </p>
-              <div className="savant-stack !gap-6 text-xl text-white/40 leading-relaxed max-w-2xl font-light">
-                <p>
-                  Our sovereign architecture ensures that all communications are encrypted and decentralized. We do not track, store, or analyze your data without explicit consent.
-                </p>
+            </div>
+
+            <div className="savant-grid sm:grid-cols-2 gap-8">
+              <GlassCard className="p-10 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-colors group">
+                <div className="font-mono text-[9px] text-white/20 tracking-widest uppercase mb-4">SECURE_NODE</div>
+                <div className="text-xl font-display text-white group-hover:text-crimson transition-colors">hello@savant.os</div>
+              </GlassCard>
+              <GlassCard className="p-10 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-colors group">
+                <div className="font-mono text-[9px] text-white/20 tracking-widest uppercase mb-4">ENCRYPTED_COMMS</div>
+                <div className="text-xl font-display text-electric-gold group-hover:text-white transition-colors">@savant_core</div>
+              </GlassCard>
+            </div>
+
+            <div className="savant-stack !gap-10 pt-10 border-t border-white/5">
+              <div className="flex items-center gap-6">
+                <Shield className="text-crimson" size={24} />
+                <div className="savant-stack !gap-1">
+                  <div className="font-mono text-[10px] text-white tracking-widest uppercase">END_TO_END_ENCRYPTION</div>
+                  <div className="font-mono text-[8px] text-white/20 tracking-widest uppercase">AES_256_BIT_STANDARD</div>
+                </div>
               </div>
-              
-              <div className="savant-grid md:grid-cols-2 pt-8">
-                 <div className="p-8 border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-colors duration-500">
-                    <div className="font-mono text-[10px] text-white/30 mb-4 tracking-widest">SECURE_EMAIL</div>
-                    <div className="text-xl font-bold text-white">hello@savant.os</div>
-                 </div>
-                 <div className="p-8 border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-colors duration-500">
-                    <div className="font-mono text-[10px] text-white/30 mb-4 tracking-widest">ENCRYPTED_NODE</div>
-                    <div className="text-xl font-bold text-electric-gold">@savant_core</div>
-                 </div>
+              <div className="flex items-center gap-6">
+                <Globe className="text-electric-gold" size={24} />
+                <div className="savant-stack !gap-1">
+                  <div className="font-mono text-[10px] text-white tracking-widest uppercase">DECENTRALIZED_ROUTING</div>
+                  <div className="font-mono text-[8px] text-white/20 tracking-widest uppercase">GLOBAL_NODE_NETWORK</div>
+                </div>
               </div>
-            </motion.div>
+            </div>
           </div>
 
-          <div className="lg:col-span-5 lg:col-start-8">
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              className="relative group"
-            >
-              <GlassCard className="p-8 md:p-16 border border-white/10 bg-obsidian/40 backdrop-blur-3xl relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-1 h-full bg-crimson/50" />
-                <div className="absolute top-0 right-0 p-6 font-mono text-[9px] text-white/20 tracking-widest uppercase">UPLINK_TERMINAL</div>
+          <div className="lg:col-span-6 lg:col-start-7">
+            <GlassCard className="p-12 md:p-20 border border-white/5 bg-white/[0.01] relative overflow-hidden rounded-[3rem]">
+              <div className="absolute top-0 right-0 p-10 font-mono text-[8px] text-white/10 tracking-[0.5em] uppercase">
+                TERMINAL_ID: SVNT_UPLINK_01
+              </div>
+              
+              <form className="savant-stack !gap-12" onSubmit={handleSubmit}>
+                <div className="savant-stack !gap-4">
+                  <label className="font-mono text-[10px] text-white/40 tracking-[0.4em] uppercase">IDENTIFIER</label>
+                  <input 
+                    type="text" 
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full bg-white/[0.02] border-b border-white/10 p-6 text-2xl text-white font-display focus:outline-none focus:border-crimson transition-colors duration-500 placeholder:text-white/5" 
+                    placeholder="ENTER_NAME" 
+                  />
+                </div>
+                <div className="savant-stack !gap-4">
+                  <label className="font-mono text-[10px] text-white/40 tracking-[0.4em] uppercase">RETURN_NODE</label>
+                  <input 
+                    type="email" 
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full bg-white/[0.02] border-b border-white/10 p-6 text-2xl text-white font-display focus:outline-none focus:border-electric-gold transition-colors duration-500 placeholder:text-white/5" 
+                    placeholder="ENTER_EMAIL" 
+                  />
+                </div>
+                <div className="savant-stack !gap-4">
+                  <label className="font-mono text-[10px] text-white/40 tracking-[0.4em] uppercase">PAYLOAD</label>
+                  <textarea 
+                    required
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    className="w-full bg-white/[0.02] border-b border-white/10 p-6 text-2xl text-white font-display h-40 resize-none focus:outline-none focus:border-white transition-colors duration-500 placeholder:text-white/5" 
+                    placeholder="ENTER_MESSAGE" 
+                  />
+                </div>
                 
-                <h3 className="font-display font-black text-5xl text-white mb-12 flex items-center gap-4">
-                  <TextScramble text="Transmit_Data" />
-                  <span className="w-3 h-3 bg-electric-gold rounded-full animate-ping" />
-                </h3>
-                
-                <form className="savant-stack !gap-8" onSubmit={handleSubmit}>
-                  <div className="savant-stack !gap-2">
-                    <label className="font-mono text-[10px] text-white/50 tracking-widest uppercase">IDENTIFIER</label>
-                    <input 
-                      type="text" 
-                      required
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full bg-white/5 border border-white/10 p-4 text-white font-mono text-sm focus:outline-none focus:border-crimson transition-colors duration-300" 
-                      placeholder="ENTER_NAME" 
-                    />
-                  </div>
-                  <div className="savant-stack !gap-2">
-                    <label className="font-mono text-[10px] text-white/50 tracking-widest uppercase">RETURN_NODE</label>
-                    <input 
-                      type="email" 
-                      required
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full bg-white/5 border border-white/10 p-4 text-white font-mono text-sm focus:outline-none focus:border-electric-gold transition-colors duration-300" 
-                      placeholder="ENTER_EMAIL" 
-                    />
-                  </div>
-                  <div className="savant-stack !gap-2">
-                    <label className="font-mono text-[10px] text-white/50 tracking-widest uppercase">PAYLOAD</label>
-                    <textarea 
-                      required
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full bg-white/5 border border-white/10 p-4 text-white font-mono text-sm h-32 resize-none focus:outline-none focus:border-white transition-colors duration-300" 
-                      placeholder="ENTER_MESSAGE" 
-                    />
-                  </div>
-                  
-                  <div className="mt-8 flex justify-center">
-                    <MagneticButton strength={0.2}>
-                      <SavantButton 
-                        variant="primary"
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="w-64 h-20"
-                      >
+                <div className="pt-10">
+                  <MagneticButton strength={0.2}>
+                    <SavantButton 
+                      variant="primary"
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full h-24 text-xl group/btn"
+                    >
+                      <span className="flex items-center gap-4">
                         {isSubmitting ? 'TRANSMITTING...' : 'INITIATE_TRANSMISSION'}
-                      </SavantButton>
-                    </MagneticButton>
-                  </div>
-                </form>
-              </GlassCard>
-            </motion.div>
+                        <Send size={20} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
+                      </span>
+                    </SavantButton>
+                  </MagneticButton>
+                </div>
+              </form>
+            </GlassCard>
           </div>
-        </ZoomBlock>
+        </div>
       </div>
     </div>
   );

@@ -17,10 +17,122 @@ import { VisualBrandingPipeline } from '../components/VisualBrandingPipeline';
 import { NeuralLattice } from '../components/NeuralLattice';
 import { MagneticButton } from '../components/MagneticButton';
 import { GlassCard } from '../components/ui/GlassCard';
+import Magnetic from '../components/Magnetic';
+import Glow from '../components/Glow';
+import { GeometricSymbol } from '../components/GeometricSymbol';
+import FractalExplorer from '../components/FractalExplorer';
+import { useStore } from '../store/useStore';
+import { useLoading } from '../contexts/LoadingContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
-import { SunGodsLogo } from '../components/SunGodsLogo';
+const NeuralBackground = () => (
+  <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-20">
+    <svg className="w-full h-full" viewBox="0 0 1000 1000">
+      <defs>
+        <radialGradient id="neural-glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#ff003c" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="transparent" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      {[...Array(20)].map((_, i) => (
+        <motion.circle
+          key={i}
+          cx={Math.random() * 1000}
+          cy={Math.random() * 1000}
+          r={Math.random() * 2 + 1}
+          fill="white"
+          animate={{
+            opacity: [0.2, 0.8, 0.2],
+            scale: [1, 1.5, 1],
+          }}
+          transition={{
+            duration: 3 + Math.random() * 5,
+            repeat: Infinity,
+            delay: Math.random() * 5,
+          }}
+        />
+      ))}
+      {[...Array(15)].map((_, i) => (
+        <motion.line
+          key={i}
+          x1={Math.random() * 1000}
+          y1={Math.random() * 1000}
+          x2={Math.random() * 1000}
+          y2={Math.random() * 1000}
+          stroke="white"
+          strokeWidth="0.5"
+          strokeOpacity="0.1"
+          animate={{
+            strokeOpacity: [0.05, 0.2, 0.05],
+          }}
+          transition={{
+            duration: 5 + Math.random() * 5,
+            repeat: Infinity,
+            delay: Math.random() * 5,
+          }}
+        />
+      ))}
+    </svg>
+  </div>
+);
+
+const ArtifactCard = ({ item, i }: { item: any, i: number }) => (
+  <motion.div 
+    className="artifact-card group relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all duration-700"
+    whileHover={{ y: -15, scale: 1.02 }}
+    transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
+  >
+    <Glow color="rgba(255,0,60,0.15)" blur="100px">
+      <div className="relative w-full h-full">
+        <ParallaxImage 
+          src={item.img} 
+          alt={item.title}
+          className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-110 group-hover:scale-105"
+          offset={60}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/20 to-transparent opacity-90" />
+        
+        {/* HUD Overlay */}
+        <div className="absolute top-4 md:top-6 left-4 md:left-6 right-4 md:right-6 flex justify-between items-start opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+          <div className="font-mono text-[7px] md:text-[8px] text-white/40 tracking-[0.4em] uppercase truncate pr-4">
+            SCANNING_ARTIFACT_{item.id}
+          </div>
+          <div className="flex gap-1 md:gap-1.5 shrink-0">
+            <div className="w-1 h-1 rounded-full bg-crimson animate-pulse" />
+            <div className="w-1 h-1 rounded-full bg-white/20" />
+          </div>
+        </div>
+
+        <div className="absolute bottom-6 md:bottom-8 left-6 md:left-8 right-6 md:right-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="flex flex-col gap-2 md:gap-3"
+          >
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="w-4 md:w-6 h-[1px] bg-crimson" />
+              <span className="font-mono text-[8px] md:text-[9px] text-crimson tracking-[0.5em] uppercase font-bold">{item.category}</span>
+            </div>
+            <h3 className="text-xl md:text-3xl font-display leading-tight tracking-tighter text-white group-hover:glitch-text">{item.title}</h3>
+            
+            <div className="mt-2 md:mt-4 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0">
+              <div className="flex flex-col gap-0.5 md:gap-1">
+                <span className="text-[7px] md:text-[8px] font-mono text-white/20 uppercase tracking-widest">Neural_Sync</span>
+                <span className="text-[10px] md:text-xs font-mono text-electric-gold font-black">0.99{i}</span>
+              </div>
+              <Magnetic strength={0.3}>
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white text-black flex items-center justify-center hover:bg-crimson hover:text-white transition-all duration-500">
+                  <ArrowUpRight size={14} className="md:w-[18px] md:h-[18px]" />
+                </div>
+              </Magnetic>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </Glow>
+  </motion.div>
+);
 
 export default function Home() {
   const containerRef = useRef(null);
@@ -32,22 +144,58 @@ export default function Home() {
     offset: ["start start", "end start"]
   });
 
-  const heroScale = useTransform(heroScroll, [0, 1], [1, 1.5]);
-  const heroOpacity = useTransform(heroScroll, [0, 0.8], [1, 0]);
+  const { finishLoading } = useLoading();
 
   useEffect(() => {
-    // GSAP Cinematic Entrance
+    // Ensure loading finishes when Home mounts
+    const timer = setTimeout(finishLoading, 1000);
+    return () => clearTimeout(timer);
+  }, [finishLoading]);
+
+  const heroScale = useTransform(heroScroll, [0, 1], [1, 1.2]);
+  const heroOpacity = useTransform(heroScroll, [0, 0.8], [1, 0]);
+  const heroBlur = useTransform(heroScroll, [0, 0.5], [0, 20]);
+
+  useEffect(() => {
+    // GSAP Cinematic Entrance & Magnetic Effects
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ delay: 0.5 });
+      const tl = gsap.timeline({ delay: 0.2 });
       
-      tl.from(titleRef.current, {
-        y: 200,
+      tl.from(".hero-title-line", {
+        y: 150,
         opacity: 0,
-        skewY: 15,
-        scale: 0.8,
-        duration: 3,
+        skewY: 10,
+        stagger: 0.2,
+        duration: 2,
         ease: "expo.out",
-      });
+      })
+      .from(".hero-subtitle", {
+        opacity: 0,
+        y: 20,
+        duration: 1.5,
+        ease: "power3.out"
+      }, "-=1")
+      .from(".hero-scroll-indicator", {
+        scaleY: 0,
+        opacity: 0,
+        duration: 1,
+        ease: "power2.inOut"
+      }, "-=0.5");
+
+      // Magnetic Title Effect
+      const magneticTitle = document.querySelector('.magnetic-title');
+      if (magneticTitle) {
+        magneticTitle.addEventListener('mousemove', (e: any) => {
+          const { clientX, clientY } = e;
+          const { left, top, width, height } = magneticTitle.getBoundingClientRect();
+          const x = (clientX - (left + width / 2)) * 0.15;
+          const y = (clientY - (top + height / 2)) * 0.15;
+          gsap.to(magneticTitle, { x, y, duration: 0.5, ease: "power2.out" });
+        });
+        magneticTitle.addEventListener('mouseleave', () => {
+          gsap.to(magneticTitle, { x: 0, y: 0, duration: 0.5, ease: "power2.out" });
+        });
+      }
 
       // Complex Scroll Timeline for Section 01
       gsap.to("#sec-01-bg", {
@@ -84,27 +232,78 @@ export default function Home() {
     <div ref={containerRef} className="flex flex-col relative">
       <NeuralLattice />
       
-      {/* Hero Section with Sun Gods Logo */}
-      <div ref={heroRef} className="h-screen relative overflow-hidden bg-obsidian">
+      {/* Hero Section - Massively Upgraded */}
+      <div ref={heroRef} className="h-screen relative overflow-hidden bg-obsidian flex items-center justify-center">
+        {/* Background Layers */}
         <motion.div 
-          style={{ scale: heroScale, opacity: heroOpacity }} 
+          style={{ scale: heroScale, opacity: heroOpacity, filter: `blur(${heroBlur}px)` }} 
           className="absolute inset-0 z-0"
         >
-          <SunGodsLogo />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,0,60,0.15),transparent_70%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-obsidian/50 to-obsidian" />
         </motion.div>
-        
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-end pb-20 pointer-events-none">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2, duration: 1.5 }}
-            className="savant-stack items-center"
+
+        {/* Hero Content */}
+        <div className="relative z-10 container mx-auto px-5 md:px-10 lg:px-20 flex flex-col items-center text-center">
+          <motion.div 
+            className="magnetic-title cursor-default select-none"
+            whileHover={{ skewX: -2 }}
           >
-            <div className="font-mono text-[10px] text-crimson tracking-[1em] uppercase mb-4">
-              SOVEREIGN_LATTICE_INITIALIZED
-            </div>
-            <div className="w-px h-24 bg-gradient-to-b from-crimson to-transparent" />
+            <h1 className="font-display font-black text-[14vw] sm:text-[12vw] md:text-[10vw] leading-[0.85] tracking-tighter text-white uppercase">
+              <div className="hero-title-line overflow-hidden">
+                <span className="block">Sovereign</span>
+              </div>
+              <div className="hero-title-line overflow-hidden text-crimson italic font-serif font-light">
+                <span className="block">Intelligence</span>
+              </div>
+              <div className="hero-title-line overflow-hidden">
+                <span className="block">Syndicate</span>
+              </div>
+            </h1>
           </motion.div>
+
+          <div className="hero-subtitle mt-12 max-w-2xl">
+            <p className="text-white/40 font-mono text-xs md:text-sm tracking-[0.3em] uppercase leading-relaxed">
+              Engineering the next epoch of digital dominance. <br />
+              Fractal logic. Absolute autonomy. <span className="text-white">Savant_v5.2</span>
+            </p>
+          </div>
+
+          <div className="mt-16 flex flex-wrap justify-center gap-8 hero-subtitle">
+            <MagneticButton strength={0.1}>
+              <SavantButton variant="primary" className="px-12 h-16 text-xs tracking-[0.2em]">
+                INITIATE_UPLINK
+              </SavantButton>
+            </MagneticButton>
+            <MagneticButton strength={0.1}>
+              <SavantButton variant="outline" className="px-12 h-16 text-xs tracking-[0.2em]">
+                CORE_TELEMETRY
+              </SavantButton>
+            </MagneticButton>
+          </div>
+        </div>
+        
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4 hero-scroll-indicator">
+          <div className="font-mono text-[8px] text-white/20 tracking-[0.5em] uppercase">Scroll_to_Explore</div>
+          <div className="w-[1px] h-24 bg-gradient-to-b from-crimson via-crimson/50 to-transparent relative overflow-hidden">
+            <motion.div 
+              className="absolute top-0 left-0 w-full h-full bg-white"
+              animate={{ y: ['-100%', '100%'] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </div>
+        </div>
+
+        {/* Decorative HUD Elements */}
+        <div className="absolute top-1/2 left-12 -translate-y-1/2 hidden xl:flex flex-col gap-24 font-mono text-[8px] text-white/10 tracking-[1em] uppercase vertical-text rotate-180">
+          <span>System_Status: Optimal</span>
+          <span>Neural_Lattice: Active</span>
+        </div>
+        <div className="absolute top-1/2 right-12 -translate-y-1/2 hidden xl:flex flex-col gap-24 font-mono text-[8px] text-white/10 tracking-[1em] uppercase vertical-text">
+          <span>Build: 42_Omega_Stable</span>
+          <span>Sync_Rate: 99.99%</span>
         </div>
       </div>
 
@@ -130,7 +329,7 @@ export default function Home() {
               </motion.div>
               
               <div ref={titleRef}>
-                <h1 className="font-display font-black text-8xl md:text-[16rem] text-white leading-[0.8] tracking-tighter mix-blend-difference">
+                <h1 className="font-display font-black text-[clamp(3rem,12vw,16rem)] text-white leading-[0.8] tracking-tighter mix-blend-difference">
                   <TextScramble text="Savant." /><br />
                   <span className="text-crimson italic font-serif font-light text-[0.6em]">Creative.</span><br />
                   Syndicate.
@@ -264,56 +463,23 @@ export default function Home() {
       </ZoomBlock>
 
       {/* Section 02: SELECTED WORKS */}
-      <ZoomBlock className="min-h-screen flex items-center bg-industrial-gray py-32 -mx-5 md:-mx-10 lg:-mx-20 px-5 md:px-10 lg:px-20">
-        <section id="sec-02" className="w-full max-w-7xl mx-auto savant-grid lg:grid-cols-12 items-center">
-          <div className="lg:col-span-7 relative">
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9, y: 50 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-              className="aspect-[16/10] border border-white/10 relative overflow-hidden group shadow-2xl"
-            >
-              <ParallaxImage 
-                src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=2670&auto=format&fit=crop"
-                alt="Selected Work"
-                className="absolute inset-0 grayscale brightness-50 contrast-150 group-hover:grayscale-0 group-hover:brightness-75 transition-all duration-1000"
-                offset={150}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent opacity-80" />
-              <div className="absolute inset-0 border-[20px] border-obsidian/50 pointer-events-none" />
-              
-              <div className="absolute inset-0 p-12 flex flex-col justify-between pointer-events-none">
-                <div className="flex justify-between items-start">
-                  <div className="space-y-1">
-                    <span className="block font-mono text-[10px] text-white/40 tracking-[0.5em]">CLIENT_ID_42_OMEGA</span>
-                    <span className="block font-mono text-[10px] text-crimson font-bold tracking-widest">CLASS: GLOBAL_BRAND</span>
-                  </div>
-                  <div className="w-16 h-16 border border-white/20 flex items-center justify-center rotate-45">
-                    <div className="w-8 h-8 bg-crimson rotate-45 animate-pulse" />
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <h4 className="font-display font-black text-6xl text-white tracking-tighter">Neuro_Link_v6</h4>
-                  <p className="font-mono text-xs text-white/40 max-w-md">
-                    Complete brand deconstruction and digital platform engineering for a next-generation neural interface company.
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-            
-            {/* Floating Data Elements */}
-            <motion.div 
-              animate={{ y: [0, -20, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -right-12 -bottom-12 p-8 bg-crimson border border-white/20 shadow-2xl z-20 hidden md:block"
-            >
-               <div className="font-mono text-[10px] text-white/60 mb-2">AWARDS_WON</div>
-               <div className="text-3xl font-black text-white">#04_FWA</div>
-            </motion.div>
+      <ZoomBlock className="min-h-screen flex items-center bg-obsidian py-40 -mx-5 md:-mx-10 lg:-mx-20 px-5 md:px-10 lg:px-20 relative">
+        <NeuralBackground />
+        <section id="sec-02" className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-32 items-center relative z-10">
+          <div className="order-2 lg:order-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              {[
+                { id: "01", title: "NEURAL_LATTICE", category: "CORE_ENGINE", img: "https://picsum.photos/seed/neural/800/1000" },
+                { id: "02", title: "CHRONOS_FLUX", category: "TIME_DILATION", img: "https://picsum.photos/seed/time/800/1000" },
+                { id: "03", title: "VOID_RESONANCE", category: "SPATIAL_LOGIC", img: "https://picsum.photos/seed/void/800/1000" },
+                { id: "04", title: "OBLIVION_CORE", category: "ENTROPY_MGMT", img: "https://picsum.photos/seed/oblivion/800/1000" }
+              ].map((item, i) => (
+                <ArtifactCard key={i} item={item} i={i} />
+              ))}
+            </div>
           </div>
-
-          <div className="lg:col-span-5">
+          
+          <div className="order-1 lg:order-2">
             <motion.div 
               initial="hidden"
               whileInView="visible"
@@ -334,7 +500,7 @@ export default function Home() {
                   hidden: { opacity: 0, x: 50 },
                   visible: { opacity: 1, x: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } }
                 }}
-                className="font-display font-black text-8xl text-white tracking-tighter leading-[0.9]"
+                className="font-display font-black text-6xl sm:text-7xl md:text-[8rem] lg:text-[10rem] text-white tracking-tighter leading-[0.8]"
               >
                 <TextScramble text="Selected_" /> <br />
                 <span className="text-crimson italic font-serif text-[0.7em]">Works.</span>
@@ -344,7 +510,7 @@ export default function Home() {
                   hidden: { opacity: 0, x: 50 },
                   visible: { opacity: 1, x: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } }
                 }}
-                className="space-y-8 text-xl text-white/50 leading-relaxed font-light"
+                className="space-y-8 text-2xl text-white/50 leading-relaxed font-light max-w-xl"
               >
                 <p>
                   Every project generated within the Savant studio is a unique, handcrafted artifact. We utilize <b className="text-white">brutal, uncompromising design principles</b> to ensure maximum impact and market dominance.
@@ -356,17 +522,17 @@ export default function Home() {
                   hidden: { opacity: 0, x: 50 },
                   visible: { opacity: 1, x: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } }
                 }}
-                className="grid grid-cols-2 gap-8 pt-8"
+                className="grid grid-cols-2 gap-12 pt-12"
               >
-                 <div className="p-8 border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-colors duration-500">
-                    <div className="font-mono text-[10px] text-white/30 mb-4 tracking-widest">LINES_OF_CODE</div>
-                    <div className="text-5xl font-black text-white">3.1M+</div>
-                    <div className="h-1 w-12 bg-crimson mt-6" />
+                 <div className="p-10 border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all duration-500 rounded-3xl group/stat">
+                    <div className="font-mono text-[11px] text-white/30 mb-6 tracking-[0.4em] group-hover/stat:text-crimson transition-colors">LINES_OF_CODE</div>
+                    <div className="text-6xl font-black text-white tracking-tighter">3.1M+</div>
+                    <div className="h-1.5 w-16 bg-crimson mt-8" />
                  </div>
-                 <div className="p-8 border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-colors duration-500">
-                    <div className="font-mono text-[10px] text-white/30 mb-4 tracking-widest">PIXELS_PUSHED</div>
-                    <div className="text-5xl font-black text-electric-gold">14B+</div>
-                    <div className="h-1 w-12 bg-electric-gold mt-6" />
+                 <div className="p-10 border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all duration-500 rounded-3xl group/stat">
+                    <div className="font-mono text-[11px] text-white/30 mb-6 tracking-[0.4em] group-hover/stat:text-electric-gold transition-colors">PIXELS_PUSHED</div>
+                    <div className="text-6xl font-black text-electric-gold tracking-tighter">14B+</div>
+                    <div className="h-1.5 w-16 bg-electric-gold mt-8" />
                  </div>
               </motion.div>
             </motion.div>
@@ -381,107 +547,149 @@ export default function Home() {
         className="bg-industrial-gray"
       />
 
-      {/* Section 02.5: FEATURED ARTIFACTS */}
-      <section id="sec-02-5" className="py-40 bg-obsidian relative overflow-hidden savant-section">
-        <div className="container mx-auto px-5 md:px-10 lg:px-20 savant-stack">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-10">
-            <div className="max-w-2xl">
-              <h2 className="text-7xl font-display mb-6">FEATURED<br/><span className="text-crimson">ARTIFACTS</span></h2>
-              <p className="text-xl text-white/50 leading-relaxed">
-                A collection of high-fidelity digital constructs developed within the Savant ecosystem. 
-                Each artifact represents a unique intersection of logic and aesthetics.
-              </p>
-            </div>
-            <div className="flex gap-4">
-              <TechButton>SEE_CASE_STUDIES</TechButton>
-            </div>
-          </div>
+      {/* Section 02.7: Visual Branding Pipeline */}
+      <VisualBrandingPipeline />
 
-          <div className="savant-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {[
-              { id: "01", title: "NEURAL_LATTICE", category: "CORE_ENGINE", img: "https://picsum.photos/seed/neural/800/1000" },
-              { id: "02", title: "CHRONOS_FLUX", category: "TIME_DILATION", img: "https://picsum.photos/seed/time/800/1000" },
-              { id: "03", title: "VOID_RESONANCE", category: "SPATIAL_LOGIC", img: "https://picsum.photos/seed/void/800/1000" }
-            ].map((item, i) => (
+      {/* Section 02.8: Fractal Architecture Explorer */}
+      <section className="savant-section bg-obsidian relative overflow-hidden">
+        <div className="container mx-auto relative z-10">
+          <div className="grid lg:grid-cols-12 gap-20 items-center">
+            <div className="lg:col-span-4">
               <motion.div 
-                key={i}
-                className="artifact-card group relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/5"
-                whileHover={{ y: -20 }}
-                transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1 }}
+                className="space-y-8"
               >
-                <ParallaxImage 
-                  src={item.img} 
-                  alt={item.title}
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-110 group-hover:scale-100"
-                  offset={80}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
-                <div className="absolute bottom-10 left-10 right-10">
-                  <div className="text-[10px] font-mono text-crimson mb-2 tracking-widest">{item.category}</div>
-                  <h3 className="text-3xl font-display">{item.title}</h3>
-                  <div className="mt-4 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <span className="text-[10px] font-mono text-white/40">ID: {item.id}</span>
-                    <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center">
-                      <ArrowUpRight size={14} />
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-[1px] bg-crimson" />
+                  <span className="text-crimson font-mono text-[10px] tracking-[0.5em] font-bold uppercase">RECURSIVE_LOGIC</span>
+                </div>
+                <h2 className="text-7xl md:text-8xl font-display leading-[0.85] tracking-tighter">
+                  FRACTAL<br/><span className="text-white/20 italic font-serif font-light">ARCHITECTURE</span>
+                </h2>
+                <p className="text-xl text-white/40 leading-relaxed font-light max-w-sm">
+                  Explore the infinite depths of our design system. Every node is a universe, every line a protocol. Zoom into the core of Savant.
+                </p>
+                <div className="pt-8">
+                  <Magnetic strength={0.2}>
+                    <div className="flex items-center gap-6 group cursor-pointer">
+                      <div className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center group-hover:border-crimson transition-colors duration-500">
+                        <motion.div 
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                          className="w-2 h-2 bg-crimson rounded-full"
+                        />
+                      </div>
+                      <span className="font-mono text-[10px] tracking-[0.4em] text-white/40 group-hover:text-white transition-colors">INITIATE_DEEP_SCAN</span>
                     </div>
-                  </div>
+                  </Magnetic>
                 </div>
               </motion.div>
-            ))}
+            </div>
+            
+            <div className="lg:col-span-8">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <FractalExplorer />
+              </motion.div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Section 02.7: Visual Branding Pipeline */}
-      <VisualBrandingPipeline />
-
-      {/* Section 02.8: Split Layout Philosophy */}
-      <section className="split-layout border-y border-white/5 min-h-screen">
-        <div className="relative overflow-hidden group p-5 md:p-10 lg:p-20 flex flex-col justify-center">
-          <img 
+      {/* Section 02.9: Split Layout Philosophy */}
+      <section className="split-layout border-y border-white/5 min-h-screen bg-obsidian">
+        <div className="relative overflow-hidden group p-10 md:p-20 lg:p-32 flex flex-col justify-center">
+          <ParallaxImage 
             src="https://picsum.photos/seed/logic/1200/1600" 
             alt="Logic" 
-            className="absolute inset-0 w-full h-full object-cover grayscale opacity-40 group-hover:scale-110 transition-transform duration-[2s]"
+            className="absolute inset-0 w-full h-full object-cover grayscale opacity-30 group-hover:scale-110 transition-transform duration-[3s]"
+            offset={100}
           />
-          <div className="absolute inset-0 bg-obsidian/60" />
-          <div className="relative z-10 savant-stack">
-            <span className="text-crimson font-mono text-xs mb-4 tracking-[0.5em]">01_STRATEGY</span>
-            <h2 className="text-8xl font-display mb-8">KINETIC<br/>IDEAS</h2>
-            <p className="text-lg text-white/60 max-w-md">
+          <div className="absolute inset-0 bg-gradient-to-r from-obsidian via-obsidian/80 to-transparent" />
+          <div className="relative z-10 space-y-10">
+            <motion.div 
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              className="flex items-center gap-4"
+            >
+              <div className="w-12 h-[1px] bg-crimson" />
+              <span className="text-crimson font-mono text-xs tracking-[0.5em] font-bold uppercase">01_STRATEGY</span>
+            </motion.div>
+            <h2 className="text-massive font-display leading-[0.8] tracking-tighter">KINETIC<br/><span className="text-white/20 italic font-serif font-light">IDEAS</span></h2>
+            <p className="text-2xl text-white/40 max-w-lg leading-relaxed font-light">
               The spark of every iconic brand is a kinetic idea. 
-              We don't just plan; we ignite movements.
+              We don't just plan; we ignite movements that redefine the cultural zeitgeist.
             </p>
+            <div className="pt-10">
+              <Magnetic strength={0.2}>
+                <TechButton>EXPLORE_STRATEGY</TechButton>
+              </Magnetic>
+            </div>
           </div>
         </div>
-        <div className="relative overflow-hidden group bg-crimson/5 p-5 md:p-10 lg:p-20 flex flex-col justify-center border-l border-white/5">
-          <div className="absolute inset-0 neural-lattice-overlay opacity-20" />
-          <div className="relative z-10 savant-stack">
-            <span className="text-electric-gold font-mono text-xs mb-4 tracking-[0.5em]">02_CRAFT</span>
-            <h2 className="text-8xl font-display mb-8">TACTILE<br/>JOY</h2>
-            <p className="text-lg text-white/60 max-w-md">
+        <div className="relative overflow-hidden group bg-crimson/[0.02] p-10 md:p-20 lg:p-32 flex flex-col justify-center border-l border-white/5">
+          <div className="absolute inset-0 neural-lattice-overlay opacity-10" />
+          <div className="relative z-10 space-y-10">
+            <motion.div 
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              className="flex items-center gap-4"
+            >
+              <div className="w-12 h-[1px] bg-electric-gold" />
+              <span className="text-electric-gold font-mono text-xs tracking-[0.5em] font-bold uppercase">02_CRAFT</span>
+            </motion.div>
+            <h2 className="text-massive font-display leading-[0.8] tracking-tighter">TACTILE<br/><span className="text-white/20 italic font-serif font-light">JOY</span></h2>
+            <p className="text-2xl text-white/40 max-w-lg leading-relaxed font-light">
               We find joy in the tactile details of branding. 
-              From metallic foils to digital precision, the craft is our obsession.
+              From metallic foils to digital precision, the craft is our obsession and our legacy.
             </p>
-            <div className="mt-12">
-              <TechButton>OUR_CAPABILITIES</TechButton>
+            <div className="pt-10">
+              <Magnetic strength={0.2}>
+                <TechButton>OUR_CAPABILITIES</TechButton>
+              </Magnetic>
+            </div>
+          </div>
+          
+          {/* Decorative HUD Element */}
+          <div className="absolute bottom-10 right-10 opacity-20 pointer-events-none">
+            <div className="font-mono text-[8px] text-white tracking-[0.5em] uppercase mb-2">Craft_Status</div>
+            <div className="flex gap-1">
+              {[...Array(10)].map((_, i) => (
+                <motion.div 
+                  key={i}
+                  animate={{ opacity: [0.2, 1, 0.2] }}
+                  transition={{ duration: 1, repeat: Infinity, delay: i * 0.1 }}
+                  className="w-1 h-4 bg-electric-gold"
+                />
+              ))}
             </div>
           </div>
         </div>
       </section>
 
       {/* Section 03: CAPABILITIES */}
-      <ZoomBlock className="min-h-screen flex items-center bg-industrial-gray py-32 -mx-5 md:-mx-10 lg:-mx-20 px-5 md:px-10 lg:px-20">
-        <section id="sec-03" className="w-full max-w-7xl mx-auto savant-stack">
-          <div className="flex flex-col md:flex-row justify-between items-end gap-16 mb-32">
-            <div className="max-w-3xl">
+      <ZoomBlock className="min-h-screen flex items-center bg-industrial-gray py-40 -mx-5 md:-mx-10 lg:-mx-20 px-5 md:px-10 lg:px-20 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5 pointer-events-none">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,transparent_70%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px]" />
+        </div>
+        
+        <section id="sec-03" className="w-full max-w-7xl mx-auto relative z-10">
+          <div className="flex flex-col md:flex-row justify-between items-end gap-20 mb-40">
+            <div className="max-w-4xl">
               <motion.h2 
                 initial={{ opacity: 0, y: 100 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1 }}
-                className="font-display font-black text-8xl md:text-[14rem] text-white tracking-tighter leading-[0.8]"
+                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                className="font-display font-black text-6xl sm:text-7xl md:text-[12rem] lg:text-[16rem] text-white tracking-tighter leading-[0.75]"
               >
                 <TextScramble text="Studio_" /> <br />
-                <span className="text-electric-gold italic font-serif text-[0.6em]">Arsenal.</span>
+                <span className="text-electric-gold italic font-serif text-[0.55em] font-light">Arsenal.</span>
               </motion.h2>
             </div>
             <motion.div 
@@ -497,14 +705,14 @@ export default function Home() {
                   }
                 }
               }}
-              className="max-w-md text-right flex flex-col items-end savant-stack"
+              className="max-w-md text-right flex flex-col items-end space-y-10"
             >
               <motion.p 
                 variants={{
                   hidden: { opacity: 0, y: 30 },
                   visible: { opacity: 1, y: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } }
                 }}
-                className="text-2xl text-white/40 leading-relaxed font-light"
+                className="text-3xl text-white/30 leading-relaxed font-light italic"
               >
                 The tools and disciplines we deploy to dominate the digital landscape. No fluff, just raw capability.
               </motion.p>
@@ -514,52 +722,41 @@ export default function Home() {
                   visible: { opacity: 1, y: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } }
                 }}
               >
-                <MagneticButton strength={0.3}>
+                <Magnetic strength={0.3}>
                   <SavantButton 
                     variant="primary"
-                    className="w-full sm:w-64 h-20"
+                    className="w-full sm:w-72 h-24 text-xl"
                   >
                     START_A_PROJECT
                   </SavantButton>
-                </MagneticButton>
+                </Magnetic>
               </motion.div>
             </motion.div>
           </div>
 
-          <div className="savant-grid md:grid-cols-3">
+          <div className="savant-grid md:grid-cols-2 lg:grid-cols-4 gap-1">
             {[
-              { title: 'BRAND_IDENTITY', subtitle: 'Visual_Dominance', val: '01', desc: 'Deconstructing market norms to build aggressive, unforgettable visual identities.', color: 'text-crimson' },
-              { title: 'DIGITAL_PRODUCT', subtitle: 'Sovereign_Systems', val: '02', desc: 'Engineering hyper-advanced web applications and sovereign digital platforms.', color: 'text-electric-gold' },
-              { title: '3D_INTERACTIVE', subtitle: 'Immersive_Voids', val: '03', desc: 'Crafting immersive WebGL experiences that blur the line between reality and the digital void.', color: 'text-white' }
-            ].map((card, i) => (
-              <GlassCard 
+              { title: "NEURAL_BRANDING", desc: "Generative identity systems that evolve with your audience.", icon: "01", color: "text-crimson" },
+              { title: "KINETIC_UI", desc: "High-fidelity motion systems for immersive digital experiences.", icon: "02", color: "text-electric-gold" },
+              { title: "SOVEREIGN_STRATEGY", desc: "Uncompromising market positioning and cultural engineering.", icon: "03", color: "text-white" },
+              { title: "QUANTUM_DEV", desc: "Next-generation full-stack architectures built for speed.", icon: "04", color: "text-white/40" }
+            ].map((cap, i) => (
+              <motion.div 
                 key={i}
-                className="group relative overflow-hidden p-10"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: i * 0.1 }}
+                className="p-12 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all duration-500 group/cap relative overflow-hidden"
               >
-                <div className="font-mono text-[8px] text-white/20 mb-4 tracking-[0.5em]">{card.subtitle}</div>
-                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-1000" />
-                <div className={`text-8xl font-black mb-8 tracking-tighter ${card.color}`}>{card.val}</div>
-                <h3 className="text-2xl font-display text-white mb-4">{card.title}</h3>
-                <p className="text-lg text-white/40 leading-relaxed font-light">{card.desc}</p>
-                <div className="mt-12 flex items-center gap-4">
-                  <div className="h-[1px] bg-white/10 flex-1" />
-                  <span className="font-mono text-[8px] text-white/20">LEARN_MORE</span>
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent scale-x-0 group-hover/cap:scale-x-100 transition-transform duration-700" />
+                <div className={`text-[10px] font-mono mb-8 tracking-[0.5em] font-bold ${cap.color}`}>{cap.icon}</div>
+                <h3 className="text-3xl font-display mb-6 group-hover/cap:text-crimson transition-colors">{cap.title}</h3>
+                <p className="text-white/40 leading-relaxed font-light">{cap.desc}</p>
+                <div className="mt-10 opacity-0 group-hover/cap:opacity-100 transition-opacity duration-500">
+                  <ArrowUpRight size={20} className="text-white/20" />
                 </div>
-              </GlassCard>
+              </motion.div>
             ))}
-          </div>
-
-          <div className="mt-32">
-            <DataGrid 
-              title="SYNDICATE_OPERATIONS_FEED"
-              data={[
-                { id: '0x42A', label: 'PROJECT_OMEGA', value: '98.2%', status: 'OPTIMAL' },
-                { id: '0x11B', label: 'NEURAL_LATTICE', value: 'LEVEL_4', status: 'SYNCING' },
-                { id: '0x99C', label: 'OBLIVION_VAULT', value: 'SECURED', status: 'OPTIMAL' },
-                { id: '0x77D', label: 'SYSTEM_UPGRADE', value: 'IN_PROGRESS', status: 'CRITICAL' },
-                { id: '0x33E', label: 'CLIENT_UPLINK', value: 'ESTABLISHED', status: 'OPTIMAL' },
-              ]}
-            />
           </div>
 
           {/* Advanced System Log Module */}
@@ -567,39 +764,65 @@ export default function Home() {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="mt-24 p-5 md:p-10 lg:p-12 border border-white/10 bg-obsidian/80 backdrop-blur-3xl font-mono text-[11px] text-white/40 relative group"
+            className="mt-40 p-10 md:p-20 border border-white/10 bg-black/40 backdrop-blur-3xl font-mono text-[11px] text-white/40 relative group rounded-3xl overflow-hidden"
           >
-             <div className="absolute top-0 left-0 w-full h-[2px] bg-crimson/30" />
-             <div className="flex justify-between items-center mb-10 border-b border-white/10 pb-6">
-                <div className="flex items-center gap-4">
-                  <span className="w-2 h-2 bg-crimson rounded-full animate-pulse" />
-                  <span className="text-white font-bold tracking-[0.4em]">LIVE_STUDIO_LOG</span>
+             <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-crimson via-electric-gold to-transparent" />
+             <div className="flex justify-between items-center mb-16 border-b border-white/5 pb-10">
+                <div className="flex items-center gap-6">
+                  <motion.div 
+                    animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="w-3 h-3 bg-crimson rounded-full" 
+                  />
+                  <span className="text-white font-black tracking-[0.6em] text-sm uppercase italic">LIVE_STUDIO_TELEMETRY_v8.2</span>
                 </div>
-                <div className="flex gap-6 text-[9px] tracking-widest">
-                  <span>LOCATION: <b className="text-white">UNDERGROUND</b></span>
-                  <span>STATUS: <b className="text-electric-gold">OPERATIONAL</b></span>
+                <div className="flex gap-10 text-[10px] tracking-[0.3em] font-bold">
+                  <span>LOCATION: <b className="text-white">DEEP_CORE</b></span>
+                  <span>STATUS: <b className="text-emerald-400">OPTIMAL</b></span>
+                  <span>UPTIME: <b className="text-electric-gold">99.999%</b></span>
                 </div>
              </div>
-              <div className="savant-grid md:grid-cols-2 h-64 overflow-hidden relative">
-                <div className="savant-stack !gap-3">
-                  <div className="flex gap-4"><span className="text-white/20">[04:23:36]</span> <span>INITIALIZING BRAND_PIPELINE...</span></div>
-                  <div className="flex gap-4"><span className="text-white/20">[04:23:37]</span> <span className="text-electric-gold">DEPLOYING GLOBAL_CAMPAIGN...</span></div>
-                  <div className="flex gap-4"><span className="text-white/20">[04:23:38]</span> <span className="text-crimson font-bold">INSIGHT: AUDIENCE_RESONANCE_MAXIMIZED</span></div>
-                  <div className="flex gap-4"><span className="text-white/20">[04:23:39]</span> <span>REFINING VISUAL_GEOMETRY...</span></div>
-                  <div className="flex gap-4"><span className="text-white/20">[04:23:40]</span> <span>BRAND_STABILIZED_AT_PEAK_IMPACT</span></div>
-                  <div className="flex gap-4"><span className="text-white/20">[04:23:41]</span> <span className="text-white">UPLINK_ESTABLISHED: CREATIVE_NETWORK</span></div>
-                  <div className="flex gap-4"><span className="text-white/20">[04:23:42]</span> <span>MAPPING_BRAND_JOURNEY...</span></div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 h-80 overflow-hidden relative">
+                <div className="space-y-4">
+                  {[
+                    { time: "04:23:36", msg: "INITIALIZING BRAND_PIPELINE...", level: "INFO" },
+                    { time: "04:23:37", msg: "DEPLOYING GLOBAL_CAMPAIGN...", level: "CRITICAL" },
+                    { time: "04:23:38", msg: "INSIGHT: AUDIENCE_RESONANCE_MAXIMIZED", level: "SUCCESS" },
+                    { time: "04:23:39", msg: "REFINING VISUAL_GEOMETRY...", level: "INFO" },
+                    { time: "04:23:40", msg: "BRAND_STABILIZED_AT_PEAK_IMPACT", level: "SUCCESS" },
+                    { time: "04:23:41", msg: "UPLINK_ESTABLISHED: CREATIVE_NETWORK", level: "INFO" },
+                    { time: "04:23:42", msg: "MAPPING_BRAND_JOURNEY...", level: "INFO" },
+                    { time: "04:23:43", msg: "NEURAL_LATTICE_SYNC_COMPLETE", level: "SUCCESS" }
+                  ].map((log, i) => (
+                    <div key={i} className="flex gap-6 group/log">
+                      <span className="text-white/10 group-hover/log:text-white/30 transition-colors">[{log.time}]</span> 
+                      <span className={
+                        log.level === 'CRITICAL' ? 'text-electric-gold' : 
+                        log.level === 'SUCCESS' ? 'text-emerald-400' : 
+                        log.level === 'ERROR' ? 'text-crimson' : 
+                        'text-white/40'
+                      }>{log.msg}</span>
+                    </div>
+                  ))}
                 </div>
-                <div className="savant-stack !gap-3 opacity-40">
-                  <div className="flex gap-4"><span>{">"}</span> <span>ALLOCATING_RENDER_RESOURCES...</span></div>
-                  <div className="flex gap-4"><span>{">"}</span> <span>ENCRYPTING_ASSETS...</span></div>
-                  <div className="flex gap-4"><span>{">"}</span> <span className="text-crimson">PROTOCOL_42_ACTIVE</span></div>
-                  <div className="flex gap-4"><span>{">"}</span> <span>STANDBY_FOR_DEPLOYMENT...</span></div>
-                  <div className="flex gap-4"><span>{">"}</span> <span>CODE_INTEGRITY: 100%</span></div>
-                  <div className="flex gap-4"><span>{">"}</span> <span>RECURSIVE_LOOPS: OPTIMIZED</span></div>
-                  <div className="flex gap-4"><span>{">"}</span> <span>BEAST_MODE: ENABLED</span></div>
+                <div className="space-y-4 opacity-30 hidden lg:block">
+                  {[
+                    "ALLOCATING_RENDER_RESOURCES...",
+                    "ENCRYPTING_ASSETS...",
+                    "PROTOCOL_42_ACTIVE",
+                    "STANDBY_FOR_DEPLOYMENT...",
+                    "CODE_INTEGRITY: 100%",
+                    "RECURSIVE_LOOPS: OPTIMIZED",
+                    "BEAST_MODE: ENABLED",
+                    "TRUTH_ANCHOR: LOCKED"
+                  ].map((msg, i) => (
+                    <div key={i} className="flex gap-6">
+                      <span className="text-white/20">{">"}</span> 
+                      <span className={i === 2 ? 'text-crimson font-bold' : ''}>{msg}</span>
+                    </div>
+                  ))}
                 </div>
-                <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-obsidian to-transparent pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
              </div>
           </motion.div>
         </section>

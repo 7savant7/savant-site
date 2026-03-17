@@ -1,6 +1,6 @@
 import { Outlet, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, useScroll, useSpring } from 'motion/react';
-import { useState, useEffect, useRef } from 'react';
 import { AnimatePresence } from 'motion/react';
 import Lenis from 'lenis';
 import Background from './components/Background';
@@ -57,6 +57,36 @@ export default function Layout() {
   const lenisRef = useRef<Lenis | null>(null);
   const location = useLocation();
   const isOS = location.pathname === '/os';
+
+  useEffect(() => {
+    console.log('Layout State:', { booted, isOS, pathname: location.pathname });
+  }, [booted, isOS, location.pathname]);
+
+  const handleBootComplete = React.useCallback(() => {
+    console.log('Boot sequence complete. Setting booted to true.');
+    setBooted(true);
+  }, [setBooted]);
+
+  const [showForceReveal, setShowForceReveal] = useState(false);
+
+  // Force boot fallback if stuck
+  useEffect(() => {
+    if (!booted) {
+      const timer = setTimeout(() => {
+        console.warn('Force booting system...');
+        handleBootComplete();
+      }, 15000);
+      
+      const revealTimer = setTimeout(() => {
+        if (!booted) setShowForceReveal(true);
+      }, 8000);
+
+      return () => {
+        clearTimeout(timer);
+        clearTimeout(revealTimer);
+      };
+    }
+  }, [booted, handleBootComplete]);
 
   useEffect(() => {
     if (booted) {
@@ -121,8 +151,17 @@ export default function Layout() {
       {neuralOverlay && <div className="neural-lattice-overlay" />}
       
       <AnimatePresence>
-        {!booted && <BootScreen onComplete={() => setBooted(true)} />}
+        {!booted && <BootScreen onComplete={handleBootComplete} />}
       </AnimatePresence>
+
+      {showForceReveal && !booted && (
+        <button 
+          onClick={handleBootComplete}
+          className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[30000] px-8 py-3 bg-crimson text-white font-mono text-[10px] tracking-[0.5em] uppercase hover:bg-white hover:text-crimson transition-all"
+        >
+          Force_System_Reveal
+        </button>
+      )}
 
       {isOS ? (
         <div className="overflow-hidden h-screen bg-obsidian">

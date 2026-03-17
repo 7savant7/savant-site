@@ -52,41 +52,44 @@ export const HUD = () => {
         <motion.div 
           animate={{ 
             opacity: [1, 0.3, 1],
-            scale: [1, 1.1, 1]
+            scale: [1, 1.2, 1],
+            boxShadow: clearance === 'ROOT' ? ['0 0 5px #f9ff00', '0 0 20px #f9ff00', '0 0 5px #f9ff00'] : ['0 0 5px #ff003c', '0 0 20px #ff003c', '0 0 5px #ff003c']
           }}
           transition={{ duration: 2, repeat: Infinity }}
-          className={`w-2 h-2 rounded-full ${clearance === 'ROOT' ? 'bg-electric-gold shadow-[0_0_15px_#f9ff00]' : 'bg-crimson shadow-[0_0_15px_#ff003c]'}`} 
+          className={`w-2.5 h-2.5 rounded-full ${clearance === 'ROOT' ? 'bg-electric-gold' : 'bg-crimson'}`} 
         />
-        <span className="text-white font-black tracking-[0.4em] uppercase text-[10px]">
+        <span className="text-white font-black tracking-[0.5em] uppercase text-[11px] italic">
           {clearance === 'ROOT' ? 'ROOT_ACCESS_GRANTED' : 'SAVANT_LATTICE_ACTIVE'}
         </span>
       </div>
 
-      <div className="space-y-5 mb-10">
+      <div className="space-y-6 mb-10">
         {[
           { label: 'COORD_X', val: coords.x, color: 'text-white' },
           { label: 'COORD_Y', val: coords.y, color: 'text-white' },
-          { label: 'LATENCY', val: `${latency.toFixed(4)}MS`, color: 'text-electric-gold' },
+          { label: 'LATENCY', val: `${latency.toFixed(6)}MS`, color: 'text-electric-gold' },
           { label: 'NODES', val: activeNodes, color: 'text-white' },
-          { label: 'UPTIME', val: '142:12:44', color: 'text-white/40' },
-          { label: 'THREAT', val: 'MINIMAL', color: 'text-emerald-500' }
+          { label: 'UPTIME', val: '142:12:44:02', color: 'text-white/40' },
+          { label: 'THREAT', val: 'MINIMAL', color: 'text-emerald-400' },
+          { label: 'ENTROPY', val: '0.0042', color: 'text-crimson' }
         ].map((stat, i) => (
-          <div key={i} className="flex justify-between gap-12 border-b border-white/5 pb-2">
-            <span className="opacity-30 uppercase tracking-[0.2em]">{stat.label}</span>
-            <b className={`${stat.color} font-tech`}>{stat.val}</b>
+          <div key={i} className="flex justify-between gap-12 border-b border-white/5 pb-2 group/stat">
+            <span className="opacity-30 uppercase tracking-[0.3em] group-hover/stat:opacity-60 transition-opacity">{stat.label}</span>
+            <b className={`${stat.color} font-mono tracking-tighter`}>{stat.val}</b>
           </div>
         ))}
       </div>
 
-      <div className="h-16 w-full border border-white/5 bg-black/40 mb-10 p-2 relative rounded-xl overflow-hidden">
-        <div className="absolute top-2 left-3 font-mono text-[7px] text-white/20 uppercase tracking-widest">Neural_Activity_Stream</div>
+      <div className="h-24 w-full border border-white/5 bg-black/60 mb-10 p-4 relative rounded-2xl overflow-hidden group/chart">
+        <div className="absolute top-2 left-4 font-mono text-[7px] text-white/30 uppercase tracking-[0.4em]">Neural_Activity_v5.2</div>
+        <div className="absolute inset-0 opacity-10 pointer-events-none bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:10px_10px]" />
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={activityData}>
             <Line 
-              type="stepAfter" 
+              type="monotone" 
               dataKey="val" 
               stroke={clearance === 'ROOT' ? '#f9ff00' : '#ff003c'} 
-              strokeWidth={1.5} 
+              strokeWidth={2} 
               dot={false} 
               isAnimationActive={false} 
             />
@@ -94,21 +97,25 @@ export const HUD = () => {
         </ResponsiveContainer>
       </div>
 
-      <div className="pt-8 border-t border-white/5 flex flex-col gap-2">
-        <div className="font-mono text-[8px] text-white/20 uppercase mb-4 tracking-[0.3em]">System_Logs_v80</div>
-        <div className="space-y-2">
-          {logs.slice(0, 6).map((log) => (
+      <div className="pt-8 border-t border-white/5 flex flex-col gap-3">
+        <div className="font-mono text-[9px] text-white/30 uppercase mb-4 tracking-[0.5em] flex justify-between">
+          <span>System_Logs</span>
+          <span className="animate-pulse">LIVE</span>
+        </div>
+        <div className="space-y-3">
+          {logs.slice(0, 8).map((log) => (
             <motion.div 
               key={log.id}
-              initial={{ opacity: 0, x: 10 }}
+              initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              className={`text-[7px] font-mono leading-tight ${
+              className={`text-[8px] font-mono leading-tight flex gap-3 ${
                 log.level === 'ERROR' ? 'text-crimson' : 
                 log.level === 'CRITICAL' ? 'text-electric-gold' : 
-                'text-white/40'
+                'text-white/50'
               }`}
             >
-              <span className="opacity-30">[{log.level.substring(0, 3)}]</span> {log.message}
+              <span className="opacity-20 shrink-0">[{log.level.substring(0, 3)}]</span> 
+              <span className="tracking-wider">{log.message}</span>
             </motion.div>
           ))}
         </div>

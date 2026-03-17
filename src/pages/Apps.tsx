@@ -94,8 +94,8 @@ const AppInterface = ({ app, onClose }: { app: typeof APPS[0], onClose: () => vo
                   className="pt-20 grid grid-cols-1 md:grid-cols-2 gap-10"
                 >
                   <div className="space-y-10">
-                    <h2 className="text-6xl font-display text-white">{app.title}</h2>
-                    <p className="text-xl text-white/50 leading-relaxed font-light">{app.desc}</p>
+                    <h2 className="text-4xl md:text-6xl font-display text-white">{app.title}</h2>
+                    <p className="text-lg md:text-xl text-white/50 leading-relaxed font-light">{app.desc}</p>
                     <div className="pt-10">
                       <MagneticButton strength={0.2}>
                         <SavantButton 
@@ -181,8 +181,8 @@ export default function Apps() {
               </div>
 
               <div className="savant-stack !gap-6">
-                <h2 className="text-5xl font-display text-white">{app.title}</h2>
-                <p className="text-lg text-white/40 leading-relaxed font-light">{app.desc}</p>
+                <h2 className="text-3xl md:text-5xl font-display text-white">{app.title}</h2>
+                <p className="text-base md:text-lg text-white/40 leading-relaxed font-light">{app.desc}</p>
               </div>
 
               <div className="pt-10">

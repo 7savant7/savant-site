@@ -25,6 +25,17 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }, 800);
   }, []);
 
+  // Safety timeout to prevent stuck preloader
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      if (isLoading) {
+        console.warn('Loading safety timeout triggered');
+        finishLoading();
+      }
+    }, 6000);
+    return () => clearTimeout(timer);
+  }, [isLoading, finishLoading]);
+
   return (
     <LoadingContext.Provider value={{ isLoading, progress, setLoading, setProgress, finishLoading }}>
       {children}
