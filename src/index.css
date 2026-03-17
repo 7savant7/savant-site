@@ -43,24 +43,25 @@
     @apply bg-obsidian text-savant-white font-sans selection:bg-crimson/30 selection:text-white overflow-x-hidden antialiased;
     text-transform: lowercase;
     letter-spacing: -0.02em;
+    cursor: none;
   }
 
   /* Savant Perfect Fit Layout */
   .savant-page-container {
-    @apply min-h-screen w-full flex flex-col items-center justify-center p-5 md:p-10 lg:p-20 overflow-hidden relative;
+    @apply min-h-screen w-full flex flex-col p-6 md:p-12 lg:p-24 overflow-x-hidden relative;
   }
 
   .savant-section {
-    @apply min-h-screen w-full flex flex-col items-center justify-center p-5 md:p-10 lg:p-20 relative;
+    @apply min-h-screen w-full flex flex-col items-center justify-center p-6 md:p-12 lg:p-24 overflow-x-hidden relative;
   }
 
   /* Collision Awareness: Ensure minimum spacing */
   .savant-grid {
-    @apply grid gap-5 md:gap-10 lg:gap-20;
+    @apply grid gap-10 md:gap-20 lg:gap-32;
   }
 
   .savant-stack {
-    @apply flex flex-col gap-5 md:gap-10 lg:gap-20;
+    @apply flex flex-col gap-10 md:gap-20 lg:gap-32;
   }
 
   * {
@@ -82,9 +83,12 @@
 
   /* Awwwards-level Typography */
   .text-massive {
-    font-size: clamp(5rem, 15vw, 25rem);
-    line-height: 0.75;
+    font-size: clamp(2.5rem, 10vw, 16rem);
+    line-height: 0.8;
     letter-spacing: -0.05em;
+    font-weight: 900;
+    @apply break-words overflow-hidden;
+    hyphens: auto;
   }
 
   .text-editorial {
@@ -95,11 +99,11 @@
 
   /* Symmetrical UI Elements */
   .savant-card {
-    @apply relative bg-white/[0.01] backdrop-blur-3xl border border-white/[0.03] rounded-2xl overflow-hidden;
+    @apply relative bg-white/[0.01] backdrop-blur-3xl border border-white/[0.03] rounded-3xl overflow-hidden;
     box-shadow: 
-      0 30px 60px rgba(0, 0, 0, 0.6),
+      0 40px 80px rgba(0, 0, 0, 0.8),
       inset 0 0 0 1px rgba(255, 255, 255, 0.02);
-    transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+    transition: all 1s cubic-bezier(0.19, 1, 0.22, 1);
   }
 
   .savant-card:hover {
@@ -223,7 +227,7 @@
     background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
     opacity: 0.03;
     pointer-events: none;
-    z-index: 10000;
+    z-index: 50;
   }
 
   .scanlines-overlay {
@@ -235,7 +239,7 @@
     );
     background-size: 100% 4px;
     pointer-events: none;
-    z-index: 9999;
+    z-index: 49;
     opacity: 0.15;
   }
 
@@ -246,7 +250,7 @@
       radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.02) 1px, transparent 0);
     background-size: 48px 48px;
     pointer-events: none;
-    z-index: 9998;
+    z-index: 48;
   }
 
   .vignette-heavy {
@@ -254,7 +258,7 @@
     inset: 0;
     background: var(--vignette-heavy);
     pointer-events: none;
-    z-index: 10001;
+    z-index: 51;
   }
 
   /* CRT Distortion Effect */

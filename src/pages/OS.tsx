@@ -1,7 +1,47 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Terminal, Network, Shield, Cpu, Activity, SplitSquareHorizontal, SplitSquareVertical, X, Lock, Database, Radio, Fingerprint, Box, Search, Command, Zap, Globe, Settings, User } from 'lucide-react';
-import { LineChart, Line, ResponsiveContainer, YAxis, AreaChart, Area, XAxis, Tooltip } from 'recharts';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
+import { 
+  Terminal as TerminalIcon, 
+  Network, 
+  Shield, 
+  Cpu, 
+  Activity, 
+  SplitSquareHorizontal, 
+  SplitSquareVertical, 
+  X, 
+  Lock, 
+  Database, 
+  Radio, 
+  Fingerprint, 
+  Box, 
+  Search, 
+  Command as CommandIcon, 
+  Zap, 
+  Globe, 
+  Settings, 
+  User,
+  Maximize2,
+  Minimize2,
+  ChevronRight,
+  AlertTriangle,
+  CheckCircle2,
+  Info
+} from 'lucide-react';
+import { 
+  LineChart, 
+  Line, 
+  ResponsiveContainer, 
+  YAxis, 
+  AreaChart, 
+  Area, 
+  XAxis, 
+  Tooltip,
+  CartesianGrid,
+  BarChart,
+  Bar,
+  Cell
+} from 'recharts';
+import { useMedia } from 'react-use';
 import { Lattice3D } from '../components/Lattice3D';
 import { NeuralLatticeViz } from '../components/NeuralLatticeViz';
 import { useStore } from '../store/useStore';
@@ -24,17 +64,77 @@ interface PaneNode {
   appType?: AppType;
 }
 
-const APPS: Record<AppType, { name: string; icon: any; color: string; hex: string }> = {
-  terminal: { name: 'FRACTAL_TERMINAL', icon: Terminal, color: 'text-electric-gold', hex: '#f9ff00' },
-  network: { name: 'NEURAL_LATTICE', icon: Network, color: 'text-crimson', hex: '#ff003c' },
-  vault: { name: 'OBLIVION_VAULT', icon: Shield, color: 'text-white', hex: '#ffffff' },
-  system: { name: 'SYSTEM_TELEMETRY', icon: Cpu, color: 'text-electric-gold', hex: '#f9ff00' },
-  matrix: { name: 'RECURSIVE_MATRIX', icon: Activity, color: 'text-crimson', hex: '#ff003c' },
-  comms: { name: 'ENCRYPTED_COMMS', icon: Radio, color: 'text-white', hex: '#ffffff' },
-  auth: { name: 'BIOMETRIC_AUTH', icon: Fingerprint, color: 'text-electric-gold', hex: '#f9ff00' },
-  lattice: { name: 'SPATIAL_LATTICE', icon: Box, color: 'text-crimson', hex: '#ff003c' },
-  diagnostics: { name: 'SYSTEM_DIAGNOSTICS', icon: Activity, color: 'text-white', hex: '#ffffff' },
-  neural: { name: 'NEURAL_MAP', icon: Command, color: 'text-electric-gold', hex: '#f9ff00' }
+const APPS: Record<AppType, { name: string; icon: any; color: string; hex: string; description: string }> = {
+  terminal: { 
+    name: 'FRACTAL_TERMINAL', 
+    icon: TerminalIcon, 
+    color: 'text-electric-gold', 
+    hex: '#f9ff00',
+    description: 'Direct kernel access and fractal command execution.'
+  },
+  network: { 
+    name: 'NEURAL_LATTICE', 
+    icon: Network, 
+    color: 'text-crimson', 
+    hex: '#ff003c',
+    description: 'Real-time neural node synchronization and topology.'
+  },
+  vault: { 
+    name: 'OBLIVION_VAULT', 
+    icon: Shield, 
+    color: 'text-white', 
+    hex: '#ffffff',
+    description: 'Hyper-encrypted data storage and sector management.'
+  },
+  system: { 
+    name: 'SYSTEM_TELEMETRY', 
+    icon: Cpu, 
+    color: 'text-electric-gold', 
+    hex: '#f9ff00',
+    description: 'Ultra-core processing metrics and hardware health.'
+  },
+  matrix: { 
+    name: 'RECURSIVE_MATRIX', 
+    icon: Activity, 
+    color: 'text-crimson', 
+    hex: '#ff003c',
+    description: 'Recursive data stream analysis and pattern recognition.'
+  },
+  comms: { 
+    name: 'ENCRYPTED_COMMS', 
+    icon: Radio, 
+    color: 'text-white', 
+    hex: '#ffffff',
+    description: 'Quantum-encrypted peer-to-peer communication channels.'
+  },
+  auth: { 
+    name: 'BIOMETRIC_AUTH', 
+    icon: Fingerprint, 
+    color: 'text-electric-gold', 
+    hex: '#f9ff00',
+    description: 'Multi-factor biometric verification and gate control.'
+  },
+  lattice: { 
+    name: 'SPATIAL_LATTICE', 
+    icon: Box, 
+    color: 'text-crimson', 
+    hex: '#ff003c',
+    description: '3D spatial lattice visualization and manipulation.'
+  },
+  diagnostics: { 
+    name: 'SYSTEM_DIAGNOSTICS', 
+    icon: Activity, 
+    color: 'text-white', 
+    hex: '#ffffff',
+    description: 'Comprehensive system integrity and diagnostic suite.'
+  },
+  neural: { 
+    name: 'NEURAL_MAP', 
+    icon: CommandIcon, 
+    color: 'text-electric-gold', 
+    hex: '#f9ff00',
+    description: 'Global neural topology and architecture mapping.'
+  }
 };
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
@@ -84,7 +184,7 @@ const CommandPalette = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
                 className="flex-1 bg-transparent border-none outline-none font-mono text-sm text-white placeholder:text-white/10"
               />
               <div className="flex items-center gap-1 px-2 py-1 bg-white/5 border border-white/10 rounded text-[9px] font-mono text-white/30">
-                <Command className="w-2 h-2" />
+                <CommandIcon className="w-2 h-2" />
                 <span>K</span>
               </div>
             </div>
@@ -112,15 +212,21 @@ const CommandPalette = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
 
 const TerminalApp = () => {
   const [lines, setLines] = useState<string[]>([]);
+  const [input, setInput] = useState('');
   const addLog = useStore(state => state.addLog);
+  const terminalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const msgs = [
+      'SAVANT_OS [VERSION 80.0.0_ULTRA]',
+      '(C) 2026 SOVEREIGN FRACTAL ARCHITECTURE',
+      '',
       'INITIALIZING KERNEL...',
-      'MAPPING FRACTAL LATTICE...',
-      'ALLOCATING SHARD MEMORY...',
-      'UPLINK SECURED.',
-      'AWAITING COMMAND...'
+      'MAPPING NEURAL LATTICE...',
+      'ALLOCATING QUANTUM SHARD MEMORY...',
+      'UPLINK SECURED VIA AES-4096-GCM.',
+      'READY.',
+      ''
     ];
     let i = 0;
     const int = setInterval(() => {
@@ -128,24 +234,61 @@ const TerminalApp = () => {
         setLines(p => [...p, msgs[i]]);
         i++;
       } else {
-        const addr = `0x${Math.floor(Math.random()*16777215).toString(16).toUpperCase()}`;
-        setLines(p => [...p, `> ${addr} PROCESSED`]);
-        if (Math.random() > 0.95) addLog(`Anomalous activity detected at ${addr}`, 'WARN');
+        clearInterval(int);
       }
-    }, 800);
+    }, 100);
     return () => clearInterval(int);
-  }, [addLog]);
+  }, []);
+
+  useEffect(() => {
+    if (terminalRef.current) {
+      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+    }
+  }, [lines]);
+
+  const handleCommand = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    const cmd = input.trim().toLowerCase();
+    setLines(p => [...p, `> ${input}`]);
+    
+    if (cmd === 'help') {
+      setLines(p => [...p, 'AVAILABLE COMMANDS: HELP, CLEAR, STATUS, SYNC, PURGE, REBOOT']);
+    } else if (cmd === 'clear') {
+      setLines([]);
+    } else if (cmd === 'status') {
+      setLines(p => [...p, 'SYSTEM_INTEGRITY: 99.998%', 'CORE_TEMP: 32.4°C', 'LATTICE_SYNC: OPTIMAL']);
+    } else if (cmd === 'sync') {
+      setLines(p => [...p, 'SYNCHRONIZING NEURAL NODES...', 'DONE.']);
+      addLog('Manual lattice synchronization initiated', 'INFO');
+    } else {
+      setLines(p => [...p, `COMMAND_NOT_FOUND: ${cmd}`]);
+    }
+    
+    setInput('');
+  };
 
   return (
-    <div className="h-full w-full p-4 font-mono text-[10px] text-electric-gold overflow-hidden flex flex-col justify-end relative">
-      <div className="absolute top-4 right-4 text-electric-gold/20 animate-pulse">
-        <Terminal className="w-16 h-16" />
+    <div className="h-full w-full p-4 font-mono text-[10px] text-electric-gold overflow-hidden flex flex-col relative bg-black/40">
+      <div className="absolute top-4 right-4 text-electric-gold/5 pointer-events-none">
+        <TerminalIcon className="w-32 h-32" />
       </div>
-      <div className="relative z-10">
-        {lines.slice(-20).map((l, i) => (
-          <div key={i} className="opacity-80">{l}</div>
+      <div ref={terminalRef} className="flex-1 overflow-y-auto custom-scrollbar mb-2 relative z-10">
+        {lines.map((l, i) => (
+          <div key={i} className="opacity-80 leading-relaxed">{l}</div>
         ))}
-        <div className="animate-pulse mt-2">_</div>
+        <div className="flex items-center gap-2 mt-2">
+          <span className="text-crimson font-bold">{'>'}</span>
+          <form onSubmit={handleCommand} className="flex-1">
+            <input 
+              autoFocus
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              className="w-full bg-transparent border-none outline-none text-electric-gold font-mono"
+            />
+          </form>
+        </div>
       </div>
     </div>
   );
@@ -156,7 +299,7 @@ const SystemApp = () => {
   const [data, setData] = useState<{val: number, val2: number, time: string}[]>([]);
   
   useEffect(() => {
-    const initialData = Array.from({ length: 20 }, (_, i) => ({
+    const initialData = Array.from({ length: 30 }, (_, i) => ({
       val: 30 + Math.random() * 40,
       val2: 20 + Math.random() * 50,
       time: `${i}:00`
@@ -180,58 +323,104 @@ const SystemApp = () => {
   }, [cpuUsage, memUsage, updateMetrics]);
 
   return (
-    <div className="h-full w-full p-8 flex flex-col gap-8 relative overflow-y-auto custom-scrollbar">
+    <div className="h-full w-full p-4 md:p-6 flex flex-col gap-4 md:gap-6 relative overflow-y-auto custom-scrollbar bg-obsidian/40">
       <div className="absolute top-8 right-8 text-electric-gold/5 pointer-events-none">
-        <Cpu className="w-48 h-48" />
+        <Cpu className="w-32 h-32 md:w-64 md:h-64" />
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
-        <GlassCard title="TELEMETRY" subtitle="Core_Frequency" className="p-6">
-          <div className="font-mono text-3xl text-electric-gold font-black">{(4.2 + (cpuUsage / 100) * 0.8).toFixed(2)}<span className="text-sm ml-1 opacity-50">GHz</span></div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 relative z-10">
+        <GlassCard title="CPU_LOAD" subtitle="Core_Frequency" className="p-4">
+          <div className="flex items-end justify-between">
+            <div className="font-mono text-2xl text-electric-gold font-black">
+              {cpuUsage.toFixed(1)}<span className="text-[10px] ml-1 opacity-50">%</span>
+            </div>
+            <div className="font-mono text-[9px] text-white/20">{(4.2 + (cpuUsage / 100) * 0.8).toFixed(2)} GHz</div>
+          </div>
+          <div className="w-full h-1 bg-white/5 mt-3 rounded-full overflow-hidden">
+            <motion.div 
+              className="h-full bg-electric-gold" 
+              animate={{ width: `${cpuUsage}%` }}
+              transition={{ duration: 1 }}
+            />
+          </div>
         </GlassCard>
         
-        <GlassCard title="NEURAL_LOAD" subtitle="System_Stress" className="p-6">
-          <div className="font-mono text-3xl text-crimson font-black">{cpuUsage.toFixed(1)}<span className="text-sm ml-1 opacity-50">%</span></div>
+        <GlassCard title="MEM_ALLOC" subtitle="Shard_Memory" className="p-4">
+          <div className="flex items-end justify-between">
+            <div className="font-mono text-2xl text-crimson font-black">
+              {memUsage.toFixed(1)}<span className="text-[10px] ml-1 opacity-50">%</span>
+            </div>
+            <div className="font-mono text-[9px] text-white/20">{(64 * (memUsage / 100)).toFixed(1)} GB</div>
+          </div>
+          <div className="w-full h-1 bg-white/5 mt-3 rounded-full overflow-hidden">
+            <motion.div 
+              className="h-full bg-crimson" 
+              animate={{ width: `${memUsage}%` }}
+              transition={{ duration: 1 }}
+            />
+          </div>
+        </GlassCard>
+
+        <GlassCard title="NETWORK" subtitle="Neural_Throughput" className="p-4">
+          <div className="font-mono text-2xl text-white font-black">
+            1.2<span className="text-[10px] ml-1 opacity-50">TB/s</span>
+          </div>
+          <div className="flex gap-1 mt-3">
+            {[...Array(12)].map((_, i) => (
+              <div key={i} className={`flex-1 h-1 ${i < 8 ? 'bg-emerald-500/50' : 'bg-white/5'}`} />
+            ))}
+          </div>
+        </GlassCard>
+
+        <GlassCard title="UPTIME" subtitle="System_Stability" className="p-4">
+          <div className="font-mono text-2xl text-emerald-500 font-black">
+            142<span className="text-[10px] ml-1 opacity-50">DAYS</span>
+          </div>
+          <div className="font-mono text-[8px] text-emerald-500/50 mt-2 uppercase tracking-widest">Integrity: 99.998%</div>
         </GlassCard>
       </div>
 
-      <GlassCard title="VISUALIZATION" subtitle="Telemetry_Stream_01" className="flex-1 min-h-[250px] relative z-10 p-6">
-        <div className="absolute top-4 right-6 flex items-center gap-2">
-          <div className="w-2 h-2 bg-electric-gold rounded-full animate-pulse" />
-          <span className="font-mono text-[8px] text-white/40 uppercase">Live_Feed</span>
-        </div>
-        <div className="h-[calc(100%-10px)]">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data}>
-              <defs>
-                <linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#f9ff00" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#f9ff00" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <Tooltip 
-                contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid rgba(255,255,255,0.1)', fontSize: '10px', fontFamily: 'monospace' }}
-                itemStyle={{ color: '#f9ff00' }}
-              />
-              <Area type="monotone" dataKey="val" stroke="#f9ff00" fillOpacity={1} fill="url(#colorVal)" isAnimationActive={false} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </GlassCard>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 min-h-[300px] relative z-10">
+        <GlassCard title="CPU_TELEMETRY" subtitle="Real-time_Core_Analysis" className="p-6 flex flex-col">
+          <div className="flex-1">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={data}>
+                <defs>
+                  <linearGradient id="colorCpu" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#f9ff00" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#f9ff00" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                <XAxis dataKey="time" hide />
+                <YAxis hide domain={[0, 100]} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid rgba(255,255,255,0.1)', fontSize: '10px', fontFamily: 'monospace' }}
+                  itemStyle={{ color: '#f9ff00' }}
+                />
+                <Area type="monotone" dataKey="val" stroke="#f9ff00" strokeWidth={2} fillOpacity={1} fill="url(#colorCpu)" isAnimationActive={false} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </GlassCard>
 
-      <GlassCard title="ANALYTICS" subtitle="Telemetry_Stream_02" className="flex-1 min-h-[250px] relative z-10 p-6">
-        <div className="absolute top-4 right-6 flex items-center gap-2">
-          <div className="w-2 h-2 bg-crimson rounded-full animate-pulse" />
-          <span className="font-mono text-[8px] text-white/40 uppercase">Live_Feed</span>
-        </div>
-        <div className="h-[calc(100%-10px)]">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
-              <Line type="stepAfter" dataKey="val2" stroke="#ff003c" strokeWidth={1} dot={false} isAnimationActive={false} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </GlassCard>
+        <GlassCard title="MEMORY_TELEMETRY" subtitle="Shard_Allocation_Stream" className="p-6 flex flex-col">
+          <div className="flex-1">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                <XAxis dataKey="time" hide />
+                <YAxis hide domain={[0, 100]} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid rgba(255,255,255,0.1)', fontSize: '10px', fontFamily: 'monospace' }}
+                  itemStyle={{ color: '#ff003c' }}
+                />
+                <Line type="stepAfter" dataKey="val2" stroke="#ff003c" strokeWidth={2} dot={false} isAnimationActive={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </GlassCard>
+      </div>
     </div>
   );
 };
@@ -245,11 +434,11 @@ const VaultApp = () => {
       <div className="font-mono text-[10px] text-white/50 mb-4 relative z-10">
         ENCRYPTED_SECTORS // AES-256-GCM
       </div>
-      <div className="flex-1 grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 relative z-10 overflow-y-auto pr-2">
+      <div className="flex-1 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 relative z-10 overflow-y-auto pr-2">
         {[...Array(48)].map((_, i) => (
-          <div key={i} className="aspect-square border border-white/10 bg-white/5 flex flex-col items-center justify-center p-2 group hover:bg-white/20 transition-colors cursor-pointer">
-            <Database className="w-4 h-4 text-white/30 group-hover:text-white mb-1" />
-            <span className="text-[8px] text-white/30 group-hover:text-white font-mono">0x{i.toString(16).padStart(2, '0').toUpperCase()}</span>
+          <div key={i} className="aspect-square border border-white/10 bg-white/5 flex flex-col items-center justify-center p-1 md:p-2 group hover:bg-white/20 transition-colors cursor-pointer">
+            <Database className="w-3 h-3 md:w-4 md:h-4 text-white/30 group-hover:text-white mb-1" />
+            <span className="text-[7px] md:text-[8px] text-white/30 group-hover:text-white font-mono">0x{i.toString(16).padStart(2, '0').toUpperCase()}</span>
           </div>
         ))}
       </div>
@@ -379,15 +568,15 @@ const CommsApp = () => {
       </div>
       <div className="flex-1 savant-stack !gap-2 relative z-10 overflow-y-auto custom-scrollbar">
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="border border-white/10 p-3 flex items-center gap-4 bg-white/5 hover:bg-white/10 transition-colors cursor-pointer group">
-            <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-white/30 transition-colors">
-              <Radio className="w-4 h-4 text-white/50 group-hover:text-white transition-colors" />
+          <div key={i} className="border border-white/10 p-2 md:p-3 flex items-center gap-3 md:gap-4 bg-white/5 hover:bg-white/10 transition-colors cursor-pointer group">
+            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-white/30 transition-colors">
+              <Radio className="w-3 h-3 md:w-4 md:h-4 text-white/50 group-hover:text-white transition-colors" />
             </div>
-            <div className="flex-1">
-              <div className="font-mono text-[10px] text-white tracking-widest">AGENT_{Math.random().toString(36).substring(2, 6).toUpperCase()}</div>
-              <div className="font-mono text-[8px] text-white/30 tracking-widest">STATUS: ONLINE // ENCRYPTED</div>
+            <div className="flex-1 min-w-0">
+              <div className="font-mono text-[9px] md:text-[10px] text-white tracking-widest truncate">AGENT_{Math.random().toString(36).substring(2, 6).toUpperCase()}</div>
+              <div className="font-mono text-[7px] md:text-[8px] text-white/30 tracking-widest truncate">STATUS: ONLINE // ENCRYPTED</div>
             </div>
-            <div className="w-2 h-2 rounded-full bg-electric-gold animate-pulse" />
+            <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-electric-gold animate-pulse shrink-0" />
           </div>
         ))}
       </div>
@@ -520,10 +709,17 @@ interface PaneProps {
 }
 
 const Pane: React.FC<PaneProps> = ({ node, onSplit, onClose, onChangeApp, isRoot }) => {
+  const [isMaximized, setIsMaximized] = useState(false);
+  const isMobile = useMedia('(max-width: 1024px)');
+
   if (node.type === 'split' && node.children) {
     const isHoriz = node.direction === 'horizontal';
+    
+    // On mobile, we stack splits vertically regardless of direction
+    const layoutClass = isMobile ? 'flex-col' : (isHoriz ? 'flex-row' : 'flex-col');
+    
     return (
-      <div className={`flex ${isHoriz ? 'flex-row' : 'flex-col'} w-full h-full gap-4 p-4 bg-obsidian`}>
+      <div className={`flex ${layoutClass} w-full h-full gap-4 p-2 md:p-4 bg-obsidian`}>
         <div className="flex-1 min-w-0 min-h-0">
           <Pane node={node.children[0]} onSplit={onSplit} onClose={onClose} onChangeApp={onChangeApp} />
         </div>
@@ -539,10 +735,14 @@ const Pane: React.FC<PaneProps> = ({ node, onSplit, onClose, onChangeApp, isRoot
   const Icon = AppConfig.icon;
 
   return (
-    <div className="w-full h-full border border-white/10 bg-industrial-gray/50 flex flex-col relative group overflow-hidden min-w-[280px] min-h-[180px]">
+    <motion.div 
+      layout
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className={`w-full h-full border border-white/10 bg-industrial-gray/50 flex flex-col relative group overflow-hidden min-w-[260px] min-h-[200px] transition-all duration-500 ${isMaximized ? 'z-[60] !fixed !inset-0 !m-0 !rounded-none' : ''}`}
+    >
       {/* Header */}
-      <div className="h-8 border-b border-white/10 bg-obsidian/90 flex items-center justify-between px-3 select-none relative overflow-hidden">
-        {/* Subtle header background pulse */}
+      <div className="h-10 border-b border-white/10 bg-obsidian/90 flex items-center justify-between px-4 select-none relative overflow-hidden">
         <motion.div 
           className="absolute inset-0 bg-white/5 pointer-events-none"
           animate={{ opacity: [0, 0.1, 0] }}
@@ -551,38 +751,51 @@ const Pane: React.FC<PaneProps> = ({ node, onSplit, onClose, onChangeApp, isRoot
 
         <div className="flex items-center gap-3 relative z-10">
           <div className="flex items-center gap-1.5">
-            <Icon className={`w-3 h-3 ${AppConfig.color}`} />
+            <Icon className={`w-3.5 h-3.5 ${AppConfig.color}`} />
             <div className={`w-1 h-1 rounded-full ${AppConfig.color} animate-pulse`} />
           </div>
-          <select 
-            value={appType}
-            onChange={(e) => onChangeApp(node.id, e.target.value as AppType)}
-            className={`bg-transparent font-mono text-[9px] font-bold tracking-[0.2em] outline-none appearance-none cursor-pointer hover:brightness-125 transition-all ${AppConfig.color}`}
-            style={{ color: AppConfig.hex }}
-          >
-            {Object.entries(APPS).map(([k, v]) => (
-              <option key={k} value={k} className="bg-obsidian text-white">{v.name}</option>
-            ))}
-          </select>
+          <div className="relative">
+            <select 
+              value={appType}
+              onChange={(e) => onChangeApp(node.id, e.target.value as AppType)}
+              className={`bg-transparent font-mono text-[10px] font-bold tracking-[0.2em] outline-none appearance-none cursor-pointer hover:brightness-125 transition-all pr-4 ${AppConfig.color}`}
+              style={{ color: AppConfig.hex }}
+            >
+              {Object.entries(APPS).map(([k, v]) => (
+                <option key={k} value={k} className="bg-obsidian text-white">{v.name}</option>
+              ))}
+            </select>
+            <ChevronRight className={`w-2 h-2 absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none ${AppConfig.color} opacity-50`} />
+          </div>
         </div>
         
-        <div className="flex items-center gap-2 relative z-10">
-          {/* System Health Indicator per pane */}
-          <div className="flex items-center gap-1 px-2 py-0.5 border border-white/5 bg-white/5 rounded-full">
-            <div className="w-1 h-1 rounded-full bg-electric-gold" />
-            <span className="font-mono text-[7px] text-white/30 uppercase tracking-tighter">Health_OK</span>
+        <div className="flex items-center gap-4 relative z-10">
+          <div className="hidden sm:flex items-center gap-2 px-2 py-0.5 border border-white/5 bg-white/5 rounded-full">
+            <div className="w-1 h-1 rounded-full bg-emerald-500" />
+            <span className="font-mono text-[7px] text-white/30 uppercase tracking-tighter">Node_Active</span>
           </div>
 
           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button onClick={() => onSplit(node.id, 'horizontal')} className="p-1 hover:bg-white/10 text-white/40 hover:text-white transition-colors" title="Split Horizontal">
-              <SplitSquareHorizontal className="w-3 h-3" />
-            </button>
-            <button onClick={() => onSplit(node.id, 'vertical')} className="p-1 hover:bg-white/10 text-white/40 hover:text-white transition-colors" title="Split Vertical">
-              <SplitSquareVertical className="w-3 h-3" />
+            {!isMobile && (
+              <>
+                <button onClick={() => onSplit(node.id, 'horizontal')} className="p-1.5 hover:bg-white/10 text-white/40 hover:text-white transition-colors" title="Split Horizontal">
+                  <SplitSquareHorizontal className="w-3.5 h-3.5" />
+                </button>
+                <button onClick={() => onSplit(node.id, 'vertical')} className="p-1.5 hover:bg-white/10 text-white/40 hover:text-white transition-colors" title="Split Vertical">
+                  <SplitSquareVertical className="w-3.5 h-3.5" />
+                </button>
+              </>
+            )}
+            <button 
+              onClick={() => setIsMaximized(!isMaximized)}
+              className="p-1.5 hover:bg-white/10 text-white/40 hover:text-white transition-colors"
+              title={isMaximized ? 'Restore' : 'Maximize'}
+            >
+              {isMaximized ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
             </button>
             {!isRoot && (
-              <button onClick={() => onClose(node.id)} className="p-1 hover:bg-crimson/20 text-white/40 hover:text-crimson transition-colors" title="Close Pane">
-                <X className="w-3 h-3" />
+              <button onClick={() => onClose(node.id)} className="p-1.5 hover:bg-crimson/20 text-white/40 hover:text-crimson transition-colors" title="Close Pane">
+                <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
@@ -591,21 +804,31 @@ const Pane: React.FC<PaneProps> = ({ node, onSplit, onClose, onChangeApp, isRoot
 
       {/* Content */}
       <div className="flex-1 min-h-0 relative bg-obsidian/40">
-        {appType === 'terminal' && <TerminalApp />}
-        {appType === 'system' && <SystemApp />}
-        {appType === 'vault' && <VaultApp />}
-        {appType === 'network' && <NetworkApp />}
-        {appType === 'matrix' && <MatrixApp />}
-        {appType === 'comms' && <CommsApp />}
-        {appType === 'auth' && <AuthApp />}
-        {appType === 'lattice' && <Lattice3D />}
-        {appType === 'diagnostics' && <DiagnosticsApp />}
-        {appType === 'neural' && <NeuralMapApp />}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={appType}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="w-full h-full"
+          >
+            {appType === 'terminal' && <TerminalApp />}
+            {appType === 'system' && <SystemApp />}
+            {appType === 'vault' && <VaultApp />}
+            {appType === 'network' && <NetworkApp />}
+            {appType === 'matrix' && <MatrixApp />}
+            {appType === 'comms' && <CommsApp />}
+            {appType === 'auth' && <AuthApp />}
+            {appType === 'lattice' && <Lattice3D />}
+            {appType === 'diagnostics' && <DiagnosticsApp />}
+            {appType === 'neural' && <NeuralMapApp />}
+          </motion.div>
+        </AnimatePresence>
         
         {/* Scanline overlay */}
-        <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100%_4px]" />
+        <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100%_3px] opacity-30" />
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -613,6 +836,8 @@ const Pane: React.FC<PaneProps> = ({ node, onSplit, onClose, onChangeApp, isRoot
 
 export default function OS() {
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const isMobile = useMedia('(max-width: 1024px)');
+  
   const [rootNode, setRootNode] = useState<PaneNode>({
     id: 'root',
     type: 'split',
@@ -646,6 +871,21 @@ export default function OS() {
       }
     ]
   });
+
+  // Simplified layout for mobile
+  useEffect(() => {
+    if (isMobile) {
+      setRootNode({
+        id: 'root',
+        type: 'split',
+        direction: 'vertical',
+        children: [
+          { id: 'm1', type: 'leaf', appType: 'system' },
+          { id: 'm2', type: 'leaf', appType: 'terminal' }
+        ]
+      });
+    }
+  }, [isMobile]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -713,6 +953,7 @@ export default function OS() {
   };
 
   const handleSplit = (id: string, direction: 'horizontal' | 'vertical') => {
+    if (isMobile) return; // Disable splitting on mobile
     setRootNode(prev => findAndSplit(prev, id, direction));
   };
 
@@ -728,7 +969,7 @@ export default function OS() {
   };
 
   return (
-    <div className="fixed inset-0 z-40 bg-obsidian flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-40 bg-obsidian flex flex-col overflow-hidden select-none">
       <div className="noise-overlay opacity-10" />
       <div className="scanlines-overlay opacity-5" />
       
@@ -738,8 +979,8 @@ export default function OS() {
       />
       
       {/* Top Bar */}
-      <div className="h-12 border-b border-white/10 bg-obsidian/95 backdrop-blur-xl flex items-center justify-between px-8 z-50 relative group">
-        <div className="flex items-center gap-6">
+      <div className="h-12 border-b border-white/10 bg-obsidian/95 backdrop-blur-xl flex items-center justify-between px-4 md:px-8 z-50 relative group">
+        <div className="flex items-center gap-4 md:gap-6">
           <div className="flex gap-1 group-hover:gap-2 transition-all duration-500">
             <div className="w-1.5 h-1.5 bg-crimson rotate-45 shadow-[0_0_10px_#ff003c]" />
             <div className="w-1.5 h-1.5 bg-white/10 rotate-45" />
@@ -747,16 +988,30 @@ export default function OS() {
           <span className="font-display font-black text-lg tracking-tighter text-white group-hover:glitch-text transition-all">
             SAVANT<span className="text-crimson">_</span>OS
           </span>
-          <div className="h-4 w-[1px] bg-white/10 mx-2" />
+          <div className="hidden sm:block h-4 w-[1px] bg-white/10 mx-2" />
           <span className="font-mono text-[9px] text-white/30 tracking-[0.3em] hidden lg:inline-block uppercase">
-            Sovereign_Fractal_Architecture_v80.0.0
+            Sovereign_Fractal_Architecture_v80.0.0_ULTRA
           </span>
         </div>
-        <div className="flex items-center gap-8 font-mono text-[10px]">
+        
+        <div className="flex items-center gap-4 md:gap-8 font-mono text-[10px]">
+          <div 
+            onClick={() => setIsCommandPaletteOpen(true)}
+            className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded hover:bg-white/10 transition-colors cursor-pointer"
+          >
+            <Search className="w-3 h-3 text-white/40" />
+            <span className="text-white/20 hidden sm:inline">SEARCH_COMMANDS...</span>
+            <div className="hidden md:flex items-center gap-1 px-1 py-0.5 bg-white/5 border border-white/10 rounded text-[8px] text-white/30">
+              <CommandIcon className="w-2 h-2" />
+              <span>K</span>
+            </div>
+          </div>
+
           <div className="flex items-center gap-3 px-4 py-1.5 bg-white/[0.03] border border-white/5 rounded-full hover:border-electric-gold/30 transition-colors cursor-help">
             <div className="w-2 h-2 rounded-full bg-electric-gold animate-pulse shadow-[0_0_10px_#f9ff00]" />
             <span className="text-white/40 tracking-widest hidden md:inline-block">UPLINK_STABLE</span>
           </div>
+          
           <div className="text-white/20 tracking-widest hidden sm:inline-block font-tech">
             {new Date().toISOString().split('T')[1].substring(0, 8)} <span className="text-[8px] opacity-50">UTC</span>
           </div>
@@ -764,17 +1019,19 @@ export default function OS() {
       </div>
 
       {/* Workspace */}
-      <div className="flex-1 p-4 lg:p-6 overflow-hidden bg-obsidian relative z-10">
+      <div className="flex-1 p-2 md:p-4 lg:p-6 overflow-hidden bg-obsidian relative z-10">
         {/* Background Grid */}
         <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:2rem_2rem]" />
         
-        <Pane 
-          node={rootNode} 
-          onSplit={handleSplit} 
-          onClose={handleClose} 
-          onChangeApp={handleChangeApp}
-          isRoot={true}
-        />
+        <div className="w-full h-full relative overflow-hidden">
+          <Pane 
+            node={rootNode} 
+            onSplit={handleSplit} 
+            onClose={handleClose} 
+            onChangeApp={handleChangeApp}
+            isRoot={true}
+          />
+        </div>
       </div>
 
       <AmbientAudioController />

@@ -1,6 +1,8 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'motion/react';
-import gsap from 'gsap';
+import Magnetic from './Magnetic';
+import Glow from './Glow';
+import { GeometricSymbol } from './GeometricSymbol';
 
 export const VisualBrandingPipeline = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -18,7 +20,7 @@ export const VisualBrandingPipeline = () => {
   return (
     <section 
       ref={containerRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden py-40"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden py-40 bg-obsidian"
     >
       <motion.div 
         style={{ scale: springScale, opacity, y }}
@@ -30,37 +32,38 @@ export const VisualBrandingPipeline = () => {
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 1, ease: "circOut" }}
-              className="space-y-8"
+              className="space-y-10"
             >
               <div className="flex items-center gap-4">
-                <div className="w-12 h-[1px] bg-crimson" />
-                <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-crimson">
-                  Visual_Branding_Pipeline_v80
+                <div className="w-16 h-[1px] bg-crimson" />
+                <span className="font-mono text-[11px] uppercase tracking-[0.5em] text-crimson font-bold">
+                  Visual_Branding_Pipeline_v8.2
                 </span>
               </div>
               
-              <h2 className="text-massive font-display">
-                THE DNA <br />
-                <span className="text-crimson">OF SAVANT</span>
+              <h2 className="text-massive font-display leading-[0.85] tracking-tighter">
+                THE GENETIC <br />
+                <span className="text-crimson italic font-serif font-light">CODE</span> <br />
+                OF SAVANT
               </h2>
               
-              <p className="text-xl text-white/60 max-w-md leading-relaxed">
-                Our visual identity is not a static asset. It is a generative algorithm, 
-                constantly evolving based on system telemetry and cognitive load.
+              <p className="text-2xl text-white/50 max-w-lg leading-relaxed font-light">
+                Our visual identity is a living algorithm. It adapts, mutates, and evolves 
+                in real-time, reflecting the sovereign intelligence at our core.
               </p>
 
-              <div className="grid grid-cols-2 gap-8 pt-10">
+              <div className="grid grid-cols-2 gap-12 pt-10">
                 {[
-                  { label: "COGNITIVE_LOAD", value: "88%" },
-                  { label: "NEURAL_SYNC", value: "0.992" },
-                  { label: "TRUTH_ANCHOR", value: "LOCKED" },
-                  { label: "LATENCY", value: "0.002ms" }
+                  { label: "COGNITIVE_LOAD", value: "92%", color: "text-crimson" },
+                  { label: "NEURAL_SYNC", value: "0.998", color: "text-white" },
+                  { label: "TRUTH_ANCHOR", value: "STABLE", color: "text-emerald-400" },
+                  { label: "ENTROPY_RATE", value: "0.0012", color: "text-electric-gold" }
                 ].map((stat, i) => (
-                  <div key={i} className="space-y-2">
-                    <div className="text-[9px] font-mono text-white/30 uppercase tracking-widest">
+                  <div key={i} className="space-y-3 group/stat">
+                    <div className="text-[10px] font-mono text-white/20 uppercase tracking-[0.3em] group-hover/stat:text-white/40 transition-colors">
                       {stat.label}
                     </div>
-                    <div className="text-2xl font-tech font-bold text-electric-gold">
+                    <div className={`text-3xl font-mono font-black tracking-tighter ${stat.color}`}>
                       {stat.value}
                     </div>
                   </div>
@@ -70,64 +73,57 @@ export const VisualBrandingPipeline = () => {
           </div>
 
           <div className="relative aspect-square">
-            <div className="absolute inset-0 bg-crimson/5 rounded-full blur-[100px] animate-pulse" />
-            
-            {/* Generative Visual Element */}
-            <div className="relative w-full h-full flex items-center justify-center">
-              <motion.div 
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 border border-white/5 rounded-full"
-              />
-              <motion.div 
-                animate={{ rotate: -360 }}
-                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-10 border border-crimson/20 rounded-full"
-              />
-              
-              <div className="relative z-10 text-center">
-                <motion.div 
-                  animate={{ 
-                    scale: [1, 1.1, 1],
-                    opacity: [0.5, 1, 0.5]
-                  }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="text-8xl font-display text-white"
-                >
-                  S
-                </motion.div>
-                <div className="mt-4 font-mono text-[8px] tracking-[1em] text-crimson uppercase">
-                  Savant_Core
-                </div>
-              </div>
+            <Glow color="rgba(255,0,60,0.2)" blur="150px" opacity={0.6}>
+              <div className="relative w-full h-full flex items-center justify-center">
+                <Magnetic strength={0.2} className="w-full h-full">
+                  <div className="relative w-full h-full flex items-center justify-center p-20">
+                    <motion.div 
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                      className="absolute inset-0 border border-white/5 rounded-full"
+                    />
+                    <motion.div 
+                      animate={{ rotate: -360 }}
+                      transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                      className="absolute inset-10 border border-crimson/10 rounded-full border-dashed"
+                    />
+                    
+                    <div className="relative z-10 w-full h-full">
+                      <GeometricSymbol />
+                    </div>
 
-              {/* Orbiting Particles */}
-              {[...Array(8)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-1 h-1 bg-electric-gold rounded-full"
-                  animate={{
-                    rotate: 360,
-                    x: Math.cos(i * 45) * 150,
-                    y: Math.sin(i * 45) * 150,
-                  }}
-                  transition={{
-                    rotate: { duration: 10 + i, repeat: Infinity, ease: "linear" },
-                    duration: 0
-                  }}
-                />
-              ))}
-            </div>
+                    {/* Orbiting Neural Nodes */}
+                    {[...Array(12)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className="absolute w-1.5 h-1.5 bg-white rounded-full shadow-[0_0_10px_#fff]"
+                        animate={{
+                          rotate: 360,
+                        }}
+                        style={{
+                          left: '50%',
+                          top: '50%',
+                          transformOrigin: `${Math.cos(i * 30) * 200}px ${Math.sin(i * 30) * 200}px`
+                        }}
+                        transition={{
+                          rotate: { duration: 15 + i, repeat: Infinity, ease: "linear" }
+                        }}
+                      />
+                    ))}
+                  </div>
+                </Magnetic>
+              </div>
+            </Glow>
           </div>
         </div>
       </motion.div>
 
-      {/* Background Text Rail */}
-      <div className="absolute top-1/2 left-10 -translate-y-1/2 rail-text">
-        SAVANT_OS_VISUAL_IDENTITY_SYSTEM_v80.0.0_DNA_SEQUENCE_LOCKED
+      {/* Background Text Rails */}
+      <div className="absolute top-1/2 left-12 -translate-y-1/2 vertical-text rotate-180 font-mono text-[9px] text-white/5 tracking-[1em] uppercase">
+        SAVANT_OS_VISUAL_IDENTITY_SYSTEM_v8.2.0_DNA_SEQUENCE_LOCKED_TRUTH_ANCHOR_STABLE
       </div>
-      <div className="absolute top-1/2 right-10 -translate-y-1/2 rail-text">
-        NEURAL_LATTICE_INTEGRATION_ACTIVE_TRUTH_ANCHOR_STABLE
+      <div className="absolute top-1/2 right-12 -translate-y-1/2 vertical-text font-mono text-[9px] text-white/5 tracking-[1em] uppercase">
+        NEURAL_LATTICE_INTEGRATION_ACTIVE_RECURSIVE_GEOMETRY_OPTIMIZED_FOR_DOMINANCE
       </div>
     </section>
   );

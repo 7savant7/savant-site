@@ -1,12 +1,12 @@
 import { useRef, useMemo, useState, useEffect } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Instances, Instance, Float, Stars, Line, Stats } from '@react-three/drei';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Instances, Instance, Float, Stars, Line } from '@react-three/drei';
 import { EffectComposer, Bloom, ChromaticAberration, Noise, Vignette } from '@react-three/postprocessing';
 import { BlendFunction } from 'postprocessing';
 import * as THREE from 'three';
 import { BRANDING } from '../styles/branding';
 
-const PARTICLE_COUNT = 600;
+const PARTICLE_COUNT = 400; // Reduced for performance
 const GRID_SIZE = 50;
 const REPULSION_RADIUS = 20;
 const REPULSION_STRENGTH = 0.6;
@@ -243,7 +243,6 @@ export default function Background() {
       >
         <color attach="background" args={['#000000']} />
         <fogExp2 attach="fog" args={['#000000', 0.0008]} />
-        <Stats />
         
         <ambientLight intensity={0.1} />
         <pointLight position={[0, 0, 500]} intensity={100} color={BRANDING.colors.primary.DEFAULT} />
@@ -251,25 +250,10 @@ export default function Background() {
         <NeuralLattice />
         <Particles />
         
-        <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
-
-        <EffectComposer>
-          <Bloom 
-            luminanceThreshold={0.2} 
-            mipmapBlur 
-            intensity={1.5} 
-            radius={0.4}
-          />
-          <ChromaticAberration 
-            blendFunction={BlendFunction.SCREEN} 
-            offset={new THREE.Vector2(0.001, 0.001)} 
-          />
-          <Noise opacity={0.05} />
-          <Vignette eskil={false} offset={0.1} darkness={1.1} />
-        </EffectComposer>
+        <Stars radius={100} depth={50} count={2000} factor={4} saturation={0} fade speed={1} />
       </Canvas>
       
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.6)_100%)]" />
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
     </div>
   );
 }

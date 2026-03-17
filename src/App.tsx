@@ -15,12 +15,14 @@ import { LoadingProvider } from './contexts/LoadingContext';
 import { Toaster } from 'sonner';
 import { SmoothScroll } from './components/SmoothScroll';
 import { Preloader } from './components/Preloader';
+import { CustomCursor } from './components/CustomCursor';
 
 export default function App() {
   return (
     <LoadingProvider>
       <AuthProvider>
         <BlogProvider>
+          <CustomCursor />
           <SmoothScroll>
             <Preloader />
             <Router>

@@ -158,7 +158,7 @@ export const NeuralCommand = () => {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[200] flex items-start justify-center pt-[15vh] px-4">
+        <div className="fixed inset-0 z-[25000] flex items-start justify-center pt-[15vh] px-4">
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

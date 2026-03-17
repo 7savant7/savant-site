@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useLoading } from '../contexts/LoadingContext';
 
 export const Preloader: React.FC = () => {
-  const { isLoading, progress } = useLoading();
+  const { isLoading, progress, finishLoading } = useLoading();
   const [displayProgress, setDisplayProgress] = useState(0);
 
   useEffect(() => {
@@ -22,8 +22,15 @@ export const Preloader: React.FC = () => {
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 1, ease: [0.22, 1, 0.36, 1] } }}
-          className="fixed inset-0 z-[100] bg-obsidian flex flex-col items-center justify-center overflow-hidden"
+          className="fixed inset-0 z-[20000] bg-obsidian flex flex-col items-center justify-center overflow-hidden"
         >
+          {/* Skip Loading Trigger */}
+          <button 
+            onClick={() => finishLoading()}
+            className="absolute top-8 right-8 z-[20001] font-mono text-[8px] text-white/20 hover:text-white transition-colors tracking-[0.5em] uppercase cursor-pointer"
+          >
+            Skip_Loading
+          </button>
           {/* Background Fractal Noise */}
           <div className="absolute inset-0 opacity-20 pointer-events-none">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,0,60,0.1)_0%,transparent_70%)]" />

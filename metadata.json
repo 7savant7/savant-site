@@ -1,5 +1,5 @@
 {
-  "name": "Savant — Build 80_ULTRA",
-  "description": "Sovereign OS Interface. Recursive fractal architecture. Build 80_ULTRA. Upgraded with hyper-lattice synchronization, ultra-core processing, and source code archival systems.",
-  "requestFramePermissions": []
+  "name": "SAVANT // BUILD.80_ULTRA",
+  "description": "Sovereign Fractal Architecture. Build 80_ULTRA. Recursive neural lattice synchronization, ultra-core processing, and autonomous source code archival systems. Engineered for absolute precision and perfect-fit responsiveness.",
+  "requestFramePermissions": ["camera", "microphone", "geolocation"]
 }

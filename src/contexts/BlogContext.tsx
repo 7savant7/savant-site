@@ -109,25 +109,37 @@ export const BlogProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const addPost = async (title: string, content: string, status: 'draft' | 'published') => {
     if (!user || !isAdmin) return;
-    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + Math.random().toString(36).substring(2, 8);
-    await addMutation.mutateAsync({
-      title,
-      content,
-      slug,
-      author_id: user.id,
-      status,
-      published_at: status === 'published' ? new Date().toISOString() : null
-    });
+    try {
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + Math.random().toString(36).substring(2, 8);
+      await addMutation.mutateAsync({
+        title,
+        content,
+        slug,
+        author_id: user.id,
+        status,
+        published_at: status === 'published' ? new Date().toISOString() : null
+      });
+    } catch (error) {
+      console.error('Failed to add post:', error);
+    }
   };
 
   const updatePost = async (id: string, title: string, content: string, status: 'draft' | 'published') => {
     if (!user || !isAdmin) return;
-    await updateMutation.mutateAsync({ id, post: { title, content, status } });
+    try {
+      await updateMutation.mutateAsync({ id, post: { title, content, status } });
+    } catch (error) {
+      console.error('Failed to update post:', error);
+    }
   };
 
   const deletePost = async (id: string) => {
     if (!user || !isAdmin) return;
-    await deleteMutation.mutateAsync(id);
+    try {
+      await deleteMutation.mutateAsync(id);
+    } catch (error) {
+      console.error('Failed to delete post:', error);
+    }
   };
 
   return (
