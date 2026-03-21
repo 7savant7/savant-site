@@ -88,7 +88,7 @@ export const VisualBrandingPipeline = () => {
                       className="absolute inset-10 border border-crimson/10 rounded-full border-dashed"
                     />
                     
-                    <div className="relative z-10 w-full h-full">
+                    <div className="relative z-10 w-full h-full overflow-visible">
                       <GeometricSymbol />
                     </div>
 

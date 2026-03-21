@@ -15,15 +15,23 @@ interface OSState {
   latency: number;
   cpuUsage: number;
   memUsage: number;
+  systemLoad: number;
+  quantumEntanglement: number;
+  shardIntegrity: number;
+  neuralSync: number;
+  biometricStatus: 'AWAITING' | 'SCANNING' | 'VERIFIED' | 'DENIED';
   logs: SystemLog[];
   chromaticAberration: boolean;
   scanlines: boolean;
   neuralOverlay: boolean;
+  logoVariant: 'triquetra' | 'variant4' | 'variant5';
   setBooted: (booted: boolean) => void;
   addLog: (message: string, level?: SystemLog['level']) => void;
   updateMetrics: () => void;
   toggleEffect: (effect: 'chromaticAberration' | 'scanlines' | 'neuralOverlay') => void;
   setClearance: (level: 'USER' | 'ADMIN' | 'ROOT') => void;
+  setBiometricStatus: (status: OSState['biometricStatus']) => void;
+  setLogoVariant: (variant: OSState['logoVariant']) => void;
 }
 
 export const useStore = create<OSState>()(
@@ -35,10 +43,16 @@ export const useStore = create<OSState>()(
       latency: 0.0014,
       cpuUsage: 42,
       memUsage: 68,
+      systemLoad: 0.42,
+      quantumEntanglement: 99.998,
+      shardIntegrity: 100,
+      neuralSync: 98.4,
+      biometricStatus: 'AWAITING',
       logs: [],
       chromaticAberration: false,
       scanlines: true,
       neuralOverlay: false,
+      logoVariant: 'triquetra',
       setBooted: (booted) => set({ booted }),
       addLog: (message, level = 'INFO') => set((state) => ({
         logs: [
@@ -51,14 +65,23 @@ export const useStore = create<OSState>()(
           ...state.logs
         ].slice(0, 50)
       })),
-      updateMetrics: () => set((state) => ({
-        activeNodes: state.activeNodes + (Math.random() > 0.5 ? 1 : -1),
-        latency: 0.0010 + Math.random() * 0.0010,
-        cpuUsage: Math.max(10, Math.min(95, state.cpuUsage + (Math.random() - 0.5) * 10)),
-        memUsage: Math.max(20, Math.min(90, state.memUsage + (Math.random() - 0.5) * 5))
-      })),
+      updateMetrics: () => set((state) => {
+        const newCpu = Math.max(10, Math.min(95, state.cpuUsage + (Math.random() - 0.5) * 10));
+        return {
+          activeNodes: state.activeNodes + (Math.random() > 0.5 ? 1 : -1),
+          latency: 0.0010 + Math.random() * 0.0010,
+          cpuUsage: newCpu,
+          memUsage: Math.max(20, Math.min(90, state.memUsage + (Math.random() - 0.5) * 5)),
+          systemLoad: newCpu / 100,
+          quantumEntanglement: 99.99 + (Math.random() * 0.01),
+          shardIntegrity: 99.9 + (Math.random() * 0.1),
+          neuralSync: 98 + (Math.random() * 2)
+        };
+      }),
       toggleEffect: (effect) => set((state) => ({ [effect]: !state[effect] })),
-      setClearance: (level) => set({ clearance: level })
+      setClearance: (level) => set({ clearance: level }),
+      setBiometricStatus: (status) => set({ biometricStatus: status }),
+      setLogoVariant: (variant) => set({ logoVariant: variant })
     }),
     {
       name: 'savant-os-storage',
@@ -67,7 +90,8 @@ export const useStore = create<OSState>()(
         clearance: state.clearance,
         chromaticAberration: state.chromaticAberration,
         scanlines: state.scanlines,
-        neuralOverlay: state.neuralOverlay
+        neuralOverlay: state.neuralOverlay,
+        logoVariant: state.logoVariant
       }),
     }
   )

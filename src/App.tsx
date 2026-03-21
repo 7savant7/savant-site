@@ -9,23 +9,28 @@ import Admin from './pages/Admin';
 import Settings from './pages/Settings';
 import OS from './pages/OS';
 import Journal from './pages/Journal';
+import Branding from './pages/Branding';
 import { AuthProvider } from './contexts/AuthContext';
 import { BlogProvider } from './contexts/BlogContext';
 import { LoadingProvider } from './contexts/LoadingContext';
+import { MoodProvider } from './contexts/MoodContext';
 import { Toaster } from 'sonner';
 import { SmoothScroll } from './components/SmoothScroll';
 import { Preloader } from './components/Preloader';
 import { CustomCursor } from './components/CustomCursor';
+import { AmbientMusic } from './components/AmbientMusic';
 
 export default function App() {
   return (
     <LoadingProvider>
       <AuthProvider>
-        <BlogProvider>
-          <CustomCursor />
-          <SmoothScroll>
-            <Preloader />
-            <Router>
+        <MoodProvider>
+          <BlogProvider>
+            <CustomCursor />
+            <SmoothScroll>
+              <Preloader />
+              <AmbientMusic />
+              <Router>
               <Toaster position="top-right" theme="dark" toastOptions={{
                 style: {
                   background: 'rgba(10, 10, 10, 0.9)',
@@ -47,14 +52,16 @@ export default function App() {
                   <Route path="admin" element={<Admin />} />
                   <Route path="settings" element={<Settings />} />
                   <Route path="journal" element={<Journal />} />
+                  <Route path="branding" element={<Branding />} />
                   <Route path="os" element={<OS />} />
                 </Route>
               </Routes>
             </Router>
           </SmoothScroll>
         </BlogProvider>
-      </AuthProvider>
-    </LoadingProvider>
+      </MoodProvider>
+    </AuthProvider>
+  </LoadingProvider>
   );
 }
 

@@ -7,12 +7,14 @@ interface GlassCardProps {
   hoverEffect?: boolean;
   title?: string;
   subtitle?: string;
+  onClick?: () => void;
 }
 
-export const GlassCard = ({ children, className = '', hoverEffect = true, title, subtitle }: GlassCardProps) => {
+export const GlassCard = ({ children, className = '', hoverEffect = true, title, subtitle, onClick }: GlassCardProps) => {
   return (
     <motion.div
       whileHover={hoverEffect ? { y: -5, scale: 1.01 } : {}}
+      onClick={onClick}
       transition={{ duration: 0.4, ease: [0.19, 1, 0.22, 1] }}
       className={`relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl group flex flex-col ${className}`}
     >
