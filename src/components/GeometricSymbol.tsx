@@ -1,271 +1,311 @@
-import React from 'react';
+import React, { useMemo, useRef, useState, Suspense } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { 
+  Float, 
+  PerspectiveCamera, 
+  Environment,
+  ContactShadows,
+  MeshTransmissionMaterial,
+  Text,
+  Center,
+  OrbitControls,
+  Grid
+} from '@react-three/drei';
+import * as THREE from 'three';
+import { EffectComposer, Bloom, ChromaticAberration, Noise, Vignette } from '@react-three/postprocessing';
+import { BlendFunction } from 'postprocessing';
 import { motion } from 'motion/react';
+import { useStore } from '../store/useStore';
 
-export const GeometricSymbol = () => {
-  // Refined triple-loop path for a more accurate "Triquetra" feel
-  const loopPath = "M 50 50 C 50 10 85 10 85 50 C 85 90 50 90 50 50";
+// --- CURVE GENERATORS ---
 
+const createCircleCurve = (radius = 3) => {
+  const points = [];
+  for (let i = 0; i <= 100; i++) {
+    const t = (i / 100) * Math.PI * 2;
+    points.push(new THREE.Vector3(Math.cos(t) * radius, Math.sin(t) * radius, 0));
+  }
+  return new THREE.CatmullRomCurve3(points, true);
+};
+
+const createInfinityCurve = (scale = 3.5) => {
+  const points = [];
+  for (let i = 0; i <= 100; i++) {
+    const t = (i / 100) * Math.PI * 2;
+    const x = scale * Math.cos(t) / (Math.sin(t) * Math.sin(t) + 1);
+    const y = scale * Math.sin(t) * Math.cos(t) / (Math.sin(t) * Math.sin(t) + 1);
+    const z = Math.sin(t * 2) * 0.5;
+    points.push(new THREE.Vector3(x, y, z));
+  }
+  return new THREE.CatmullRomCurve3(points, true);
+};
+
+const createTrefoilCurve = (scale = 1.8) => {
+  const points = [];
+  for (let i = 0; i <= 100; i++) {
+    const t = (i / 100) * Math.PI * 2;
+    const x = scale * (Math.sin(t) + 2 * Math.sin(2 * t));
+    const y = scale * (Math.cos(t) - 2 * Math.cos(2 * t));
+    const z = scale * -Math.sin(3 * t);
+    points.push(new THREE.Vector3(x, y, z));
+  }
+  return new THREE.CatmullRomCurve3(points, true);
+};
+
+const createTorusKnotCurve = (p = 2, q = 3, scale = 2.5) => {
+  const points = [];
+  for (let i = 0; i <= 150; i++) {
+    const t = (i / 150) * Math.PI * 2;
+    const r = scale * (0.5 * (2 + Math.sin(q * t)));
+    const x = r * Math.cos(p * t);
+    const y = r * Math.sin(p * t);
+    const z = scale * Math.cos(q * t) * 0.5;
+    points.push(new THREE.Vector3(x, y, z));
+  }
+  return new THREE.CatmullRomCurve3(points, true);
+};
+
+const createHeartCurve = (scale = 0.25) => {
+  const points = [];
+  for (let i = 0; i <= 100; i++) {
+    const t = (i / 100) * Math.PI * 2;
+    const x = 16 * Math.pow(Math.sin(t), 3);
+    const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+    points.push(new THREE.Vector3(x * scale, y * scale, Math.sin(t * 4) * 0.5));
+  }
+  return new THREE.CatmullRomCurve3(points, true);
+};
+
+const createSpiralLoop = (scale = 3) => {
+  const points = [];
+  for (let i = 0; i <= 100; i++) {
+    const t = (i / 100) * Math.PI * 2;
+    const r = scale * (1 + 0.2 * Math.sin(t * 5));
+    const x = r * Math.cos(t);
+    const y = r * Math.sin(t);
+    const z = Math.cos(t * 5) * 0.5;
+    points.push(new THREE.Vector3(x, y, z));
+  }
+  return new THREE.CatmullRomCurve3(points, true);
+};
+
+const createMobiusCurve = (scale = 3) => {
+  const points = [];
+  for (let i = 0; i <= 100; i++) {
+    const t = (i / 100) * Math.PI * 2;
+    const x = scale * (1 + 0.5 * Math.cos(t / 2)) * Math.cos(t);
+    const y = scale * (1 + 0.5 * Math.cos(t / 2)) * Math.sin(t);
+    const z = scale * 0.5 * Math.sin(t / 2);
+    points.push(new THREE.Vector3(x, y, z));
+  }
+  return new THREE.CatmullRomCurve3(points, true);
+};
+
+const createHexCurve = (scale = 3) => {
+  const points = [];
+  for (let i = 0; i <= 6; i++) {
+    const t = (i / 6) * Math.PI * 2;
+    points.push(new THREE.Vector3(Math.cos(t) * scale, Math.sin(t) * scale, 0));
+  }
+  return new THREE.CatmullRomCurve3(points, true);
+};
+
+const createStarCurve = (scale = 3) => {
+  const points = [];
+  for (let i = 0; i <= 10; i++) {
+    const t = (i / 10) * Math.PI * 2;
+    const r = i % 2 === 0 ? scale : scale * 0.4;
+    points.push(new THREE.Vector3(Math.cos(t) * r, Math.sin(t) * r, Math.sin(t * 5) * 0.5));
+  }
+  return new THREE.CatmullRomCurve3(points, true);
+};
+
+// --- LOGO CELL COMPONENT ---
+
+const LogoCell = ({ position, index, curve, font, materialProps, title }: any) => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const [hovered, setHovered] = useState(false);
+
+  // Removed useFrame for static high-quality presentation as per user request
+  
   return (
-    <svg viewBox="0 0 100 100" className="w-full h-full filter drop-shadow-[0_0_60px_rgba(255,0,60,0.8)]">
-      <defs>
-        {/* Advanced 3D Gradients */}
-        <linearGradient id="triple-3d-main" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#ffffff" />
-          <stop offset="20%" stopColor="#ff003c" />
-          <stop offset="50%" stopColor="#80001e" />
-          <stop offset="80%" stopColor="#200008" />
-          <stop offset="100%" stopColor="#000000" />
-        </linearGradient>
-        
-        <linearGradient id="triple-3d-accent" x1="100%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#f9ff00" />
-          <stop offset="40%" stopColor="#ff003c" />
-          <stop offset="100%" stopColor="#050505" />
-        </linearGradient>
-
-        <radialGradient id="neural-core-glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#ff003c" stopOpacity="0.9" />
-          <stop offset="40%" stopColor="#ff003c" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="transparent" stopOpacity="0" />
-        </radialGradient>
-
-        {/* 3D Bevel and Specular Lighting */}
-        <filter id="bevel-3d" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur in="SourceAlpha" stdDeviation="1.5" result="blur" />
-          <feSpecularLighting in="blur" surfaceScale="7" specularConstant="1.5" specularExponent="40" lighting-color="#ffffff" result="specular">
-            <fePointLight x="50" y="20" z="60" />
-          </feSpecularLighting>
-          <feComposite in="specular" in2="SourceAlpha" operator="in" result="specularIn" />
-          <feComposite in="SourceGraphic" in2="specularIn" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" />
-        </filter>
-
-        <filter id="hyper-glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="4" result="blur" />
-          <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 35 -12" result="glow" />
-          <feComposite in="SourceGraphic" in2="glow" operator="over" />
-        </filter>
-
-        <filter id="chromatic-aberration-v3" x="-20%" y="-20%" width="140%" height="140%">
-          <feOffset in="SourceGraphic" dx="1.5" dy="0" result="red" />
-          <feOffset in="SourceGraphic" dx="-1.5" dy="0" result="blue" />
-          <feColorMatrix in="red" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="red-only" />
-          <feColorMatrix in="blue" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="blue-only" />
-          <feBlend in="red-only" in2="blue-only" mode="screen" result="aberration" />
-          <feBlend in="aberration" in2="SourceGraphic" mode="screen" />
-        </filter>
-      </defs>
-
-      {/* Atmospheric Neural Field */}
-      <motion.circle
-        cx="50" cy="50" r="42"
-        fill="url(#neural-core-glow)"
-        animate={{ 
-          opacity: [0.3, 0.6, 0.3],
-          scale: [0.85, 1.15, 0.85],
-          rotate: 360
-        }}
-        transition={{ 
-          opacity: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-          scale: { duration: 6, repeat: Infinity, ease: "easeInOut" },
-          rotate: { duration: 20, repeat: Infinity, ease: "linear" }
-        }}
-      />
-
-      {/* Triple Loop 3D Structure */}
-      {[0, 120, 240].map((rotation) => (
-        <motion.g key={rotation} transform={`rotate(${rotation} 50 50)`} filter="url(#bevel-3d)">
-          {/* Depth Shadow Layer */}
-          <motion.path
-            d={loopPath}
-            fill="none"
-            stroke="black"
-            strokeWidth="12"
-            strokeOpacity="0.5"
-            strokeLinecap="round"
-            transform="translate(2, 2)"
+    <group position={position}>
+      <Float speed={0} rotationIntensity={0} floatIntensity={0}>
+        <mesh 
+          ref={meshRef} 
+          castShadow
+        >
+          <tubeGeometry args={[curve, 128, 0.25, 32, true]} />
+          <MeshTransmissionMaterial 
+            {...materialProps}
+            samples={16}
+            resolution={512}
+            thickness={1}
+            chromaticAberration={0.5}
+            anisotropy={0.3}
+            distortion={0.2}
+            distortionScale={0.2}
+            temporalDistortion={0.1}
           />
+        </mesh>
+      </Float>
 
-          {/* Main Structural Body */}
-          <motion.path
-            d={loopPath}
-            fill="none"
-            stroke="url(#triple-3d-main)"
-            strokeWidth="10"
-            strokeLinecap="round"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ duration: 2.5, ease: [0.16, 1, 0.3, 1] }}
-          />
-          
-          {/* Inner Highlight Ridge */}
-          <motion.path
-            d={loopPath}
-            fill="none"
-            stroke="white"
-            strokeWidth="0.8"
-            strokeOpacity="0.6"
-            strokeLinecap="round"
-            filter="url(#hyper-glow)"
-          />
+      <Center position={[0, -2.5, 0]}>
+        <Text
+          font={font}
+          fontSize={0.4}
+          color="white"
+          anchorX="center"
+          anchorY="middle"
+          maxWidth={4}
+          textAlign="center"
+        >
+          savant
+        </Text>
+      </Center>
 
-          {/* Kinetic Energy Pulse */}
-          <motion.path
-            d={loopPath}
-            fill="none"
-            stroke="url(#triple-3d-accent)"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeDasharray="20 160"
-            animate={{ strokeDashoffset: [0, -180] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
-          />
-
-          {/* Micro-Circuitry Fractal Overlay */}
-          {[...Array(6)].map((_, i) => (
-            <motion.path
-              key={i}
-              d={loopPath}
-              fill="none"
-              stroke={i % 2 === 0 ? "#f9ff00" : "white"}
-              strokeWidth="0.08"
-              strokeOpacity={0.5 - i * 0.05}
-              strokeDasharray={`${1 + i} ${15 + i}`}
-              animate={{ strokeDashoffset: [0, 150] }}
-              transition={{ duration: 8 + i * 2, repeat: Infinity, ease: "linear" }}
-              style={{ 
-                scale: 1 - i * 0.04, 
-                transformOrigin: '50% 50%'
-              }}
-            />
-          ))}
-        </motion.g>
-      ))}
-
-      {/* Central Singularity Core */}
-      <motion.g transform="translate(50, 50)" filter="url(#chromatic-aberration-v3)">
-        {/* Geometric Containment Rings */}
-        {[...Array(4)].map((_, i) => (
-          <motion.circle
-            key={i}
-            r={4 + i * 3}
-            fill="none"
-            stroke={i % 2 === 0 ? "white" : "#ff003c"}
-            strokeWidth="0.15"
-            strokeOpacity={0.4 - i * 0.1}
-            animate={{ 
-              rotate: i % 2 === 0 ? 360 : -360,
-              scale: [1, 1.1, 1]
-            }}
-            transition={{ 
-              rotate: { duration: 12 + i * 4, repeat: Infinity, ease: "linear" },
-              scale: { duration: 3, repeat: Infinity, ease: "easeInOut" }
-            }}
-          />
-        ))}
-        
-        {/* The Singularity */}
-        <motion.circle
-          r="2.5"
-          fill="white"
-          filter="url(#hyper-glow)"
-          animate={{ 
-            scale: [1, 2.2, 1],
-            opacity: [0.6, 1, 0.6],
-          }}
-          transition={{ duration: 1.2, repeat: Infinity }}
-        />
-
-        {/* Tactical HUD Crosshair */}
-        <motion.g animate={{ rotate: 90 }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }}>
-          <motion.path
-            d="M -10 0 L 10 0 M 0 -10 L 0 10"
-            stroke="white"
-            strokeWidth="0.1"
-            strokeOpacity="0.2"
-          />
-          {[...Array(4)].map((_, i) => (
-            <motion.rect
-              key={i}
-              x="8" y="-0.5" width="2" height="1"
-              fill="#ff003c"
-              fillOpacity="0.4"
-              transform={`rotate(${i * 90} 0 0)`}
-            />
-          ))}
-        </motion.g>
-      </motion.g>
-
-      {/* Outer Data Perimeter */}
-      <motion.g filter="url(#hyper-glow)">
-        <motion.circle
-          cx="50" cy="50" r="49"
-          fill="none"
-          stroke="white"
-          strokeWidth="0.15"
-          strokeDasharray="0.5 12"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
-        />
-        <motion.circle
-          cx="50" cy="50" r="47"
-          fill="none"
-          stroke="#ff003c"
-          strokeWidth="0.15"
-          strokeDasharray="3 18"
-          animate={{ rotate: -360 }}
-          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-        />
-        
-        {/* Telemetry Nodes */}
-        {[...Array(36)].map((_, i) => (
-          <motion.g key={i} transform={`rotate(${i * 10} 50 50)`}>
-            <rect
-              x="49.9" y="0.5" width="0.2" height="2.5"
-              fill={i % 9 === 0 ? "#f9ff00" : "white"}
-              fillOpacity="0.6"
-            />
-            {i % 9 === 0 && (
-              <text
-                x="51.5" y="5"
-                fontSize="1.2"
-                fill="white"
-                fillOpacity="0.3"
-                fontFamily="monospace"
-                fontWeight="black"
-                transform={`rotate(90 51.5 5)`}
-              >
-                {`NODE_${i.toString(16).toUpperCase()}`}
-              </text>
-            )}
-          </motion.g>
-        ))}
-      </motion.g>
-
-      {/* Floating System Metadata */}
-      <motion.text
-        x="50" y="10"
-        textAnchor="middle"
-        fill="white"
-        fillOpacity="0.2"
-        fontSize="2.2"
-        fontFamily="monospace"
-        className="uppercase tracking-[0.8em] font-black"
+      <Text
+        position={[0, -3.2, 0]}
+        fontSize={0.15}
+        color="#4ade80"
+        fillOpacity={0.5}
+        font="https://fonts.gstatic.com/s/jetbrainsmono/v18/t6nu21tuWht9mXzE7h459uPzXOk9.woff2"
       >
-        SAVANT_OS_v10.4
-      </motion.text>
-      
-      <motion.text
-        x="50" y="94"
-        textAnchor="middle"
-        fill="#ff003c"
-        fillOpacity="0.3"
-        fontSize="1.6"
-        fontFamily="monospace"
-        className="uppercase tracking-[1.2em] font-bold"
-      >
-        NEURAL_LATTICE_ACTIVE
-      </motion.text>
-    </svg>
+        {`VAR_${index + 1} // ${title}`}
+      </Text>
+    </group>
   );
 };
 
+// --- MAIN SCENE ---
+
+const Scene = () => {
+  const variants = useMemo(() => [
+    { 
+      curve: createCircleCurve(), 
+      title: "CORE_LOOP", 
+      font: "https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfMZhrib2Bg-4.woff2",
+      material: { color: "#ffffff", transmission: 1, roughness: 0.05, ior: 1.5 }
+    },
+    { 
+      curve: createInfinityCurve(), 
+      title: "INFINITE_SYNC", 
+      font: "https://fonts.gstatic.com/s/jetbrainsmono/v18/t6nu21tuWht9mXzE7h459uPzXOk9.woff2",
+      material: { color: "#8fd7ff", transmission: 1, roughness: 0.1, ior: 1.8, attenuationColor: "#8fd7ff" }
+    },
+    { 
+      curve: createTrefoilCurve(), 
+      title: "NEURAL_KNOT", 
+      font: "https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD7K3a7mX7P9pW8khGnvD-iaU6GptX2vYvS6f.woff2",
+      material: { color: "#ffd590", transmission: 0.9, roughness: 0.2, ior: 2.4, attenuationColor: "#ffd590" }
+    },
+    { 
+      curve: createTorusKnotCurve(2, 3), 
+      title: "QUANTUM_WEAVE", 
+      font: "https://fonts.gstatic.com/s/spacegrotesk/v16/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-g.woff2",
+      material: { color: "#f6d5ff", transmission: 1, roughness: 0.0, ior: 1.6, chromaticAberration: 1 }
+    },
+    { 
+      curve: createHeartCurve(), 
+      title: "BIO_CORE", 
+      font: "https://fonts.gstatic.com/s/outfit/v11/QGYsz_MVcBeNP4NjuGObX1vH_07W.woff2",
+      material: { color: "#ff8f8f", transmission: 0.8, roughness: 0.3, ior: 1.4, attenuationColor: "#ff0000" }
+    },
+    { 
+      curve: createSpiralLoop(), 
+      title: "VORTEX_FLOW", 
+      font: "https://fonts.gstatic.com/s/cormorantgaramond/v16/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYpHtK.woff2",
+      material: { color: "#4ade80", transmission: 1, roughness: 0.05, ior: 1.5, emissive: "#10b981", emissiveIntensity: 0.5 }
+    },
+    { 
+      curve: createMobiusCurve(), 
+      title: "RECURSIVE_LOGIC", 
+      font: "https://fonts.gstatic.com/s/anton/v25/1Pt6g87L7UJq2Q3W.woff2",
+      material: { color: "#333333", transmission: 0.5, roughness: 0.1, ior: 2.0, metalness: 1 }
+    },
+    { 
+      curve: createHexCurve(), 
+      title: "GRID_INTEGRITY", 
+      font: "https://fonts.gstatic.com/s/montserrat/v26/JTUSjIg1_i6t8kCHKm459Wlhyw.woff2",
+      material: { color: "#ffffff", transmission: 1, roughness: 0.5, ior: 1.2, clearcoat: 1 }
+    },
+    { 
+      curve: createStarCurve(), 
+      title: "SINGULARITY_PT", 
+      font: "https://fonts.gstatic.com/s/librebaskerville/v14/kmKiZf83YYDsTX39aJ29Go6Tg726XGvX.woff2",
+      material: { color: "#000000", transmission: 0.2, roughness: 0.0, ior: 3.0, attenuationColor: "#ffffff" }
+    }
+  ], []);
+
+  const spacing = 8;
+
+  return (
+    <>
+      <PerspectiveCamera makeDefault position={[0, 0, 25]} fov={45} />
+      
+      <ambientLight intensity={0.2} />
+      <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2} castShadow />
+      <pointLight position={[-10, -10, -10]} intensity={1} color="#4ade80" />
+      
+      <Environment preset="studio" />
+
+      <group position={[-spacing, spacing, 0]}>
+        {variants.map((v, i) => {
+          const row = Math.floor(i / 3);
+          const col = i % 3;
+          return (
+            <LogoCell 
+              key={i}
+              index={i}
+              position={[col * spacing, -row * spacing, 0]}
+              curve={v.curve}
+              font={v.font}
+              materialProps={v.material}
+              title={v.title}
+            />
+          );
+        })}
+      </group>
+
+      <Grid 
+        infiniteGrid 
+        fadeDistance={50} 
+        fadeStrength={5} 
+        cellSize={spacing} 
+        sectionSize={spacing} 
+        sectionThickness={1} 
+        sectionColor="#10b981" 
+        cellColor="#222222"
+        position={[0, -15, 0]}
+      />
+
+      <ContactShadows position={[0, -15, 0]} opacity={0.4} blur={2} scale={50} far={20} color="#000000" />
+
+      <EffectComposer multisampling={4}>
+        <Bloom intensity={1.5} luminanceThreshold={0.2} luminanceSmoothing={0.9} mipmapBlur />
+        <ChromaticAberration offset={new THREE.Vector2(0.001, 0.001)} />
+        <Noise opacity={0.05} />
+        <Vignette eskil={false} offset={0.1} darkness={0.5} />
+      </EffectComposer>
+
+      <OrbitControls enablePan={true} enableZoom={true} makeDefault />
+    </>
+  );
+};
+
+export const GeometricSymbol: React.FC = () => {
+  return (
+    <div className="w-full h-full relative overflow-visible">
+      <Canvas 
+        shadows 
+        dpr={[1, 2]} 
+        gl={{ antialias: true, alpha: true }}
+        camera={{ position: [0, 0, 25], fov: 45 }}
+      >
+        <Suspense fallback={null}>
+          <Scene />
+        </Suspense>
+      </Canvas>
+    </div>
+  );
+};

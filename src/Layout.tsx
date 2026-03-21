@@ -4,6 +4,7 @@ import { motion, useScroll, useSpring } from 'motion/react';
 import { AnimatePresence } from 'motion/react';
 import Lenis from 'lenis';
 import Background from './components/Background';
+import { GeometricSymbol } from './components/GeometricSymbol';
 import BootScreen from './components/BootScreen';
 import Navigation from './components/Navigation';
 import Logo from './components/Logo';
@@ -15,6 +16,7 @@ import { ScrollScene } from './components/ScrollScene';
 import { AdminPanel } from './components/AdminPanel';
 import { AdminTrigger } from './components/AdminTrigger';
 import { NeuralCommand } from './components/NeuralCommand';
+import { AmbientAudioController } from './components/AmbientAudioController';
 import { useStore } from './store/useStore';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
 import { SavantCard } from './components/ui/SavantCard';
@@ -140,6 +142,7 @@ export default function Layout() {
   return (
     <div className={wrapperClass}>
       <CustomCursor />
+      <AmbientAudioController />
       <NoiseOverlay />
       <NeuralCommand />
       <ChromaticFilter />
@@ -179,11 +182,9 @@ export default function Layout() {
       ) : (
         <div className="bg-obsidian">
           <Background />
+          
           <ScrollScene />
           
-          {/* Terminal Industries style grid overlay */}
-          <div className="fixed inset-0 z-[1] pointer-events-none bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,#000_70%,transparent_100%)]" />
-
           {/* Progress Bar */}
           <motion.div 
             className="fixed top-0 left-0 right-0 h-[2px] bg-crimson z-[6000] origin-left"
@@ -191,31 +192,33 @@ export default function Layout() {
           />
 
           {/* HUD Header */}
-          <header className="fixed top-0 left-0 w-full p-8 md:p-12 z-50 flex justify-between items-start pointer-events-none">
-            <div className="flex flex-col gap-6 items-start">
-              <div className="pointer-events-auto">
+          <header className="fixed top-0 left-0 w-full p-8 md:p-12 z-50 flex justify-between items-center pointer-events-none">
+            <div className="flex items-center gap-12 pointer-events-auto">
+              <div className="relative group">
+                {/* Backdrop blur specifically for the logo area - always visible but subtle */}
+                <div className="absolute -inset-10 bg-obsidian/20 backdrop-blur-xl rounded-full opacity-100 transition-opacity duration-1000 -z-10" />
                 <Logo />
               </div>
-              <AdminTrigger onClick={() => setIsAdminPanelOpen(true)} />
             </div>
 
-            <HUD />
+            <div className="flex items-center gap-12 pointer-events-auto">
+              <Navigation />
+              <AdminTrigger onClick={() => setIsAdminPanelOpen(true)} />
+            </div>
           </header>
 
           <AdminPanel isOpen={isAdminPanelOpen} onClose={() => setIsAdminPanelOpen(false)} />
 
-          <Navigation />
-
           <AnimatePresence mode="wait">
             <motion.main 
               key={location.pathname}
-              initial={{ opacity: 0, scale: 0.98, filter: 'blur(10px)' }}
-              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, scale: 1.02, filter: 'blur(10px)' }}
+              initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="relative z-10 pt-48 pb-32 px-5 md:px-10 lg:px-20"
             >
-              <div className="max-w-7xl mx-auto savant-stack">
+              <div className="max-w-7xl mx-auto">
                 <Breadcrumbs />
                 <Outlet />
               </div>

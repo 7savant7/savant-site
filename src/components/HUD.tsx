@@ -69,6 +69,9 @@ export const HUD = () => {
           { label: 'COORD_Y', val: coords.y, color: 'text-white' },
           { label: 'LATENCY', val: `${latency.toFixed(6)}MS`, color: 'text-electric-gold' },
           { label: 'NODES', val: activeNodes, color: 'text-white' },
+          { label: 'CPU_LOAD', val: `${(useStore.getState().cpuUsage).toFixed(1)}%`, color: 'text-crimson' },
+          { label: 'MEM_USAGE', val: `${(useStore.getState().memUsage).toFixed(1)}%`, color: 'text-white' },
+          { label: 'NEURAL_SYNC', val: `${(useStore.getState().neuralSync).toFixed(2)}%`, color: 'text-electric-gold' },
           { label: 'UPTIME', val: '142:12:44:02', color: 'text-white/40' },
           { label: 'THREAT', val: 'MINIMAL', color: 'text-emerald-400' },
           { label: 'ENTROPY', val: '0.0042', color: 'text-crimson' }

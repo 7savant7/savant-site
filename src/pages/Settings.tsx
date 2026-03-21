@@ -151,12 +151,17 @@ export default function Settings() {
             <MagneticButton strength={0.1}>
               <SavantButton 
                 onClick={async () => {
-                  const promise = fetch('/api/extract', { method: 'POST' });
-                  toast.promise(promise, {
-                    loading: 'INITIATING_EXTRACTION_SEQUENCE...',
-                    success: 'EXTRACTION_COMPLETE: Archive deployed.',
-                    error: 'EXTRACTION_FAILURE: Check system logs.'
-                  });
+                  try {
+                    const promise = fetch('/api/extract', { method: 'POST' });
+                    toast.promise(promise, {
+                      loading: 'INITIATING_EXTRACTION_SEQUENCE...',
+                      success: 'EXTRACTION_COMPLETE: Archive deployed.',
+                      error: 'EXTRACTION_FAILURE: Check system logs.'
+                    });
+                    await promise;
+                  } catch (error) {
+                    console.error('Extraction failed:', error);
+                  }
                 }}
                 variant="primary"
                 className="w-full h-20 bg-electric-gold border-electric-gold text-black"

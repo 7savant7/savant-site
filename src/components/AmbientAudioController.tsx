@@ -1,109 +1,252 @@
-
-import React, { useEffect, useState } from 'react';
-import { Volume2, VolumeX, Activity } from 'lucide-react';
-import { useStore } from '../store/useStore';
-import { ambientAudio } from '../services/ambientAudio';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import * as Tone from 'tone';
 import { motion, AnimatePresence } from 'motion/react';
+import { useStore } from '../store/useStore';
+import { Volume2, VolumeX, Activity, Zap, Cpu, Database } from 'lucide-react';
+
+/**
+ * SAVANT_AMBIENT_AUDIO_ENGINE_v1.0
+ * 
+ * A sovereign, reactive audio synthesis engine that translates system metrics 
+ * into a dynamic, generative soundscape.
+ * 
+ * MAPPINGS:
+ * - System Load -> Drone Filter Cutoff & Sub-Bass Depth
+ * - Neural Sync -> Pulse Rhythm & Harmonic Complexity
+ * - Quantum Entanglement -> High-Frequency Shimmer & Spatial Width
+ * - Latency -> Delay Feedback & Granular Jitter
+ * - Memory Usage -> Harmonic Hum & Resonance
+ */
 
 export const AmbientAudioController: React.FC = () => {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const { cpuUsage, latency, memUsage, updateMetrics } = useStore();
+  const { 
+    systemLoad, 
+    neuralSync, 
+    quantumEntanglement, 
+    latency, 
+    memUsage,
+    booted 
+  } = useStore();
 
-  // Update metrics periodically if not already being updated elsewhere
-  useEffect(() => {
-    const interval = setInterval(() => {
-      updateMetrics();
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [updateMetrics]);
+  const [isActive, setIsActive] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [volume, setVolume] = useState(-12); // dB
 
-  // Sync audio with metrics
-  useEffect(() => {
-    if (isEnabled) {
-      ambientAudio.updateMetrics(cpuUsage, latency, memUsage);
-    }
-  }, [cpuUsage, latency, memUsage, isEnabled]);
+  // Audio Engine Refs
+  const engineRef = useRef<{
+    drone: Tone.Oscillator;
+    droneFilter: Tone.Filter;
+    pulseSynth: Tone.PolySynth;
+    pulseLFO: Tone.LFO;
+    shimmer: Tone.Noise;
+    shimmerFilter: Tone.Filter;
+    delay: Tone.FeedbackDelay;
+    reverb: Tone.Reverb;
+    masterGain: Tone.Gain;
+    isInitialized: boolean;
+  } | null>(null);
 
-  const toggleAudio = async () => {
-    if (!isEnabled) {
-      await ambientAudio.start();
-      setIsEnabled(true);
+  const initializeEngine = useCallback(async () => {
+    if (engineRef.current?.isInitialized) return;
+
+    await Tone.start();
+    console.log('SAVANT_AUDIO_ENGINE: Initialized');
+
+    // 1. MASTER CHAIN
+    const masterGain = new Tone.Gain(Tone.dbToGain(volume)).toDestination();
+    const limiter = new Tone.Limiter(-3).connect(masterGain);
+    const reverb = new Tone.Reverb({ decay: 6, wet: 0.5 }).connect(limiter);
+    const delay = new Tone.FeedbackDelay({ delayTime: '8n', feedback: 0.6, wet: 0.3 }).connect(reverb);
+    const panner = new Tone.AutoPanner('2n').connect(delay).start();
+
+    // 2. DRONE LAYER (System Load)
+    const droneFilter = new Tone.Filter({ frequency: 200, type: 'lowpass', Q: 2 }).connect(panner);
+    const drone = new Tone.Oscillator({ frequency: 'C1', type: 'sawtooth' }).connect(droneFilter);
+    drone.volume.value = -25;
+
+    // 3. PULSE LAYER (Neural Sync)
+    const pulseFilter = new Tone.Filter({ frequency: 1200, type: 'bandpass', Q: 4 }).connect(panner);
+    const pulseSynth = new Tone.PolySynth(Tone.FMSynth, {
+      harmonicity: 3,
+      modulationIndex: 10,
+      oscillator: { type: 'sine' },
+      envelope: { attack: 0.05, decay: 0.3, sustain: 0.1, release: 2 }
+    }).connect(pulseFilter);
+    pulseSynth.volume.value = -20;
+
+    const pulseLFO = new Tone.LFO('4n', 200, 3000).connect(pulseFilter.frequency);
+
+    // 4. GRANULAR SHIMMER (Quantum Entanglement)
+    const shimmerFilter = new Tone.Filter({ frequency: 10000, type: 'highpass' }).connect(panner);
+    const shimmer = new Tone.Noise('pink').connect(shimmerFilter);
+    shimmer.volume.value = -45;
+
+    // 5. NEURAL FEEDBACK LOOP
+    const feedbackDelay = new Tone.FeedbackDelay({ delayTime: '16n', feedback: 0.8, wet: 0.4 }).connect(panner);
+    const feedbackFilter = new Tone.Filter({ frequency: 2000, type: 'lowpass' }).connect(feedbackDelay);
+    pulseSynth.connect(feedbackFilter);
+
+    engineRef.current = {
+      drone,
+      droneFilter,
+      pulseSynth,
+      pulseLFO,
+      shimmer,
+      shimmerFilter,
+      delay,
+      reverb,
+      masterGain,
+      isInitialized: true
+    };
+
+    drone.start();
+    shimmer.start();
+    pulseLFO.start();
+
+    // Rhythmic Trigger Loop
+    const loop = new Tone.Loop((time) => {
+      const notes = ['C2', 'G2', 'Eb2', 'Bb2'];
+      const note = notes[Math.floor(Math.random() * notes.length)];
+      pulseSynth.triggerAttackRelease(note, '16n', time);
+    }, '8n').start(0);
+
+    Tone.Transport.start();
+
+    setIsActive(true);
+  }, [volume]);
+
+  const toggleAudio = () => {
+    if (!isActive) {
+      initializeEngine();
     } else {
-      ambientAudio.stop();
-      setIsEnabled(false);
+      setIsMuted(!isMuted);
     }
   };
 
+  // REACTIVE UPDATES
+  useEffect(() => {
+    if (!engineRef.current || !isActive) return;
+
+    const { droneFilter, pulseLFO, shimmerFilter, delay, masterGain } = engineRef.current;
+
+    // Map System Load to Drone Filter (200Hz to 2000Hz)
+    const droneFreq = 200 + (systemLoad * 1800);
+    droneFilter.frequency.rampTo(droneFreq, 0.5);
+
+    // Map Neural Sync to Pulse LFO Rate (1Hz to 10Hz)
+    const lfoRate = 1 + ((neuralSync - 90) / 10) * 9;
+    pulseLFO.frequency.rampTo(lfoRate, 0.5);
+
+    // Map Quantum Entanglement to Shimmer Cutoff (5000Hz to 12000Hz)
+    const shimmerFreq = 5000 + ((quantumEntanglement - 99) * 7000);
+    shimmerFilter.frequency.rampTo(shimmerFreq, 0.5);
+
+    // Map Latency to Delay Feedback (0.2 to 0.8)
+    const feedback = 0.2 + (latency * 300); // latency is around 0.0014
+    delay.feedback.rampTo(Math.min(0.8, feedback), 0.5);
+
+    // Handle Mute
+    masterGain.gain.rampTo(isMuted ? 0 : Tone.dbToGain(volume), 0.2);
+
+  }, [systemLoad, neuralSync, quantumEntanglement, latency, memUsage, isActive, isMuted, volume]);
+
+  // Clean up on unmount
+  useEffect(() => {
+    return () => {
+      if (engineRef.current) {
+        engineRef.current.drone.stop();
+        engineRef.current.shimmer.stop();
+        engineRef.current.pulseLFO.stop();
+        engineRef.current.masterGain.dispose();
+        Tone.Transport.stop();
+        Tone.Transport.cancel();
+      }
+    };
+  }, []);
+
+  if (!booted) return null;
+
   return (
-    <div className="fixed bottom-20 right-8 z-50 flex flex-col items-end gap-2">
+    <div className="fixed bottom-8 left-8 z-[100] flex flex-col gap-4">
       <AnimatePresence>
-        {isEnabled && (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
+        {isActive && (
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            className="bg-obsidian/80 backdrop-blur-md border border-white/10 p-3 rounded-lg flex items-center gap-4 mb-2"
+            exit={{ opacity: 0, x: -20 }}
+            className="bg-obsidian/80 backdrop-blur-xl border border-white/10 p-4 rounded-xl flex flex-col gap-3 min-w-[200px]"
           >
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center justify-between gap-8">
-                <span className="text-[8px] font-mono text-white/40 uppercase tracking-widest">Acoustic_Feedback</span>
-                <div className="flex gap-0.5">
-                  {[...Array(5)].map((_, i) => (
-                    <motion.div
-                      key={i}
-                      animate={{ 
-                        height: [4, 8 + Math.random() * 8, 4],
-                        opacity: [0.3, 1, 0.3]
-                      }}
-                      transition={{ 
-                        duration: 0.5 + Math.random(), 
-                        repeat: Infinity,
-                        delay: i * 0.1
-                      }}
-                      className="w-0.5 bg-electric-gold"
-                    />
-                  ))}
-                </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Activity className="w-3 h-3 text-crimson animate-pulse" />
+                <span className="font-mono text-[10px] text-white/60 uppercase tracking-widest">Audio_Core_Active</span>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <Activity className="w-3 h-3 text-crimson" />
-                  <span className="text-[9px] font-mono text-crimson uppercase tracking-tighter">
-                    Resonance: {(cpuUsage * 1.2).toFixed(0)}Hz
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-electric-gold/40 animate-pulse" />
-                  <span className="text-[9px] font-mono text-white/40 uppercase tracking-tighter">
-                    Static: {(latency * 1000).toFixed(2)}ms
-                  </span>
-                </div>
+              <div className="flex gap-1">
+                {[...Array(4)].map((_, i) => (
+                  <motion.div 
+                    key={i}
+                    className="w-1 h-3 bg-crimson/40"
+                    animate={{ 
+                      height: [4, 12, 4],
+                      backgroundColor: ['rgba(255,0,60,0.2)', 'rgba(255,0,60,0.8)', 'rgba(255,0,60,0.2)']
+                    }}
+                    transition={{ 
+                      duration: 0.5 + Math.random(), 
+                      repeat: Infinity,
+                      delay: i * 0.1
+                    }}
+                  />
+                ))}
               </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex items-center gap-2">
+                <Zap className="w-2.5 h-2.5 text-electric-gold" />
+                <span className="font-mono text-[8px] text-white/30 uppercase">Sync: {neuralSync.toFixed(1)}%</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Cpu className="w-2.5 h-2.5 text-crimson" />
+                <span className="font-mono text-[8px] text-white/30 uppercase">Load: {(systemLoad * 100).toFixed(0)}%</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Database className="w-2.5 h-2.5 text-white/40" />
+                <span className="font-mono text-[8px] text-white/30 uppercase">Mem: {memUsage.toFixed(0)}%</span>
+              </div>
+            </div>
+
+            <div className="h-[1px] bg-white/5" />
+
+            <div className="flex items-center gap-4">
+              <input 
+                type="range" 
+                min="-40" 
+                max="0" 
+                value={volume}
+                onChange={(e) => setVolume(Number(e.target.value))}
+                className="flex-1 h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-crimson"
+              />
+              <span className="font-mono text-[8px] text-white/40">{volume}dB</span>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <button
+      <motion.button
         onClick={toggleAudio}
-        className={`p-3 rounded-full border transition-all duration-500 group relative overflow-hidden ${
-          isEnabled 
-            ? 'bg-electric-gold border-electric-gold text-obsidian shadow-[0_0_20px_rgba(249,255,0,0.3)]' 
-            : 'bg-obsidian/40 border-white/10 text-white/40 hover:border-white/30 hover:text-white'
-        }`}
-        title={isEnabled ? "Disable Ambient Audio" : "Enable Ambient Audio"}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className={`
+          w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500
+          ${isActive && !isMuted ? 'bg-crimson shadow-[0_0_20px_rgba(255,0,60,0.4)]' : 'bg-white/5 border border-white/10 hover:bg-white/10'}
+        `}
       >
-        {isEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
-        
-        {/* Subtle pulse effect when enabled */}
-        {isEnabled && (
-          <motion.div
-            animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="absolute inset-0 bg-white rounded-full pointer-events-none"
-          />
+        {isMuted || !isActive ? (
+          <VolumeX className="w-5 h-5 text-white/60" />
+        ) : (
+          <Volume2 className="w-5 h-5 text-white" />
         )}
-      </button>
+      </motion.button>
     </div>
   );
 };

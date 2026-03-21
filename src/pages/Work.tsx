@@ -1,13 +1,12 @@
-import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
+import { useRef, useState } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
 import { TextScramble } from '../components/TextScramble';
 import { ParallaxImage } from '../components/ParallaxImage';
-import { ZoomBlock } from '../components/ZoomBlock';
 import { MagneticButton } from '../components/MagneticButton';
 import { SavantButton } from '../components/ui/SavantButton';
-import { ArrowUpRight, Globe, Zap, Shield } from 'lucide-react';
+import { ArrowUpRight, X, Zap, Shield, Cpu, Globe, Activity } from 'lucide-react';
 
-const WorkItem = ({ work, i }: { work: any, i: number }) => {
+const WorkItem = ({ work, i, onSelect }: { work: any, i: number, onSelect: (w: any) => void }) => {
   const container = useRef(null);
   const { scrollYProgress } = useScroll({
     target: container,
@@ -24,7 +23,7 @@ const WorkItem = ({ work, i }: { work: any, i: number }) => {
       style={{ opacity, scale }}
       className={`savant-grid lg:grid-cols-12 items-center min-h-[80vh] py-20 ${i % 2 !== 0 ? 'lg:flex-row-reverse' : ''}`}
     >
-      <div className={`lg:col-span-7 ${i % 2 !== 0 ? 'lg:order-2' : ''} relative group`}>
+      <div className={`lg:col-span-7 ${i % 2 !== 0 ? 'lg:order-2' : ''} relative group cursor-pointer`} onClick={() => onSelect(work)}>
         <div className="absolute -inset-4 bg-crimson/5 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
         <div className="relative overflow-hidden rounded-[2rem] border border-white/5 bg-white/[0.02]">
           <ParallaxImage 
@@ -35,7 +34,6 @@ const WorkItem = ({ work, i }: { work: any, i: number }) => {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent opacity-60" />
           
-          {/* HUD Overlay */}
           <div className="absolute top-8 left-8 right-8 flex justify-between items-start opacity-0 group-hover:opacity-100 transition-all duration-500">
             <div className="font-mono text-[8px] text-white/40 tracking-[0.5em] uppercase">
               PROJECT_ID: {work.id} // SECTOR_0{i+1}
@@ -76,6 +74,7 @@ const WorkItem = ({ work, i }: { work: any, i: number }) => {
           <div className="pt-10">
             <MagneticButton strength={0.2}>
               <SavantButton 
+                onClick={() => onSelect(work)}
                 variant="primary"
                 className="w-full sm:w-64 h-20 group/btn"
               >
@@ -93,11 +92,57 @@ const WorkItem = ({ work, i }: { work: any, i: number }) => {
 };
 
 export default function Work() {
+  const [selectedWork, setSelectedWork] = useState<any>(null);
+
   const works = [
-    { id: '01', title: 'OBLIVION', category: 'GLOBAL_REBRAND', desc: 'A comprehensive brand transformation for a leading luxury house, redefining elegance for the digital elite.', img: 'https://picsum.photos/seed/oblivion/1600/1000' },
-    { id: '02', title: 'LATTICE', category: 'ADVERTISING_IMPACT', desc: 'A high-energy, kinetic advertising campaign that captured global attention and drove unprecedented growth.', img: 'https://picsum.photos/seed/lattice/1600/1000' },
-    { id: '03', title: 'VOID', category: 'VISUAL_IDENTITY', desc: 'Meticulous design systems engineered to translate complex strategies into powerful visual geometry.', img: 'https://picsum.photos/seed/void/1600/1000' },
-    { id: '04', title: 'NEURAL', category: 'AI_INTEGRATION', desc: 'Advanced neural networks integrated into consumer products, creating seamless human-machine synergy.', img: 'https://picsum.photos/seed/neural/1600/1000' }
+    { 
+      id: '01', 
+      title: 'OBLIVION', 
+      category: 'GLOBAL_REBRAND', 
+      desc: 'A comprehensive brand transformation for a leading luxury house, redefining elegance for the digital elite.', 
+      img: 'https://picsum.photos/seed/oblivion/1600/1000',
+      stats: [
+        { label: 'REACH', val: '42M+', icon: Globe },
+        { label: 'CONVERSION', val: '+240%', icon: Zap },
+        { label: 'SECURITY', val: 'LOCKED', icon: Shield }
+      ]
+    },
+    { 
+      id: '02', 
+      title: 'LATTICE', 
+      category: 'ADVERTISING_IMPACT', 
+      desc: 'A high-energy, kinetic advertising campaign that captured global attention and drove unprecedented growth.', 
+      img: 'https://picsum.photos/seed/lattice/1600/1000',
+      stats: [
+        { label: 'IMPRESSIONS', val: '1.2B', icon: Activity },
+        { label: 'VELOCITY', val: 'HIGH', icon: Zap },
+        { label: 'NODES', val: '8.4K', icon: Cpu }
+      ]
+    },
+    { 
+      id: '03', 
+      title: 'VOID', 
+      category: 'VISUAL_IDENTITY', 
+      desc: 'Meticulous design systems engineered to translate complex strategies into powerful visual geometry.', 
+      img: 'https://picsum.photos/seed/void/1600/1000',
+      stats: [
+        { label: 'PRECISION', val: '99.9%', icon: Shield },
+        { label: 'ASSETS', val: '4.2K', icon: Cpu },
+        { label: 'SYNC', val: 'ACTIVE', icon: Activity }
+      ]
+    },
+    { 
+      id: '04', 
+      title: 'NEURAL', 
+      category: 'AI_INTEGRATION', 
+      desc: 'Advanced neural networks integrated into consumer products, creating seamless human-machine synergy.', 
+      img: 'https://picsum.photos/seed/neural/1600/1000',
+      stats: [
+        { label: 'COGNITION', val: 'OMEGA', icon: Cpu },
+        { label: 'LATENCY', val: '0.4ms', icon: Zap },
+        { label: 'UPTIME', val: '100%', icon: Shield }
+      ]
+    }
   ];
 
   return (
@@ -146,9 +191,67 @@ export default function Work() {
 
         <div className="savant-stack !gap-0">
           {works.map((work, i) => (
-            <WorkItem key={work.id} work={work} i={i} />
+            <WorkItem key={work.id} work={work} i={i} onSelect={setSelectedWork} />
           ))}
         </div>
+
+        <AnimatePresence>
+          {selectedWork && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10">
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setSelectedWork(null)}
+                className="absolute inset-0 bg-obsidian/95 backdrop-blur-2xl"
+              />
+              
+              <motion.div 
+                layoutId={`work-${selectedWork.id}`}
+                className="relative w-full max-w-7xl h-[90vh] bg-white/[0.02] border border-white/10 rounded-[3rem] overflow-hidden flex flex-col lg:flex-row"
+              >
+                <button 
+                  onClick={() => setSelectedWork(null)}
+                  className="absolute top-8 right-8 z-50 w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-crimson hover:border-crimson transition-all"
+                >
+                  <X size={20} />
+                </button>
+
+                <div className="flex-1 relative h-1/2 lg:h-full overflow-hidden">
+                  <img src={selectedWork.img} alt={selectedWork.title} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-obsidian via-transparent to-transparent" />
+                </div>
+
+                <div className="w-full lg:w-[500px] p-12 lg:p-20 border-t lg:border-t-0 lg:border-l border-white/10 flex flex-col justify-center bg-black/40 backdrop-blur-xl overflow-y-auto custom-scrollbar">
+                  <div className="font-mono text-[10px] text-crimson tracking-[0.5em] uppercase mb-6">{selectedWork.category}</div>
+                  <h2 className="text-6xl lg:text-8xl font-display text-white mb-10 leading-none">{selectedWork.title}</h2>
+                  
+                  <p className="text-xl text-white/40 font-light leading-relaxed mb-16">
+                    {selectedWork.desc}
+                  </p>
+
+                  <div className="space-y-10 mb-16">
+                    {selectedWork.stats.map((stat: any, i: number) => (
+                      <div key={i} className="flex items-center gap-6">
+                        <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+                          <stat.icon className="text-crimson" size={20} />
+                        </div>
+                        <div>
+                          <div className="font-mono text-[9px] text-white/20 uppercase tracking-widest mb-1">{stat.label}</div>
+                          <div className="text-2xl font-tech font-bold text-white">{stat.val}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <SavantButton variant="primary" className="w-full h-20 text-lg">
+                    EXPLORE_CASE_STUDY
+                  </SavantButton>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
 
         <footer className="py-40 border-t border-white/10 flex flex-col items-center text-center">
           <h2 className="text-4xl sm:text-5xl md:text-7xl font-display mb-12">READY_TO_BUILD_YOUR_LEGACY?</h2>

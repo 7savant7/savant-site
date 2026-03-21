@@ -1,195 +1,161 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { toast } from 'sonner';
-import { Key, Save, Trash2 } from 'lucide-react';
-import { MagneticButton } from '../components/MagneticButton';
-import { SavantButton } from '../components/ui/SavantButton';
+import { Shield, Activity, Database, Cpu, Zap, Lock, Terminal } from 'lucide-react';
+import { useStore } from '../store/useStore';
+import { SavantCard } from '../components/ui/SavantCard';
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
 
-export default function Settings() {
-  const [apiKey, setApiKey] = useState('');
-  const [debouncedKey, setDebouncedKey] = useState('');
+export default function Admin() {
+  const { logs, cpuUsage, memUsage, systemLoad, activeNodes, neuralSync } = useStore();
+  const [history, setHistory] = useState<{time: string, cpu: number, mem: number}[]>([]);
 
-  // Load key from localStorage on mount
   useEffect(() => {
-    const savedKey = localStorage.getItem('SAVANT_API_KEY') || '';
-    setApiKey(savedKey);
-    setDebouncedKey(savedKey);
-  }, []);
-
-  // Debounce logic
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedKey(apiKey);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [apiKey]);
-
-  const handleSave = () => {
-    localStorage.setItem('SAVANT_API_KEY', apiKey);
-    toast.success('API_KEY_STORED: Sovereign access updated.');
-  };
-
-  const handleClear = () => {
-    setApiKey('');
-    localStorage.removeItem('SAVANT_API_KEY');
-    toast.success('API_KEY_PURGED: Local storage cleared.');
-  };
+    const interval = setInterval(() => {
+      setHistory(prev => {
+        const newData = [...prev, { 
+          time: new Date().toLocaleTimeString(), 
+          cpu: cpuUsage, 
+          mem: memUsage 
+        }].slice(-20);
+        return newData;
+      });
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [cpuUsage, memUsage]);
 
   return (
     <div className="savant-page-container bg-obsidian">
       <div className="noise-overlay opacity-5" />
       
-      <div className="relative z-10 savant-stack">
-        <header className="min-h-[40vh] flex flex-col justify-center">
+      <div className="relative z-10 savant-stack !gap-16">
+        <header className="min-h-[30vh] flex flex-col justify-center">
           <motion.div 
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            className="savant-stack !gap-8"
+            className="savant-stack !gap-6"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-[1px] bg-crimson" />
-              <span className="font-mono text-[10px] text-crimson tracking-[0.6em] uppercase font-bold">SYSTEM_CORE // CONFIG</span>
+              <span className="font-mono text-[10px] text-crimson tracking-[0.6em] uppercase font-bold">COMMAND_CENTER // OMEGA_LEVEL</span>
             </div>
             <h1 className="text-massive font-display">
-              SYSTEM_<br />
-              <span className="text-crimson italic font-serif font-light text-[0.7em]">Settings.</span>
+              CORE_<br />
+              <span className="text-crimson italic font-serif font-light text-[0.7em]">Administration.</span>
             </h1>
           </motion.div>
         </header>
 
-        <div className="savant-grid grid-cols-1 lg:grid-cols-2 !gap-12">
-          <section className="p-12 border border-white/5 bg-white/[0.01] backdrop-blur-3xl relative overflow-hidden group rounded-[3rem]">
-            <div className="absolute top-0 left-0 w-1 h-full bg-crimson opacity-50" />
-            
-            <div className="flex items-center gap-6 mb-10">
-              <div className="w-12 h-12 rounded-2xl bg-crimson/10 flex items-center justify-center">
-                <Key className="text-crimson" size={24} />
+        <div className="savant-grid grid-cols-1 lg:grid-cols-3 !gap-10">
+          {/* Real-time Telemetry */}
+          <SavantCard className="lg:col-span-2 p-12 border-white/5 bg-white/[0.01] rounded-[3rem] overflow-hidden">
+            <div className="flex justify-between items-center mb-12">
+              <div className="flex items-center gap-4">
+                <Activity className="text-crimson" size={24} />
+                <h2 className="font-display text-3xl text-white">SYSTEM_TELEMETRY</h2>
               </div>
-              <h2 className="font-display text-3xl text-white tracking-tight">API_KEY_CONFIGURATION</h2>
+              <div className="font-mono text-[10px] text-white/20 tracking-widest uppercase">LIVE_FEED // v80.0.0</div>
             </div>
 
-            <p className="text-white/30 font-mono text-[10px] mb-10 leading-relaxed tracking-widest uppercase">
-              Configure your sovereign access key for external service integration. 
-              This key is stored locally in your browser and never leaves your machine.
-            </p>
-
-            <div className="savant-stack !gap-8">
-              <div className="savant-stack !gap-4">
-                <label className="font-mono text-[9px] text-white/20 tracking-widest uppercase block">
-                  ACCESS_KEY_SECRET
-                </label>
-                <div className="relative">
-                  <input 
-                    type="password"
-                    value={apiKey}
-                    onChange={(e) => setApiKey(e.target.value)}
-                    placeholder="ENTER_SOVEREIGN_KEY..."
-                    className="w-full bg-white/[0.02] border border-white/10 p-6 font-mono text-sm text-white focus:outline-none focus:border-crimson transition-colors rounded-2xl"
+            <div className="h-80 w-full mb-12">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={history}>
+                  <defs>
+                    <linearGradient id="colorCpu" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#ff003c" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#ff003c" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorMem" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#f9ff00" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#f9ff00" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <Area type="monotone" dataKey="cpu" stroke="#ff003c" fillOpacity={1} fill="url(#colorCpu)" isAnimationActive={false} />
+                  <Area type="monotone" dataKey="mem" stroke="#f9ff00" fillOpacity={1} fill="url(#colorMem)" isAnimationActive={false} />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid rgba(255,255,255,0.1)', fontFamily: 'monospace', fontSize: '10px' }}
+                    itemStyle={{ color: '#fff' }}
                   />
-                  <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${apiKey ? 'bg-crimson animate-pulse' : 'bg-white/10'}`} />
-                  </div>
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              {[
+                { label: 'CPU_LOAD', val: `${cpuUsage.toFixed(1)}%`, icon: Cpu, color: 'text-crimson' },
+                { label: 'MEM_USAGE', val: `${memUsage.toFixed(1)}%`, icon: Database, color: 'text-electric-gold' },
+                { label: 'ACTIVE_NODES', val: activeNodes, icon: Zap, color: 'text-white' },
+                { label: 'NEURAL_SYNC', val: `${neuralSync.toFixed(2)}%`, icon: Activity, color: 'text-emerald-400' }
+              ].map((stat, i) => (
+                <div key={i} className="p-6 border border-white/5 bg-white/[0.02] rounded-2xl">
+                  <stat.icon className={`${stat.color} mb-4`} size={20} />
+                  <div className="font-mono text-[9px] text-white/20 mb-1 uppercase tracking-widest">{stat.label}</div>
+                  <div className="text-2xl font-tech font-bold text-white">{stat.val}</div>
+                </div>
+              ))}
+            </div>
+          </SavantCard>
+
+          {/* Security Status */}
+          <SavantCard className="p-12 border-white/5 bg-white/[0.01] rounded-[3rem] flex flex-col">
+            <div className="flex items-center gap-4 mb-12">
+              <Shield className="text-crimson" size={24} />
+              <h2 className="font-display text-3xl text-white">SECURITY</h2>
+            </div>
+
+            <div className="flex-1 space-y-10">
+              <div className="p-8 bg-crimson/10 border border-crimson/20 rounded-2xl">
+                <div className="flex justify-between items-center mb-4">
+                  <span className="font-mono text-[10px] text-crimson tracking-widest uppercase">FIREWALL_STATUS</span>
+                  <Lock size={14} className="text-crimson" />
+                </div>
+                <div className="text-3xl font-display text-white">ACTIVE</div>
+              </div>
+
+              <div className="space-y-6">
+                <h3 className="font-mono text-[10px] text-white/20 tracking-widest uppercase">THREAT_LOGS</h3>
+                <div className="space-y-4">
+                  {[
+                    'UNAUTHORIZED_ACCESS_ATTEMPT // BLOCKED',
+                    'NEURAL_LATTICE_INTEGRITY_CHECK // PASSED',
+                    'ENCRYPTION_KEY_ROTATION // COMPLETE',
+                    'ANOMALY_DETECTED_IN_SECTOR_7 // RESOLVED'
+                  ].map((log, i) => (
+                    <div key={i} className="flex items-center gap-4 text-[9px] font-mono text-white/40 border-l border-crimson/30 pl-4">
+                      <div className="w-1 h-1 bg-crimson rounded-full" />
+                      {log}
+                    </div>
+                  ))}
                 </div>
               </div>
-
-              <div className="flex flex-wrap gap-6 pt-4">
-                <MagneticButton strength={0.1}>
-                  <SavantButton 
-                    onClick={handleSave}
-                    variant="primary"
-                    className="w-48 h-14"
-                  >
-                    <span className="flex items-center gap-3">
-                      <Save size={16} />
-                      SAVE_CONFIG
-                    </span>
-                  </SavantButton>
-                </MagneticButton>
-                
-                <MagneticButton strength={0.1}>
-                  <SavantButton 
-                    onClick={handleClear}
-                    variant="outline"
-                    className="w-48 h-14"
-                  >
-                    <span className="flex items-center gap-3">
-                      <Trash2 size={16} />
-                      PURGE_KEY
-                    </span>
-                  </SavantButton>
-                </MagneticButton>
-              </div>
             </div>
+          </SavantCard>
 
-            {debouncedKey && (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-10 p-6 bg-white/[0.02] border-l-2 border-electric-gold font-mono text-[9px] text-white/40 tracking-widest uppercase rounded-r-2xl"
-              >
-                <span className="text-electric-gold">STATUS:</span> KEY_DETECTED_IN_BUFFER // {debouncedKey.substring(0, 4)}****{debouncedKey.substring(debouncedKey.length - 4)}
-              </motion.div>
-            )}
-          </section>
-
-          <section className="p-12 border border-white/5 bg-white/[0.01] backdrop-blur-3xl relative overflow-hidden group rounded-[3rem]">
-            <div className="absolute top-0 left-0 w-1 h-full bg-electric-gold opacity-50" />
+          {/* System Logs */}
+          <SavantCard className="lg:col-span-3 p-12 border-white/5 bg-white/[0.01] rounded-[3rem]">
+            <div className="flex items-center gap-4 mb-10">
+              <Terminal className="text-electric-gold" size={24} />
+              <h2 className="font-display text-3xl text-white">SYSTEM_LOG_MANIFEST</h2>
+            </div>
             
-            <div className="flex items-center gap-6 mb-10">
-              <div className="w-12 h-12 rounded-2xl bg-electric-gold/10 flex items-center justify-center">
-                <Save className="text-electric-gold" size={24} />
-              </div>
-              <h2 className="font-display text-3xl text-white tracking-tight">SOURCE_EXTRACTION_v80</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+              {logs.slice(0, 12).map((log) => (
+                <div key={log.id} className="flex gap-6 py-3 border-b border-white/5 group">
+                  <span className="font-mono text-[9px] text-white/10 group-hover:text-crimson transition-colors shrink-0">
+                    [{new Date(log.timestamp).toLocaleTimeString()}]
+                  </span>
+                  <span className={`font-mono text-[10px] uppercase tracking-widest shrink-0 ${
+                    log.level === 'ERROR' ? 'text-crimson' : 
+                    log.level === 'CRITICAL' ? 'text-electric-gold' : 
+                    'text-white/40'
+                  }`}>
+                    {log.level}
+                  </span>
+                  <span className="font-mono text-[10px] text-white/60 truncate">{log.message}</span>
+                </div>
+              ))}
             </div>
-
-            <p className="text-white/30 font-mono text-[10px] mb-10 leading-relaxed tracking-widest uppercase">
-              Initiate a full-spectrum extraction of the Savant OS codebase. 
-              This will generate a source dump, file tree, and archive it to GitHub and S3.
-            </p>
-
-            <MagneticButton strength={0.1}>
-              <SavantButton 
-                onClick={async () => {
-                  const promise = fetch('/api/extract', { method: 'POST' });
-                  toast.promise(promise, {
-                    loading: 'INITIATING_EXTRACTION_SEQUENCE...',
-                    success: 'EXTRACTION_COMPLETE: Archive deployed.',
-                    error: 'EXTRACTION_FAILURE: Check system logs.'
-                  });
-                }}
-                variant="primary"
-                className="w-full h-20 bg-electric-gold border-electric-gold text-black"
-              >
-                <span className="flex items-center gap-3">
-                  <Save size={18} />
-                  RUN_EXTRACTOR_v80
-                </span>
-              </SavantButton>
-            </MagneticButton>
-          </section>
-
-          <section className="lg:col-span-2 p-12 border border-white/5 bg-white/[0.01] rounded-[3rem] opacity-40">
-            <h2 className="font-display text-2xl text-white tracking-tight mb-8">SYSTEM_TELEMETRY</h2>
-            <div className="savant-grid grid-cols-2 md:grid-cols-4 !gap-12 font-mono text-[9px] text-white/30 tracking-[0.4em] uppercase">
-              <div>
-                <div className="text-white mb-2">LOCAL_STORAGE</div>
-                <div className="text-electric-gold">ENABLED</div>
-              </div>
-              <div>
-                <div className="text-white mb-2">ENCRYPTION</div>
-                <div className="text-electric-gold">AES_256_LOCAL</div>
-              </div>
-              <div>
-                <div className="text-white mb-2">SYNC_STATUS</div>
-                <div className="text-electric-gold">OFFLINE_ONLY</div>
-              </div>
-              <div>
-                <div className="text-white mb-2">NODE_ID</div>
-                <div className="text-white">{Math.random().toString(36).substring(2, 10).toUpperCase()}</div>
-              </div>
-            </div>
-          </section>
+          </SavantCard>
         </div>
       </div>
     </div>

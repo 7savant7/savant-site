@@ -6,10 +6,10 @@ import { BlendFunction } from 'postprocessing';
 import * as THREE from 'three';
 import { BRANDING } from '../styles/branding';
 
-const PARTICLE_COUNT = 400; // Reduced for performance
-const GRID_SIZE = 50;
-const REPULSION_RADIUS = 20;
-const REPULSION_STRENGTH = 0.6;
+const PARTICLE_COUNT = 100; // Significantly reduced for performance
+const GRID_SIZE = 100;
+const REPULSION_RADIUS = 10;
+const REPULSION_STRENGTH = 0.3;
 
 function NeuralLattice() {
   const lines = useMemo(() => {
@@ -239,21 +239,19 @@ export default function Background() {
       <Canvas
         camera={{ position: [0, 0, 600], fov: 50 }}
         gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
-        dpr={[1, 1.5]}
+        dpr={[1, 1]}
       >
         <color attach="background" args={['#000000']} />
         <fogExp2 attach="fog" args={['#000000', 0.0008]} />
         
         <ambientLight intensity={0.1} />
-        <pointLight position={[0, 0, 500]} intensity={100} color={BRANDING.colors.primary.DEFAULT} />
+        <pointLight position={[0, 0, 500]} intensity={50} color={BRANDING.colors.primary.DEFAULT} />
         
         <NeuralLattice />
         <Particles />
-        
-        <Stars radius={100} depth={50} count={2000} factor={4} saturation={0} fade speed={1} />
       </Canvas>
       
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.6)_100%)]" />
     </div>
   );
 }
