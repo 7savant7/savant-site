@@ -36,12 +36,12 @@ export default function Admin() {
             className="savant-stack !gap-6"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-[1px] bg-crimson" />
-              <span className="font-mono text-[10px] text-crimson tracking-[0.6em] uppercase font-bold">COMMAND_CENTER // OMEGA_LEVEL</span>
+              <div className="w-12 h-[1px] bg-neon-pink" />
+              <span className="font-mono text-[10px] text-neon-pink tracking-[0.6em] uppercase font-bold">COMMAND_CENTER // OMEGA_LEVEL</span>
             </div>
             <h1 className="text-massive font-display">
               CORE_<br />
-              <span className="text-crimson italic font-serif font-light text-[0.7em]">Administration.</span>
+              <span className="text-neon-pink italic font-serif font-light text-[0.7em]">Administration.</span>
             </h1>
           </motion.div>
         </header>
@@ -51,7 +51,7 @@ export default function Admin() {
           <SavantCard className="lg:col-span-2 p-12 border-white/5 bg-white/[0.01] rounded-[3rem] overflow-hidden">
             <div className="flex justify-between items-center mb-12">
               <div className="flex items-center gap-4">
-                <Activity className="text-crimson" size={24} />
+                <Activity className="text-neon-pink" size={24} />
                 <h2 className="font-display text-3xl text-white">SYSTEM_TELEMETRY</h2>
               </div>
               <div className="font-mono text-[10px] text-white/20 tracking-widest uppercase">LIVE_FEED // v80.0.0</div>
@@ -62,16 +62,16 @@ export default function Admin() {
                 <AreaChart data={history}>
                   <defs>
                     <linearGradient id="colorCpu" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#ff003c" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#ff003c" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#ff4068" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#ff4068" stopOpacity={0}/>
                     </linearGradient>
                     <linearGradient id="colorMem" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#f9ff00" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#f9ff00" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#e6c03b" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#e6c03b" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <Area type="monotone" dataKey="cpu" stroke="#ff003c" fillOpacity={1} fill="url(#colorCpu)" isAnimationActive={false} />
-                  <Area type="monotone" dataKey="mem" stroke="#f9ff00" fillOpacity={1} fill="url(#colorMem)" isAnimationActive={false} />
+                  <Area type="monotone" dataKey="cpu" stroke="#ff4068" fillOpacity={1} fill="url(#colorCpu)" isAnimationActive={false} />
+                  <Area type="monotone" dataKey="mem" stroke="#e6c03b" fillOpacity={1} fill="url(#colorMem)" isAnimationActive={false} />
                   <Tooltip 
                     contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid rgba(255,255,255,0.1)', fontFamily: 'monospace', fontSize: '10px' }}
                     itemStyle={{ color: '#fff' }}
@@ -82,8 +82,8 @@ export default function Admin() {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {[
-                { label: 'CPU_LOAD', val: `${cpuUsage.toFixed(1)}%`, icon: Cpu, color: 'text-crimson' },
-                { label: 'MEM_USAGE', val: `${memUsage.toFixed(1)}%`, icon: Database, color: 'text-electric-gold' },
+                { label: 'CPU_LOAD', val: `${cpuUsage.toFixed(1)}%`, icon: Cpu, color: 'text-neon-pink' },
+                { label: 'MEM_USAGE', val: `${memUsage.toFixed(1)}%`, icon: Database, color: 'text-gold' },
                 { label: 'ACTIVE_NODES', val: activeNodes, icon: Zap, color: 'text-white' },
                 { label: 'NEURAL_SYNC', val: `${neuralSync.toFixed(2)}%`, icon: Activity, color: 'text-emerald-400' }
               ].map((stat, i) => (
@@ -99,15 +99,15 @@ export default function Admin() {
           {/* Security Status */}
           <SavantCard className="p-12 border-white/5 bg-white/[0.01] rounded-[3rem] flex flex-col">
             <div className="flex items-center gap-4 mb-12">
-              <Shield className="text-crimson" size={24} />
+              <Shield className="text-neon-pink" size={24} />
               <h2 className="font-display text-3xl text-white">SECURITY</h2>
             </div>
 
             <div className="flex-1 space-y-10">
-              <div className="p-8 bg-crimson/10 border border-crimson/20 rounded-2xl">
+              <div className="p-8 bg-neon-pink/10 border border-neon-pink/20 rounded-2xl">
                 <div className="flex justify-between items-center mb-4">
-                  <span className="font-mono text-[10px] text-crimson tracking-widest uppercase">FIREWALL_STATUS</span>
-                  <Lock size={14} className="text-crimson" />
+                  <span className="font-mono text-[10px] text-neon-pink tracking-widest uppercase">FIREWALL_STATUS</span>
+                  <Lock size={14} className="text-neon-pink" />
                 </div>
                 <div className="text-3xl font-display text-white">ACTIVE</div>
               </div>
@@ -121,8 +121,8 @@ export default function Admin() {
                     'ENCRYPTION_KEY_ROTATION // COMPLETE',
                     'ANOMALY_DETECTED_IN_SECTOR_7 // RESOLVED'
                   ].map((log, i) => (
-                    <div key={i} className="flex items-center gap-4 text-[9px] font-mono text-white/40 border-l border-crimson/30 pl-4">
-                      <div className="w-1 h-1 bg-crimson rounded-full" />
+                    <div key={i} className="flex items-center gap-4 text-[9px] font-mono text-white/40 border-l border-neon-pink/30 pl-4">
+                      <div className="w-1 h-1 bg-neon-pink rounded-full" />
                       {log}
                     </div>
                   ))}
@@ -134,19 +134,19 @@ export default function Admin() {
           {/* System Logs */}
           <SavantCard className="lg:col-span-3 p-12 border-white/5 bg-white/[0.01] rounded-[3rem]">
             <div className="flex items-center gap-4 mb-10">
-              <Terminal className="text-electric-gold" size={24} />
+              <Terminal className="text-gold" size={24} />
               <h2 className="font-display text-3xl text-white">SYSTEM_LOG_MANIFEST</h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
               {logs.slice(0, 12).map((log) => (
                 <div key={log.id} className="flex gap-6 py-3 border-b border-white/5 group">
-                  <span className="font-mono text-[9px] text-white/10 group-hover:text-crimson transition-colors shrink-0">
+                  <span className="font-mono text-[9px] text-white/10 group-hover:text-neon-pink transition-colors shrink-0">
                     [{new Date(log.timestamp).toLocaleTimeString()}]
                   </span>
                   <span className={`font-mono text-[10px] uppercase tracking-widest shrink-0 ${
-                    log.level === 'ERROR' ? 'text-crimson' : 
-                    log.level === 'CRITICAL' ? 'text-electric-gold' : 
+                    log.level === 'ERROR' ? 'text-neon-pink' : 
+                    log.level === 'CRITICAL' ? 'text-gold' : 
                     'text-white/40'
                   }`}>
                     {log.level}

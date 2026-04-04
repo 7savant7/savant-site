@@ -22,7 +22,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
         onClick={() => editor.chain().focus().toggleBold().run()}
         disabled={!editor.can().chain().focus().toggleBold().run()}
         className={`px-2 py-1 text-xs font-mono tracking-widest transition-colors ${
-          editor.isActive('bold') ? 'bg-electric-gold text-obsidian' : 'text-white/70 hover:bg-white/10'
+          editor.isActive('bold') ? 'bg-gold text-obsidian' : 'text-white/70 hover:bg-white/10'
         }`}
       >
         BOLD
@@ -32,7 +32,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
         onClick={() => editor.chain().focus().toggleItalic().run()}
         disabled={!editor.can().chain().focus().toggleItalic().run()}
         className={`px-2 py-1 text-xs font-mono tracking-widest transition-colors ${
-          editor.isActive('italic') ? 'bg-electric-gold text-obsidian' : 'text-white/70 hover:bg-white/10'
+          editor.isActive('italic') ? 'bg-gold text-obsidian' : 'text-white/70 hover:bg-white/10'
         }`}
       >
         ITALIC
@@ -42,7 +42,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
         onClick={() => editor.chain().focus().toggleStrike().run()}
         disabled={!editor.can().chain().focus().toggleStrike().run()}
         className={`px-2 py-1 text-xs font-mono tracking-widest transition-colors ${
-          editor.isActive('strike') ? 'bg-electric-gold text-obsidian' : 'text-white/70 hover:bg-white/10'
+          editor.isActive('strike') ? 'bg-gold text-obsidian' : 'text-white/70 hover:bg-white/10'
         }`}
       >
         STRIKE
@@ -52,7 +52,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
         type="button"
         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
         className={`px-2 py-1 text-xs font-mono tracking-widest transition-colors ${
-          editor.isActive('heading', { level: 1 }) ? 'bg-electric-gold text-obsidian' : 'text-white/70 hover:bg-white/10'
+          editor.isActive('heading', { level: 1 }) ? 'bg-gold text-obsidian' : 'text-white/70 hover:bg-white/10'
         }`}
       >
         H1
@@ -61,7 +61,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
         type="button"
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
         className={`px-2 py-1 text-xs font-mono tracking-widest transition-colors ${
-          editor.isActive('heading', { level: 2 }) ? 'bg-electric-gold text-obsidian' : 'text-white/70 hover:bg-white/10'
+          editor.isActive('heading', { level: 2 }) ? 'bg-gold text-obsidian' : 'text-white/70 hover:bg-white/10'
         }`}
       >
         H2
@@ -70,7 +70,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
         type="button"
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         className={`px-2 py-1 text-xs font-mono tracking-widest transition-colors ${
-          editor.isActive('bulletList') ? 'bg-electric-gold text-obsidian' : 'text-white/70 hover:bg-white/10'
+          editor.isActive('bulletList') ? 'bg-gold text-obsidian' : 'text-white/70 hover:bg-white/10'
         }`}
       >
         BULLETS
@@ -79,7 +79,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
         type="button"
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         className={`px-2 py-1 text-xs font-mono tracking-widest transition-colors ${
-          editor.isActive('orderedList') ? 'bg-electric-gold text-obsidian' : 'text-white/70 hover:bg-white/10'
+          editor.isActive('orderedList') ? 'bg-gold text-obsidian' : 'text-white/70 hover:bg-white/10'
         }`}
       >
         NUMBERS
@@ -88,7 +88,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
         type="button"
         onClick={() => editor.chain().focus().toggleBlockquote().run()}
         className={`px-2 py-1 text-xs font-mono tracking-widest transition-colors ${
-          editor.isActive('blockquote') ? 'bg-electric-gold text-obsidian' : 'text-white/70 hover:bg-white/10'
+          editor.isActive('blockquote') ? 'bg-gold text-obsidian' : 'text-white/70 hover:bg-white/10'
         }`}
       >
         QUOTE
@@ -125,7 +125,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({ content, onChang
   }, [content, editor]);
 
   return (
-    <div className="w-full bg-white/5 border border-white/10 focus-within:border-electric-gold transition-colors duration-300 flex flex-col relative overflow-hidden">
+    <div className="w-full bg-white/5 border border-white/10 focus-within:border-gold transition-colors duration-300 flex flex-col relative overflow-hidden">
       {/* Scanning Line */}
       <motion.div 
         className="absolute inset-0 w-full h-[1px] bg-white/5 z-0 pointer-events-none"

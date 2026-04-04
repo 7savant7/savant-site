@@ -23,8 +23,8 @@ interface Particle {
 
 export const TechButton: React.FC<TechButtonProps> = ({
   children,
-  colorClass = 'bg-crimson',
-  borderClass = 'border-crimson',
+  colorClass = 'bg-neon-pink',
+  borderClass = 'border-neon-pink',
   width = 'w-48',
   height = 'h-16',
   className = '',

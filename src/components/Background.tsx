@@ -32,7 +32,7 @@ function NeuralLattice() {
         <Line
           key={i}
           points={[line.start as [number, number, number], line.end as [number, number, number]]}
-          color={BRANDING.colors.primary.DEFAULT}
+          color={BRANDING.colors.neonPink.base}
           lineWidth={0.5}
           transparent
           opacity={0.05}
@@ -58,7 +58,7 @@ function Particles() {
   // Object pooling for geometries and materials
   const geometry = useMemo(() => new THREE.SphereGeometry(0.3, 8, 8), []);
   const material = useMemo(() => new THREE.MeshStandardMaterial({
-    emissive: BRANDING.colors.primary.DEFAULT,
+    emissive: BRANDING.colors.neonPink.base,
     emissiveIntensity: 8,
     transparent: true,
     opacity: 0.6,
@@ -91,10 +91,10 @@ function Particles() {
   const particles = useMemo(() => {
     const temp = [];
     const colors = [
-      BRANDING.colors.primary.DEFAULT, // Crimson
-      BRANDING.colors.accent.DEFAULT,  // Electric Gold
-      '#ffffff',                       // White
-      '#444444'                        // Dark Gray for depth
+      BRANDING.colors.neonPink.base, // Neon Pink
+      BRANDING.colors.gold.base,     // Gold
+      '#ffffff',                     // White
+      '#444444'                      // Dark Gray for depth
     ];
     
     for (let i = 0; i < PARTICLE_COUNT; i++) {
@@ -245,7 +245,7 @@ export default function Background() {
         <fogExp2 attach="fog" args={['#000000', 0.0008]} />
         
         <ambientLight intensity={0.1} />
-        <pointLight position={[0, 0, 500]} intensity={50} color={BRANDING.colors.primary.DEFAULT} />
+        <pointLight position={[0, 0, 500]} intensity={50} color={BRANDING.colors.neonPink.base} />
         
         <NeuralLattice />
         <Particles />

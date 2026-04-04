@@ -22,8 +22,8 @@ export const DataGrid: React.FC<DataGridProps> = ({ data, title, className = "" 
         <div className="flex items-center justify-between mb-8 border-b border-white/10 pb-4">
           <h3 className="font-mono text-[10px] text-white/40 tracking-[0.5em] uppercase">{title}</h3>
           <div className="flex gap-2">
-            <div className="w-1 h-1 bg-crimson rounded-full animate-pulse" />
-            <div className="w-1 h-1 bg-electric-gold rounded-full animate-pulse delay-75" />
+            <div className="w-1 h-1 bg-neon-pink rounded-full animate-pulse" />
+            <div className="w-1 h-1 bg-gold rounded-full animate-pulse delay-75" />
             <div className="w-1 h-1 bg-white rounded-full animate-pulse delay-150" />
           </div>
         </div>
@@ -47,17 +47,17 @@ export const DataGrid: React.FC<DataGridProps> = ({ data, title, className = "" 
           >
             <span className="data-value text-white/20 group-hover:text-white/40">{item.id}</span>
             <span className="data-value text-white font-bold">{item.label}</span>
-            <span className="data-value text-electric-gold">{item.value}</span>
+            <span className="data-value text-gold">{item.value}</span>
             <div className="flex items-center gap-3">
               <div className={`w-1.5 h-1.5 rounded-full ${
                 item.status === 'OPTIMAL' ? 'bg-emerald-500' :
-                item.status === 'CRITICAL' ? 'bg-crimson' :
-                item.status === 'SYNCING' ? 'bg-electric-gold' : 'bg-white/20'
+                item.status === 'CRITICAL' ? 'bg-neon-pink' :
+                item.status === 'SYNCING' ? 'bg-gold' : 'bg-white/20'
               }`} />
               <span className={`data-value text-[9px] ${
                 item.status === 'OPTIMAL' ? 'text-emerald-500/50' :
-                item.status === 'CRITICAL' ? 'text-crimson/50' :
-                item.status === 'SYNCING' ? 'text-electric-gold/50' : 'text-white/20'
+                item.status === 'CRITICAL' ? 'text-neon-pink/50' :
+                item.status === 'SYNCING' ? 'text-gold/50' : 'text-white/20'
               }`}>{item.status}</span>
             </div>
           </motion.div>

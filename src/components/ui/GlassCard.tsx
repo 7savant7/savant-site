@@ -13,10 +13,15 @@ interface GlassCardProps {
 export const GlassCard = ({ children, className = '', hoverEffect = true, title, subtitle, onClick }: GlassCardProps) => {
   return (
     <motion.div
-      whileHover={hoverEffect ? { y: -5, scale: 1.01 } : {}}
+      whileHover={hoverEffect ? { 
+        y: -3, 
+        scale: 1.005,
+        borderColor: 'rgba(255, 255, 255, 0.2)',
+        boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
+      } : {}}
       onClick={onClick}
-      transition={{ duration: 0.4, ease: [0.19, 1, 0.22, 1] }}
-      className={`relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl group flex flex-col ${className}`}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      className={`relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl group flex flex-col transition-colors duration-500 ${className}`}
     >
       {/* Subtle Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] to-transparent pointer-events-none" />
@@ -28,7 +33,7 @@ export const GlassCard = ({ children, className = '', hoverEffect = true, title,
             {subtitle && <span className="font-display font-bold text-sm tracking-tight text-white">{subtitle}</span>}
           </div>
           <div className="flex gap-1 relative z-10">
-            <div className="w-1 h-1 rounded-full bg-crimson/40" />
+            <div className="w-1 h-1 rounded-full bg-neon-pink/40" />
             <div className="w-1 h-1 rounded-full bg-white/10" />
           </div>
         </div>

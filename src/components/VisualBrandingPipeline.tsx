@@ -35,15 +35,15 @@ export const VisualBrandingPipeline = () => {
               className="space-y-10"
             >
               <div className="flex items-center gap-4">
-                <div className="w-16 h-[1px] bg-crimson" />
-                <span className="font-mono text-[11px] uppercase tracking-[0.5em] text-crimson font-bold">
+                <div className="w-16 h-[1px] bg-neon-pink" />
+                <span className="font-mono text-[11px] uppercase tracking-[0.5em] text-neon-pink font-bold">
                   Visual_Branding_Pipeline_v8.2
                 </span>
               </div>
               
               <h2 className="text-massive font-display leading-[0.85] tracking-tighter">
                 THE GENETIC <br />
-                <span className="text-crimson italic font-serif font-light">CODE</span> <br />
+                <span className="text-neon-pink italic font-serif font-light">CODE</span> <br />
                 OF SAVANT
               </h2>
               
@@ -54,10 +54,10 @@ export const VisualBrandingPipeline = () => {
 
               <div className="grid grid-cols-2 gap-12 pt-10">
                 {[
-                  { label: "COGNITIVE_LOAD", value: "92%", color: "text-crimson" },
+                  { label: "COGNITIVE_LOAD", value: "92%", color: "text-neon-pink" },
                   { label: "NEURAL_SYNC", value: "0.998", color: "text-white" },
                   { label: "TRUTH_ANCHOR", value: "STABLE", color: "text-emerald-400" },
-                  { label: "ENTROPY_RATE", value: "0.0012", color: "text-electric-gold" }
+                  { label: "ENTROPY_RATE", value: "0.0012", color: "text-gold" }
                 ].map((stat, i) => (
                   <div key={i} className="space-y-3 group/stat">
                     <div className="text-[10px] font-mono text-white/20 uppercase tracking-[0.3em] group-hover/stat:text-white/40 transition-colors">
@@ -73,7 +73,7 @@ export const VisualBrandingPipeline = () => {
           </div>
 
           <div className="relative aspect-square">
-            <Glow color="rgba(255,0,60,0.2)" blur="150px" opacity={0.6}>
+            <Glow color="rgba(255,64,104,0.2)" blur="150px" opacity={0.6}>
               <div className="relative w-full h-full flex items-center justify-center">
                 <Magnetic strength={0.2} className="w-full h-full">
                   <div className="relative w-full h-full flex items-center justify-center p-20">
@@ -85,7 +85,7 @@ export const VisualBrandingPipeline = () => {
                     <motion.div 
                       animate={{ rotate: -360 }}
                       transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                      className="absolute inset-10 border border-crimson/10 rounded-full border-dashed"
+                      className="absolute inset-10 border border-neon-pink/10 rounded-full border-dashed"
                     />
                     
                     <div className="relative z-10 w-full h-full overflow-visible">

@@ -178,17 +178,17 @@ export const AmbientAudioController: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Activity className="w-3 h-3 text-crimson animate-pulse" />
+                <Activity className="w-3 h-3 text-neon-pink animate-pulse" />
                 <span className="font-mono text-[10px] text-white/60 uppercase tracking-widest">Audio_Core_Active</span>
               </div>
               <div className="flex gap-1">
                 {[...Array(4)].map((_, i) => (
                   <motion.div 
                     key={i}
-                    className="w-1 h-3 bg-crimson/40"
+                    className="w-1 h-3 bg-neon-pink/40"
                     animate={{ 
                       height: [4, 12, 4],
-                      backgroundColor: ['rgba(255,0,60,0.2)', 'rgba(255,0,60,0.8)', 'rgba(255,0,60,0.2)']
+                      backgroundColor: ['rgba(255,64,104,0.2)', 'rgba(255,64,104,0.8)', 'rgba(255,64,104,0.2)']
                     }}
                     transition={{ 
                       duration: 0.5 + Math.random(), 
@@ -202,11 +202,11 @@ export const AmbientAudioController: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-2">
               <div className="flex items-center gap-2">
-                <Zap className="w-2.5 h-2.5 text-electric-gold" />
+                <Zap className="w-2.5 h-2.5 text-gold" />
                 <span className="font-mono text-[8px] text-white/30 uppercase">Sync: {neuralSync.toFixed(1)}%</span>
               </div>
               <div className="flex items-center gap-2">
-                <Cpu className="w-2.5 h-2.5 text-crimson" />
+                <Cpu className="w-2.5 h-2.5 text-neon-pink" />
                 <span className="font-mono text-[8px] text-white/30 uppercase">Load: {(systemLoad * 100).toFixed(0)}%</span>
               </div>
               <div className="flex items-center gap-2">
@@ -224,7 +224,7 @@ export const AmbientAudioController: React.FC = () => {
                 max="0" 
                 value={volume}
                 onChange={(e) => setVolume(Number(e.target.value))}
-                className="flex-1 h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-crimson"
+                className="flex-1 h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-neon-pink"
               />
               <span className="font-mono text-[8px] text-white/40">{volume}dB</span>
             </div>
@@ -238,7 +238,7 @@ export const AmbientAudioController: React.FC = () => {
         whileTap={{ scale: 0.95 }}
         className={`
           w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500
-          ${isActive && !isMuted ? 'bg-crimson shadow-[0_0_20px_rgba(255,0,60,0.4)]' : 'bg-white/5 border border-white/10 hover:bg-white/10'}
+          ${isActive && !isMuted ? 'bg-neon-pink shadow-[0_0_20px_rgba(255,64,104,0.4)]' : 'bg-white/5 border border-white/10 hover:bg-white/10'}
         `}
       >
         {isMuted || !isActive ? (

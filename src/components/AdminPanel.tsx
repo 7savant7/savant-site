@@ -72,21 +72,21 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
           >
             {/* Scanning Line */}
             <motion.div 
-              className="absolute inset-0 w-full h-[1px] bg-crimson/10 z-0 pointer-events-none"
+              className="absolute inset-0 w-full h-[1px] bg-neon-pink/10 z-0 pointer-events-none"
               animate={{ top: ['0%', '100%'] }}
               transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
             />
 
             {/* Decorative elements */}
-            <div className="absolute top-0 left-0 w-1 h-full bg-crimson/50" />
+            <div className="absolute top-0 left-0 w-1 h-full bg-neon-pink/50" />
             <div className="absolute top-0 right-0 p-4 font-mono text-[9px] text-white/20 tracking-widest uppercase">
               Admin_Access_Terminal
             </div>
 
             <div className="flex justify-between items-center mb-16">
               <div className="flex items-center gap-4">
-                <div className="w-8 h-8 border border-crimson flex items-center justify-center">
-                  <Shield className="w-4 h-4 text-crimson" />
+                <div className="w-8 h-8 border border-neon-pink flex items-center justify-center">
+                  <Shield className="w-4 h-4 text-neon-pink" />
                 </div>
                 <h2 className="font-display font-black text-3xl text-white tracking-tighter uppercase">
                   Sovereign_Auth
@@ -96,7 +96,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                 onClick={onClose}
                 className="p-2 hover:bg-white/5 transition-colors duration-300 group"
               >
-                <X className="w-6 h-6 text-white/40 group-hover:text-crimson transition-colors duration-300" />
+                <X className="w-6 h-6 text-white/40 group-hover:text-neon-pink transition-colors duration-300" />
               </button>
             </div>
 
@@ -119,7 +119,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
               ) : (
                 <div className="space-y-12">
                   <div className="p-6 border border-white/5 bg-white/[0.02] relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-2 font-mono text-[8px] text-electric-gold tracking-widest">ACTIVE_SESSION</div>
+                    <div className="absolute top-0 right-0 p-2 font-mono text-[8px] text-gold tracking-widest">ACTIVE_SESSION</div>
                     <div className="flex items-center gap-4 mb-4">
                       {user.user_metadata.avatar_url ? (
                         <img src={user.user_metadata.avatar_url} alt="" className="w-12 h-12 rounded-none border border-white/10" />
@@ -142,12 +142,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                   <div className="space-y-4">
                     {isAdmin && (
                       <Link to="/admin" onClick={onClose} className="block group">
-                        <div className="p-6 border border-white/10 bg-white/5 hover:bg-crimson/10 hover:border-crimson/30 transition-all duration-500 flex items-center justify-between">
+                        <div className="p-6 border border-white/10 bg-white/5 hover:bg-neon-pink/10 hover:border-neon-pink/30 transition-all duration-500 flex items-center justify-between">
                           <div className="flex items-center gap-4">
-                            <LayoutDashboard className="w-5 h-5 text-crimson" />
+                            <LayoutDashboard className="w-5 h-5 text-neon-pink" />
                             <span className="font-mono text-xs font-bold text-white tracking-widest uppercase">Command_Center</span>
                           </div>
-                          <div className="w-2 h-2 bg-crimson" />
+                          <div className="w-2 h-2 bg-neon-pink" />
                         </div>
                       </Link>
                     )}

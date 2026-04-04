@@ -10,6 +10,7 @@ import Settings from './pages/Settings';
 import OS from './pages/OS';
 import Journal from './pages/Journal';
 import Branding from './pages/Branding';
+import NotFound from './pages/NotFound';
 import { AuthProvider } from './contexts/AuthContext';
 import { BlogProvider } from './contexts/BlogContext';
 import { LoadingProvider } from './contexts/LoadingContext';
@@ -31,37 +32,40 @@ export default function App() {
               <Preloader />
               <AmbientMusic />
               <Router>
-              <Toaster position="top-right" theme="dark" toastOptions={{
-                style: {
-                  background: 'rgba(10, 10, 10, 0.9)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  color: '#fff',
-                  fontFamily: 'monospace',
-                  fontSize: '12px',
-                  letterSpacing: '0.1em',
-                  borderRadius: '0px'
-                }
-              }} />
-              <Routes>
-                <Route path="/" element={<Layout />}>
-                  <Route index element={<Home />} />
-                  <Route path="work" element={<Work />} />
-                  <Route path="services" element={<Services />} />
-                  <Route path="contact" element={<Contact />} />
-                  <Route path="apps" element={<Apps />} />
-                  <Route path="admin" element={<Admin />} />
-                  <Route path="settings" element={<Settings />} />
-                  <Route path="journal" element={<Journal />} />
-                  <Route path="branding" element={<Branding />} />
-                  <Route path="os" element={<OS />} />
-                </Route>
-              </Routes>
-            </Router>
-          </SmoothScroll>
-        </BlogProvider>
-      </MoodProvider>
-    </AuthProvider>
-  </LoadingProvider>
+                <Toaster position="top-right" theme="dark" toastOptions={{
+                  style: {
+                    background: 'rgba(10, 10, 10, 0.95)',
+                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                    color: '#fff',
+                    fontFamily: 'JetBrains Mono',
+                    fontSize: '10px',
+                    letterSpacing: '0.2em',
+                    borderRadius: '0px',
+                    backdropFilter: 'blur(20px)',
+                    textTransform: 'uppercase'
+                  }
+                }} />
+                <Routes>
+                  <Route path="/" element={<Layout />}>
+                    <Route index element={<Home />} />
+                    <Route path="work" element={<Work />} />
+                    <Route path="services" element={<Services />} />
+                    <Route path="contact" element={<Contact />} />
+                    <Route path="apps" element={<Apps />} />
+                    <Route path="admin" element={<Admin />} />
+                    <Route path="settings" element={<Settings />} />
+                    <Route path="journal" element={<Journal />} />
+                    <Route path="branding" element={<Branding />} />
+                    <Route path="os" element={<OS />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Route>
+                </Routes>
+              </Router>
+            </SmoothScroll>
+          </BlogProvider>
+        </MoodProvider>
+      </AuthProvider>
+    </LoadingProvider>
   );
 }
 

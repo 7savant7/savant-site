@@ -1,5 +1,7 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import Savant3DLogo from './Savant3DLogo';
+import { BRANDING } from '../styles/branding';
 
 const bootStatuses = [
   "INITIALIZING_KERNEL",
@@ -14,22 +16,21 @@ export default function BootScreen({ onComplete }: { onComplete: () => void }) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    console.log('BootScreen mounted');
     const statusInterval = setInterval(() => {
       setStatusIdx((prev) => (prev + 1) % bootStatuses.length);
-    }, 600);
+    }, 800);
 
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(progressInterval);
           clearInterval(statusInterval);
-          setTimeout(onComplete, 800);
+          setTimeout(onComplete, 1200);
           return 100;
         }
-        return prev + 1.5;
+        return prev + 1.2;
       });
-    }, 50);
+    }, 60);
 
     return () => {
       clearInterval(statusInterval);
@@ -42,124 +43,67 @@ export default function BootScreen({ onComplete }: { onComplete: () => void }) {
       initial={{ opacity: 1 }}
       exit={{ 
         opacity: 0,
-        scale: 1.1,
-        filter: 'blur(20px)',
-        transition: { duration: 1.2, ease: [0.9, 0, 0.1, 1] } 
+        scale: 1.05,
+        filter: 'blur(30px)',
+        transition: { duration: 1.5, ease: [0.16, 1, 0.3, 1] } 
       }}
       className="fixed inset-0 bg-obsidian z-[10000] flex items-center justify-center overflow-hidden"
     >
-      {/* Scanning Line */}
-      <motion.div 
-        className="absolute inset-0 w-full h-[2px] bg-crimson/20 z-[10001] pointer-events-none"
-        animate={{ top: ['0%', '100%'] }}
-        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-      />
-      
-      {/* Background Fractal Lattice */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--color-crimson)_0%,transparent_70%)] opacity-20" />
+      {/* Subtle Grid Background */}
+      <div className="absolute inset-0 opacity-5 pointer-events-none">
         <div className="grid grid-cols-12 h-full w-full">
           {Array.from({ length: 12 }).map((_, i) => (
-            <div key={i} className="border-r border-white/5 h-full" />
-          ))}
-        </div>
-        <div className="grid grid-rows-12 h-full w-full absolute inset-0">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div key={i} className="border-b border-white/5 w-full" />
+            <div key={i} className="border-r border-white/10 h-full" />
           ))}
         </div>
       </div>
 
-      <div className="relative flex flex-col items-center">
-        {/* Central Fractal Symbol */}
-        <div className="relative w-40 h-40 mb-16 group cursor-pointer" onClick={onComplete}>
-          <motion.div 
-            className="absolute inset-0 border-2 border-crimson/40"
-            style={{ clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }}
-            animate={{ rotate: 360, scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-          />
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <span className="font-mono text-[8px] text-white/40 uppercase tracking-widest">Skip_Boot</span>
-          </div>
-          <motion.div 
-            className="absolute inset-4 border border-electric-gold/30"
-            style={{ clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }}
-            animate={{ rotate: -360, scale: [1, 0.9, 1], opacity: [0.2, 0.5, 0.2] }}
-            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-          />
-          <motion.div 
-            className="absolute inset-8 border border-white/20"
-            style={{ clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }}
-            animate={{ rotate: 180, scale: [1, 1.2, 1] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <div className="absolute inset-0 flex items-center justify-center">
-             <motion.div 
-              className="w-1.5 h-1.5 bg-white shadow-[0_0_20px_#fff] rounded-full"
-              animate={{ opacity: [0, 1, 0], scale: [1, 2, 1] }}
-              transition={{ duration: 0.8, repeat: Infinity }}
-             />
-          </div>
+      <div className="relative flex flex-col items-center w-full max-w-2xl px-12">
+        {/* Central 3D Logo */}
+        <div className="w-full h-[40vh] mb-12">
+          <Suspense fallback={null}>
+            <Savant3DLogo className="w-full h-full" />
+          </Suspense>
         </div>
 
         <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="font-display font-black text-7xl md:text-9xl text-white tracking-tighter mb-4 uppercase"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, delay: 0.5 }}
+          className="flex flex-col items-center gap-8 w-full"
         >
-          SAVANT<span className="text-crimson">.</span>
+          <div className="flex flex-col items-center gap-2">
+            <h1 className="font-display font-black text-4xl md:text-6xl text-white tracking-tighter uppercase">
+              SAVANT<span className="text-neon-pink">.</span>
+            </h1>
+            <div className="font-mono text-[8px] text-white/20 tracking-[0.8em] uppercase">
+              sovereign_os_v5.5
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center gap-4 w-full max-w-xs">
+            <div className="font-mono text-[9px] text-neon-pink tracking-[0.5em] h-4 uppercase font-bold">
+              {bootStatuses[statusIdx]}
+            </div>
+            
+            <div className="relative w-full h-[1px] bg-white/5 overflow-hidden">
+              <motion.div 
+                className="h-full bg-neon-pink shadow-[0_0_15px_rgba(255,64,104,0.5)]"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            
+            <div className="font-mono text-[8px] text-white/10 tracking-[0.4em] uppercase">
+              {Math.round(progress)}%_STABILIZED
+            </div>
+          </div>
         </motion.div>
-        
-        <div className="flex items-center gap-4 mb-8">
-          <div className="h-[1px] w-12 bg-white/10" />
-          <div className="font-mono text-[8px] text-white/40 tracking-[0.8em] uppercase">
-            sovereign_os_v5.5
-          </div>
-          <div className="h-[1px] w-12 bg-white/10" />
-        </div>
 
-        <div className="flex flex-col items-center gap-4">
-          <div className="font-mono text-[10px] text-crimson tracking-[0.5em] h-4 uppercase font-bold">
-            {bootStatuses[statusIdx]}
-          </div>
-          
-          <div className="relative w-96 h-[3px] bg-white/5 overflow-hidden rounded-full">
-            <motion.div 
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-crimson to-transparent"
-              animate={{ x: ['-100%', '100%'] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            />
-            <motion.div 
-              className="h-full bg-crimson shadow-[0_0_15px_rgba(255,0,60,0.5)]"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-          
-          <div className="font-mono text-[9px] text-white/20 tracking-widest">
-            {Math.round(progress)}%_STABILIZED
-          </div>
-        </div>
-
-        {/* Technical Data Stream */}
-        <div className="absolute -bottom-48 left-1/2 -translate-x-1/2 w-[120%] opacity-20 pointer-events-none">
-          <div className="font-mono text-[7px] text-white/50 leading-relaxed grid grid-cols-3 gap-8">
-            <div>
-              [SYS] KERNEL_LOAD_SUCCESS<br/>
-              [SYS] MEMORY_MAP_0x4421_OK<br/>
-              [SYS] FRACTAL_CORE_SYNCED
-            </div>
-            <div className="text-center">
-              [NET] UPLINK_ESTABLISHED<br/>
-              [NET] LATTICE_HANDSHAKE_OK<br/>
-              [NET] ENCRYPTION_LAYER_4_ACTIVE
-            </div>
-            <div className="text-right">
-              [USR] IDENTITY_VERIFIED<br/>
-              [USR] PERMISSIONS_GRANTED<br/>
-              [USR] SESSION_ID_0x992_ACTIVE
-            </div>
-          </div>
+        {/* Technical Data Stream - Minimalist */}
+        <div className="absolute bottom-12 left-12 right-12 flex justify-between opacity-10 font-mono text-[6px] tracking-[0.3em] uppercase">
+          <span>[SYS] KERNEL_LOAD_SUCCESS</span>
+          <span>[NET] UPLINK_ESTABLISHED</span>
+          <span>[USR] IDENTITY_VERIFIED</span>
         </div>
       </div>
     </motion.div>

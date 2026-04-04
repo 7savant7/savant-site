@@ -14,11 +14,11 @@ export const SystemStatus: React.FC = () => {
         </div>
         <div className="flex items-center gap-3 group cursor-help">
           <span className="uppercase tracking-[0.2em] opacity-50 group-hover:opacity-100 transition-opacity">Neural_Latency:</span>
-          <span className="text-electric-gold font-black font-tech">{latency.toFixed(4)}ms</span>
+          <span className="text-gold font-black font-tech">{latency.toFixed(4)}ms</span>
         </div>
         <div className="flex items-center gap-3 group cursor-help">
           <span className="uppercase tracking-[0.2em] opacity-50 group-hover:opacity-100 transition-opacity">Core_State:</span>
-          <span className="text-crimson font-black tracking-widest animate-pulse">STABLE_v80</span>
+          <span className="text-neon-pink font-black tracking-widest animate-pulse">STABLE_v80</span>
         </div>
       </div>
 
@@ -27,7 +27,7 @@ export const SystemStatus: React.FC = () => {
           <span className="uppercase tracking-[0.2em] opacity-50">Mem_Allocation:</span>
           <div className="w-32 h-1 bg-white/5 rounded-full overflow-hidden relative">
             <motion.div 
-              className="absolute inset-0 bg-gradient-to-r from-crimson/40 to-crimson"
+              className="absolute inset-0 bg-gradient-to-r from-neon-pink/40 to-neon-pink"
               animate={{ 
                 width: ['40%', '85%', '60%'],
                 opacity: [0.5, 1, 0.5]
@@ -53,7 +53,7 @@ export const SystemStatus: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-4 border-l border-white/10 pl-10">
-          <div className={`w-2 h-2 rounded-full ${clearance === 'ROOT' ? 'bg-electric-gold' : 'bg-crimson'} animate-ping`} />
+          <div className={`w-2 h-2 rounded-full ${clearance === 'ROOT' ? 'bg-gold' : 'bg-neon-pink'} animate-ping`} />
           <div className="text-white/40 font-black uppercase tracking-[0.4em] text-[8px]">
             {clearance === 'ROOT' ? 'ROOT_OVERRIDE_ACTIVE' : 'SOVEREIGN_v80_ULTRA'}
           </div>

@@ -70,9 +70,9 @@ export const NeuralSummary: React.FC<NeuralSummaryProps> = ({ content, title }) 
     <div className="relative inline-block">
       <button 
         onClick={generateSummary}
-        className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-electric-gold/50 transition-all group"
+        className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-gold/50 transition-all group"
       >
-        <Brain className="w-3 h-3 text-electric-gold group-hover:animate-pulse" />
+        <Brain className="w-3 h-3 text-gold group-hover:animate-pulse" />
         <span className="font-mono text-[9px] text-white/50 group-hover:text-white tracking-widest uppercase">Neural_Summary</span>
       </button>
 
@@ -86,8 +86,8 @@ export const NeuralSummary: React.FC<NeuralSummaryProps> = ({ content, title }) 
           >
             <div className="flex items-center justify-between mb-3 border-b border-white/10 pb-2">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-3 h-3 text-electric-gold" />
-                <span className="font-mono text-[9px] text-electric-gold tracking-widest uppercase">Neural_Synthesis</span>
+                <Sparkles className="w-3 h-3 text-gold" />
+                <span className="font-mono text-[9px] text-gold tracking-widest uppercase">Neural_Synthesis</span>
               </div>
               <button onClick={() => setIsOpen(false)} className="text-white/30 hover:text-white">
                 <X className="w-3 h-3" />
@@ -96,7 +96,7 @@ export const NeuralSummary: React.FC<NeuralSummaryProps> = ({ content, title }) 
 
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-8 gap-3">
-                <Loader2 className="w-6 h-6 text-electric-gold animate-spin" />
+                <Loader2 className="w-6 h-6 text-gold animate-spin" />
                 <span className="font-mono text-[8px] text-white/30 animate-pulse">SYNTHESIZING...</span>
               </div>
             ) : (
@@ -105,7 +105,7 @@ export const NeuralSummary: React.FC<NeuralSummaryProps> = ({ content, title }) 
               </div>
             )}
 
-            <div className="absolute -bottom-2 left-4 w-4 h-4 bg-industrial-gray border-r border-b border-electric-gold/30 rotate-45" />
+            <div className="absolute -bottom-2 left-4 w-4 h-4 bg-industrial-gray border-r border-b border-gold/30 rotate-45" />
           </motion.div>
         )}
       </AnimatePresence>

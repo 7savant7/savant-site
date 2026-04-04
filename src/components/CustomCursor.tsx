@@ -49,7 +49,7 @@ export const CustomCursor = () => {
   return (
     <div className="fixed inset-0 pointer-events-none z-[9999] hidden md:block">
       <motion.div
-        className="fixed top-0 left-0 w-4 h-4 bg-crimson rounded-full mix-blend-difference"
+        className="fixed top-0 left-0 w-4 h-4 bg-neon-pink rounded-full mix-blend-difference"
         style={{
           x: cursorXSpring,
           y: cursorYSpring,
@@ -62,7 +62,7 @@ export const CustomCursor = () => {
         }}
       />
       <motion.div
-        className="fixed top-0 left-0 w-12 h-12 border border-crimson/30 rounded-full"
+        className="fixed top-0 left-0 w-12 h-12 border border-neon-pink/30 rounded-full"
         style={{
           x: cursorXSpring,
           y: cursorYSpring,
@@ -88,10 +88,10 @@ export const CustomCursor = () => {
             translateY: '-50%',
           }}
         >
-          <div className="absolute top-0 w-[1px] h-4 bg-crimson/50" />
-          <div className="absolute bottom-0 w-[1px] h-4 bg-crimson/50" />
-          <div className="absolute left-0 w-4 h-[1px] bg-crimson/50" />
-          <div className="absolute right-0 w-4 h-[1px] bg-crimson/50" />
+          <div className="absolute top-0 w-[1px] h-4 bg-neon-pink/50" />
+          <div className="absolute bottom-0 w-[1px] h-4 bg-neon-pink/50" />
+          <div className="absolute left-0 w-4 h-[1px] bg-neon-pink/50" />
+          <div className="absolute right-0 w-4 h-[1px] bg-neon-pink/50" />
         </motion.div>
       )}
     </div>

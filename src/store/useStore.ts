@@ -45,8 +45,8 @@ export const useStore = create<OSState>()(
       memUsage: 68,
       systemLoad: 0.42,
       quantumEntanglement: 99.998,
-      shardIntegrity: 100,
-      neuralSync: 98.4,
+      shardIntegrity: 0.999,
+      neuralSync: 0.984,
       biometricStatus: 'AWAITING',
       logs: [],
       chromaticAberration: false,
@@ -74,8 +74,8 @@ export const useStore = create<OSState>()(
           memUsage: Math.max(20, Math.min(90, state.memUsage + (Math.random() - 0.5) * 5)),
           systemLoad: newCpu / 100,
           quantumEntanglement: 99.99 + (Math.random() * 0.01),
-          shardIntegrity: 99.9 + (Math.random() * 0.1),
-          neuralSync: 98 + (Math.random() * 2)
+          shardIntegrity: 0.999 + (Math.random() * 0.001),
+          neuralSync: 0.98 + (Math.random() * 0.02)
         };
       }),
       toggleEffect: (effect) => set((state) => ({ [effect]: !state[effect] })),

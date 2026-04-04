@@ -33,7 +33,7 @@ export const HUD = () => {
     <SavantCard className="hidden lg:flex flex-col text-right font-mono text-[9px] text-white/40 tracking-widest pointer-events-auto p-8 relative overflow-hidden group min-w-[240px] max-w-[320px] max-h-[80vh] overflow-y-auto custom-scrollbar rounded-3xl border-white/5 bg-obsidian/80 backdrop-blur-2xl shadow-2xl">
       {/* Neural Pulse */}
       <motion.div 
-        className="absolute inset-0 bg-crimson/5 z-0 pointer-events-none"
+        className="absolute inset-0 bg-neon-pink/5 z-0 pointer-events-none"
         animate={{ 
           opacity: [0, 0.1, 0],
           scale: [1, 1.05, 1]
@@ -43,7 +43,7 @@ export const HUD = () => {
       
       {/* Scanning Line */}
       <motion.div 
-        className="absolute inset-0 w-full h-[1px] bg-crimson/10 z-0 pointer-events-none"
+        className="absolute inset-0 w-full h-[1px] bg-neon-pink/10 z-0 pointer-events-none"
         animate={{ top: ['0%', '100%'] }}
         transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
       />
@@ -53,10 +53,10 @@ export const HUD = () => {
           animate={{ 
             opacity: [1, 0.3, 1],
             scale: [1, 1.2, 1],
-            boxShadow: clearance === 'ROOT' ? ['0 0 5px #f9ff00', '0 0 20px #f9ff00', '0 0 5px #f9ff00'] : ['0 0 5px #ff003c', '0 0 20px #ff003c', '0 0 5px #ff003c']
+            boxShadow: clearance === 'ROOT' ? ['0 0 5px #e6c03b', '0 0 20px #e6c03b', '0 0 5px #e6c03b'] : ['0 0 5px #ff4068', '0 0 20px #ff4068', '0 0 5px #ff4068']
           }}
           transition={{ duration: 2, repeat: Infinity }}
-          className={`w-2.5 h-2.5 rounded-full ${clearance === 'ROOT' ? 'bg-electric-gold' : 'bg-crimson'}`} 
+          className={`w-2.5 h-2.5 rounded-full ${clearance === 'ROOT' ? 'bg-gold' : 'bg-neon-pink'}`} 
         />
         <span className="text-white font-black tracking-[0.5em] uppercase text-[11px] italic">
           {clearance === 'ROOT' ? 'ROOT_ACCESS_GRANTED' : 'SAVANT_LATTICE_ACTIVE'}
@@ -67,14 +67,14 @@ export const HUD = () => {
         {[
           { label: 'COORD_X', val: coords.x, color: 'text-white' },
           { label: 'COORD_Y', val: coords.y, color: 'text-white' },
-          { label: 'LATENCY', val: `${latency.toFixed(6)}MS`, color: 'text-electric-gold' },
+          { label: 'LATENCY', val: `${latency.toFixed(6)}MS`, color: 'text-gold' },
           { label: 'NODES', val: activeNodes, color: 'text-white' },
-          { label: 'CPU_LOAD', val: `${(useStore.getState().cpuUsage).toFixed(1)}%`, color: 'text-crimson' },
+          { label: 'CPU_LOAD', val: `${(useStore.getState().cpuUsage).toFixed(1)}%`, color: 'text-neon-pink' },
           { label: 'MEM_USAGE', val: `${(useStore.getState().memUsage).toFixed(1)}%`, color: 'text-white' },
-          { label: 'NEURAL_SYNC', val: `${(useStore.getState().neuralSync).toFixed(2)}%`, color: 'text-electric-gold' },
+          { label: 'NEURAL_SYNC', val: `${(useStore.getState().neuralSync).toFixed(2)}%`, color: 'text-gold' },
           { label: 'UPTIME', val: '142:12:44:02', color: 'text-white/40' },
           { label: 'THREAT', val: 'MINIMAL', color: 'text-emerald-400' },
-          { label: 'ENTROPY', val: '0.0042', color: 'text-crimson' }
+          { label: 'ENTROPY', val: '0.0042', color: 'text-neon-pink' }
         ].map((stat, i) => (
           <div key={i} className="flex justify-between gap-12 border-b border-white/5 pb-2 group/stat">
             <span className="opacity-30 uppercase tracking-[0.3em] group-hover/stat:opacity-60 transition-opacity">{stat.label}</span>
@@ -91,7 +91,7 @@ export const HUD = () => {
             <Line 
               type="monotone" 
               dataKey="val" 
-              stroke={clearance === 'ROOT' ? '#f9ff00' : '#ff003c'} 
+              stroke={clearance === 'ROOT' ? '#e6c03b' : '#ff4068'} 
               strokeWidth={2} 
               dot={false} 
               isAnimationActive={false} 
@@ -112,8 +112,8 @@ export const HUD = () => {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               className={`text-[8px] font-mono leading-tight flex gap-3 ${
-                log.level === 'ERROR' ? 'text-crimson' : 
-                log.level === 'CRITICAL' ? 'text-electric-gold' : 
+                log.level === 'ERROR' ? 'text-neon-pink' : 
+                log.level === 'CRITICAL' ? 'text-gold' : 
                 'text-white/50'
               }`}
             >
@@ -127,7 +127,7 @@ export const HUD = () => {
       <div className="mt-10 pt-8 border-t border-white/5 flex flex-col gap-4">
          <div className="flex justify-between items-center">
            <span className="opacity-30 uppercase">BUILD</span>
-           <b className="text-crimson font-black tracking-widest">80_ULTRA</b>
+           <b className="text-neon-pink font-black tracking-widest">80_ULTRA</b>
          </div>
          <div className="flex justify-between items-center">
            <span className="opacity-30 uppercase">ARCH</span>

@@ -28,7 +28,7 @@ const generateNeuralTexture = () => {
   ctx.fillRect(0, 0, 1024, 1024);
   
   // Draw neural network / circuit lines
-  ctx.strokeStyle = 'rgba(255, 0, 60, 0.4)';
+  ctx.strokeStyle = 'rgba(255, 64, 104, 0.4)';
   ctx.lineWidth = 1;
   
   const nodes = Array.from({ length: 50 }, () => ({
@@ -52,7 +52,7 @@ const generateNeuralTexture = () => {
   nodes.forEach(node => {
     const grad = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, 4);
     grad.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
-    grad.addColorStop(1, 'rgba(255, 0, 60, 0)');
+    grad.addColorStop(1, 'rgba(255, 64, 104, 0)');
     ctx.fillStyle = grad;
     ctx.beginPath();
     ctx.arc(node.x, node.y, 4, 0, Math.PI * 2);
@@ -155,8 +155,8 @@ const SavantLogoShape = () => {
       <mesh ref={coreRef}>
         <tubeGeometry args={[curve, 300, 0.15, 12, true]} />
         <MeshDistortMaterial
-          color="#ff003c"
-          emissive="#ff003c"
+          color="#ff4068"
+          emissive="#ff4068"
           emissiveIntensity={15}
           speed={5}
           distort={0.5}
@@ -172,7 +172,7 @@ const SavantLogoShape = () => {
           <mesh key={i}>
             <tubeGeometry args={[c, 200, 0.03, 8, true]} />
             <meshBasicMaterial
-              color="#ff003c"
+              color="#ff4068"
               transparent
               opacity={0.6}
               blending={THREE.AdditiveBlending}
@@ -185,7 +185,7 @@ const SavantLogoShape = () => {
       <mesh scale={1.15}>
         <tubeGeometry args={[curve, 150, 0.7, 16, true]} />
         <meshBasicMaterial
-          color="#ff003c"
+          color="#ff4068"
           transparent
           opacity={0.05}
           blending={THREE.AdditiveBlending}
@@ -215,13 +215,13 @@ const BackgroundAtmosphere = () => {
       
       {/* Moving Neural Grid */}
       <group ref={gridRef} rotation={[Math.PI / 2, 0, 0]} position={[0, -10, 0]}>
-        <gridHelper args={[100, 50, "#ff003c", "#1a0b2e"]} />
+        <gridHelper args={[100, 50, "#ff4068", "#1a0b2e"]} />
       </group>
 
       <Points positions={new Float32Array(Array.from({ length: 3000 }, () => (Math.random() - 0.5) * 50))}>
         <PointMaterial
           transparent
-          color="#ff003c"
+          color="#ff4068"
           size={0.02}
           sizeAttenuation={true}
           depthWrite={false}
@@ -241,11 +241,11 @@ const LogoScene = () => {
       
       <ambientLight intensity={0.2} />
       <spotLight position={[15, 25, 15]} angle={0.2} penumbra={1} intensity={25} castShadow />
-      <pointLight position={[-15, -15, -15]} color="#ff003c" intensity={10} />
+      <pointLight position={[-15, -15, -15]} color="#ff4068" intensity={10} />
       <pointLight position={[10, 10, 10]} color="#ffffff" intensity={5} />
       
-      {/* Intense Purple Background Glow */}
-      <pointLight position={[0, 0, -8]} color="#6a0dad" intensity={40} distance={50} />
+      {/* Intense Gold Background Glow */}
+      <pointLight position={[0, 0, -8]} color="#e6c03b" intensity={40} distance={50} />
       
       <Float speed={1.5} rotationIntensity={0.8} floatIntensity={0.8}>
         <SavantLogoShape />
@@ -300,10 +300,10 @@ export const ThreeLogo = () => {
       <div className="absolute inset-0 pointer-events-none p-12 flex flex-col justify-between">
         <div className="flex justify-between items-start">
           <div className="flex flex-col gap-1">
-            <div className="font-mono text-[10px] text-crimson tracking-[0.8em] uppercase font-black">
+            <div className="font-mono text-[10px] text-neon-pink tracking-[0.8em] uppercase font-black">
               SAVANT_CORE_v14.5
             </div>
-            <div className="h-[1px] w-24 bg-crimson/30" />
+            <div className="h-[1px] w-24 bg-neon-pink/30" />
           </div>
           <div className="font-mono text-[10px] text-white/20 tracking-[0.4em] uppercase">
             NEURAL_LATTICE_ACTIVE
@@ -316,7 +316,7 @@ export const ThreeLogo = () => {
               PRECISION_3D_ARCHITECTURE
             </div>
             <div className="flex items-center gap-4">
-              <div className="w-2 h-2 bg-crimson rounded-full animate-pulse" />
+              <div className="w-2 h-2 bg-neon-pink rounded-full animate-pulse" />
               <div className="font-mono text-[10px] text-white/40 tracking-[0.5em] uppercase">
                 SYNCHRONIZED
               </div>
