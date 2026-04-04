@@ -34,14 +34,14 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, 
           >
             {/* Scanning Line */}
             <motion.div 
-              className="absolute top-0 left-0 w-full h-[2px] bg-crimson/50 z-10"
+              className="absolute top-0 left-0 w-full h-[2px] bg-neon-pink/50 z-10"
               animate={{ top: ['0%', '100%', '0%'] }}
               transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
             />
             
             {/* Header */}
             <div className="flex justify-between items-center p-6 border-b border-white/10 relative">
-              <div className="absolute top-0 left-0 w-1 h-full bg-crimson" />
+              <div className="absolute top-0 left-0 w-1 h-full bg-neon-pink" />
               <h3 className="font-display font-black text-2xl text-white tracking-tighter uppercase">{title}</h3>
               <button 
                 onClick={onClose}

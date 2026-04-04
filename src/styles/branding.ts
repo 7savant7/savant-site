@@ -5,16 +5,20 @@
 
 export const BRANDING = {
   colors: {
-    primary: {
-      DEFAULT: '#ff003c', // Electric Crimson
-      glow: 'rgba(255, 0, 60, 0.5)',
-      muted: 'rgba(255, 0, 60, 0.1)',
-      dark: '#8a0303',
+    gunmetal: {
+      base: '#3d444d',
+      dark: '#2c3138',
+      light: '#4e5661',
     },
-    accent: {
-      DEFAULT: '#f9ff00', // Electric Gold
-      glow: 'rgba(249, 255, 0, 0.5)',
-      muted: 'rgba(249, 255, 0, 0.1)',
+    gold: {
+      base: '#e6c03b',
+      dark: '#c4a332',
+      light: '#f2d15a',
+    },
+    neonPink: {
+      base: '#ff4068',
+      glow: 'rgba(255, 64, 104, 0.5)',
+      muted: 'rgba(255, 64, 104, 0.1)',
     },
     background: {
       obsidian: '#0a0a0a',
@@ -26,14 +30,15 @@ export const BRANDING = {
       white: '#ffffff',
       dim: 'rgba(255, 255, 255, 0.6)',
       ghost: 'rgba(255, 255, 255, 0.2)',
-      crimson: '#ff003c',
-      gold: '#f9ff00',
+      pink: '#ff4068',
+      gold: '#e6c03b',
     }
   },
   typography: {
     sans: '"Inter", ui-sans-serif, system-ui, sans-serif',
     mono: '"JetBrains Mono", ui-monospace, SFMono-Regular, monospace',
     display: '"Inter", ui-sans-serif, system-ui, sans-serif',
+    serif: '"Playfair Display", serif',
     weights: {
       light: 300,
       normal: 400,
@@ -52,7 +57,7 @@ export const BRANDING = {
       pulse: 4.0,
     },
     easing: {
-      smooth: [0.23, 1, 0.32, 1],
+      smooth: [0.16, 1, 0.3, 1],
       bounce: [0.68, -0.6, 0.32, 1.6],
       linear: [0, 0, 1, 1],
     }
@@ -60,7 +65,7 @@ export const BRANDING = {
   borders: {
     thin: '1px solid rgba(255, 255, 255, 0.05)',
     medium: '1px solid rgba(255, 255, 255, 0.1)',
-    glow: '1px solid rgba(255, 0, 60, 0.3)',
+    glow: '1px solid rgba(255, 64, 104, 0.3)',
     radius: {
       none: '0px',
       sm: '2px',
@@ -82,7 +87,7 @@ export const BRANDING = {
       sm: '0 2px 8px rgba(0, 0, 0, 0.2)',
       md: '0 8px 32px rgba(0, 0, 0, 0.4)',
       lg: '0 16px 64px rgba(0, 0, 0, 0.6)',
-      glow: '0 0 20px rgba(255, 0, 60, 0.2)',
+      glow: '0 0 20px rgba(255, 64, 104, 0.2)',
     }
   }
 };

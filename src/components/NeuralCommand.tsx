@@ -176,7 +176,7 @@ export const NeuralCommand = () => {
           >
             {/* Header */}
             <div className="flex items-center gap-4 p-8 border-b border-white/10 bg-white/[0.02]">
-              <Search className="w-6 h-6 text-crimson" />
+              <Search className="w-6 h-6 text-neon-pink" />
               <input 
                 autoFocus
                 value={query}
@@ -212,7 +212,7 @@ export const NeuralCommand = () => {
                         className={`w-full text-left p-5 flex items-center gap-6 transition-all relative group ${isSelected ? 'bg-white text-black' : 'hover:bg-white/5 text-white/50'}`}
                       >
                         <div className={`p-3 border ${isSelected ? 'border-black/20 bg-black/5' : 'border-white/10 bg-white/5'} group-hover:scale-110 transition-transform rounded-lg`}>
-                          <Icon className={`w-5 h-5 ${isSelected ? 'text-crimson' : 'text-white/40'}`} />
+                          <Icon className={`w-5 h-5 ${isSelected ? 'text-neon-pink' : 'text-white/40'}`} />
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-1">
@@ -228,7 +228,7 @@ export const NeuralCommand = () => {
                         {isSelected && (
                           <motion.div 
                             layoutId="active-indicator"
-                            className="absolute right-0 w-1.5 h-full bg-crimson"
+                            className="absolute right-0 w-1.5 h-full bg-neon-pink"
                           />
                         )}
                       </button>
@@ -250,7 +250,7 @@ export const NeuralCommand = () => {
                 <span className="flex items-center gap-1"><kbd className="px-1 bg-white/5 border border-white/10 rounded">ESC</kbd> CLOSE</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-crimson animate-pulse" />
+                <div className="w-1.5 h-1.5 rounded-full bg-neon-pink animate-pulse" />
                 <span>SOVEREIGN_CORE_v5.5</span>
               </div>
             </div>

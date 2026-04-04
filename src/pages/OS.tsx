@@ -54,8 +54,9 @@ import { GlassCard } from '../components/ui/GlassCard';
 import { MagneticButton } from '../components/MagneticButton';
 import { SystemStatus } from '../components/SystemStatus';
 import { AmbientAudioController } from '../components/AmbientAudioController';
+import { TaskManager } from '../components/apps/TaskManager';
 
-type AppType = 'terminal' | 'network' | 'vault' | 'system' | 'matrix' | 'comms' | 'auth' | 'lattice' | 'diagnostics' | 'neural' | 'quantum' | 'settings';
+type AppType = 'terminal' | 'network' | 'vault' | 'system' | 'matrix' | 'comms' | 'auth' | 'lattice' | 'diagnostics' | 'neural' | 'quantum' | 'settings' | 'tasks';
 
 interface PaneNode {
   id: string;
@@ -70,15 +71,15 @@ const APPS: Record<AppType, { name: string; icon: any; color: string; hex: strin
   terminal: { 
     name: 'FRACTAL_TERMINAL', 
     icon: TerminalIcon, 
-    color: 'text-electric-gold', 
-    hex: '#f9ff00',
+    color: 'text-gold', 
+    hex: '#e6c03b',
     description: 'Direct kernel access and fractal command execution.'
   },
   network: { 
     name: 'NEURAL_LATTICE', 
     icon: Network, 
-    color: 'text-crimson', 
-    hex: '#ff003c',
+    color: 'text-neon-pink', 
+    hex: '#ff4068',
     description: 'Real-time neural node synchronization and topology.'
   },
   vault: { 
@@ -91,15 +92,15 @@ const APPS: Record<AppType, { name: string; icon: any; color: string; hex: strin
   system: { 
     name: 'SYSTEM_TELEMETRY', 
     icon: Cpu, 
-    color: 'text-electric-gold', 
-    hex: '#f9ff00',
+    color: 'text-gold', 
+    hex: '#e6c03b',
     description: 'Ultra-core processing metrics and hardware health.'
   },
   matrix: { 
     name: 'RECURSIVE_MATRIX', 
     icon: Activity, 
-    color: 'text-crimson', 
-    hex: '#ff003c',
+    color: 'text-neon-pink', 
+    hex: '#ff4068',
     description: 'Recursive data stream analysis and pattern recognition.'
   },
   comms: { 
@@ -112,15 +113,15 @@ const APPS: Record<AppType, { name: string; icon: any; color: string; hex: strin
   auth: { 
     name: 'BIOMETRIC_AUTH', 
     icon: Fingerprint, 
-    color: 'text-electric-gold', 
-    hex: '#f9ff00',
+    color: 'text-gold', 
+    hex: '#e6c03b',
     description: 'Multi-factor biometric verification and gate control.'
   },
   lattice: { 
     name: 'SPATIAL_LATTICE', 
     icon: Box, 
-    color: 'text-crimson', 
-    hex: '#ff003c',
+    color: 'text-neon-pink', 
+    hex: '#ff4068',
     description: '3D spatial lattice visualization and manipulation.'
   },
   diagnostics: { 
@@ -133,15 +134,15 @@ const APPS: Record<AppType, { name: string; icon: any; color: string; hex: strin
   neural: { 
     name: 'NEURAL_MAP', 
     icon: CommandIcon, 
-    color: 'text-electric-gold', 
-    hex: '#f9ff00',
+    color: 'text-gold', 
+    hex: '#e6c03b',
     description: 'Global neural topology and architecture mapping.'
   },
   quantum: {
     name: 'QUANTUM_TELEMETRY',
     icon: Zap,
-    color: 'text-crimson',
-    hex: '#ff003c',
+    color: 'text-neon-pink',
+    hex: '#ff4068',
     description: 'Advanced quantum state monitoring and entanglement analysis.'
   },
   settings: {
@@ -150,6 +151,13 @@ const APPS: Record<AppType, { name: string; icon: any; color: string; hex: strin
     color: 'text-white',
     hex: '#ffffff',
     description: 'Configure system core parameters and visual aesthetics.'
+  },
+  tasks: {
+    name: 'MISSION_OBJECTIVES',
+    icon: CheckCircle2,
+    color: 'text-emerald-400',
+    hex: '#34d399',
+    description: 'Strategic task management and objective tracking.'
   }
 };
 
@@ -226,7 +234,7 @@ const CommandPalette = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
                     className="w-full text-left p-3 font-mono text-[10px] text-white/50 hover:text-white hover:bg-white/5 transition-colors flex items-center justify-between group"
                   >
                     <span>{cmd}</span>
-                    <span className="opacity-0 group-hover:opacity-100 text-crimson">EXECUTE</span>
+                    <span className="opacity-0 group-hover:opacity-100 text-neon-pink">EXECUTE</span>
                   </button>
                 </MagneticButton>
               ))}
@@ -342,15 +350,15 @@ const TerminalApp = () => {
   };
 
   return (
-    <div className="h-full w-full p-4 font-mono text-[10px] text-electric-gold overflow-hidden flex flex-col relative bg-black/40">
-      <div className="absolute top-4 right-4 text-electric-gold/5 pointer-events-none">
+    <div className="h-full w-full p-4 font-mono text-[10px] text-gold overflow-hidden flex flex-col relative bg-black/40">
+      <div className="absolute top-4 right-4 text-gold/5 pointer-events-none">
         <TerminalIcon className="w-32 h-32" />
       </div>
       <div ref={terminalRef} className="flex-1 overflow-y-auto custom-scrollbar mb-2 relative z-10">
         {lines.map((l, i) => (
           <div key={i} className="opacity-80 leading-relaxed py-0.5">
             {l.startsWith('>') ? (
-              <span className="text-crimson font-bold">{l}</span>
+              <span className="text-neon-pink font-bold">{l}</span>
             ) : l.startsWith(' ') ? (
               <span className="text-white/60">{l}</span>
             ) : (
@@ -359,13 +367,13 @@ const TerminalApp = () => {
           </div>
         ))}
         <div className="flex items-center gap-2 mt-2">
-          <span className="text-crimson font-bold animate-pulse">{'>'}</span>
+          <span className="text-neon-pink font-bold animate-pulse">{'>'}</span>
           <form onSubmit={handleCommand} className="flex-1">
             <input 
               autoFocus
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="w-full bg-transparent border-none outline-none text-electric-gold font-mono placeholder:text-white/5"
+              className="w-full bg-transparent border-none outline-none text-gold font-mono placeholder:text-white/5"
               placeholder="ENTER_COMMAND..."
             />
           </form>
@@ -387,7 +395,7 @@ const SystemApp = () => {
     const initialData = Array.from({ length: 30 }, (_, i) => ({
       val: 30 + Math.random() * 40,
       val2: 20 + Math.random() * 50,
-      val3: 50 + Math.random() * 30,
+      val3: 99.99 + Math.random() * 0.01,
       time: `${i}:00`
     }));
     setData(initialData);
@@ -411,21 +419,21 @@ const SystemApp = () => {
 
   return (
     <div className="h-full w-full p-4 md:p-6 flex flex-col gap-4 md:gap-6 relative overflow-y-auto custom-scrollbar bg-obsidian/40">
-      <div className="absolute top-8 right-8 text-electric-gold/5 pointer-events-none">
+      <div className="absolute top-8 right-8 text-gold/5 pointer-events-none">
         <Cpu className="w-32 h-32 md:w-64 md:h-64" />
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 relative z-10">
         <GlassCard title="CPU_LOAD" subtitle="Core_Frequency" className="p-3 md:p-4">
           <div className="flex items-end justify-between">
-            <div className="font-mono text-2xl text-electric-gold font-black">
+            <div className="font-mono text-2xl text-gold font-black">
               {cpuUsage.toFixed(1)}<span className="text-[10px] ml-1 opacity-50">%</span>
             </div>
             <div className="font-mono text-[9px] text-white/20">{(4.2 + (cpuUsage / 100) * 0.8).toFixed(2)} GHz</div>
           </div>
           <div className="w-full h-1 bg-white/5 mt-3 rounded-full overflow-hidden">
             <motion.div 
-              className="h-full bg-electric-gold" 
+              className="h-full bg-gold" 
               animate={{ width: `${cpuUsage}%` }}
               transition={{ duration: 1 }}
             />
@@ -434,14 +442,14 @@ const SystemApp = () => {
         
         <GlassCard title="MEM_ALLOC" subtitle="Shard_Memory" className="p-3 md:p-4">
           <div className="flex items-end justify-between">
-            <div className="font-mono text-xl md:text-2xl text-crimson font-black">
+            <div className="font-mono text-xl md:text-2xl text-neon-pink font-black">
               {memUsage.toFixed(1)}<span className="text-[10px] ml-1 opacity-50">%</span>
             </div>
             <div className="font-mono text-[8px] md:text-[9px] text-white/20">{(64 * (memUsage / 100)).toFixed(1)} GB</div>
           </div>
           <div className="w-full h-1 bg-white/5 mt-3 rounded-full overflow-hidden">
             <motion.div 
-              className="h-full bg-crimson" 
+              className="h-full bg-neon-pink" 
               animate={{ width: `${memUsage}%` }}
               transition={{ duration: 1 }}
             />
@@ -474,8 +482,8 @@ const SystemApp = () => {
               <AreaChart data={data}>
                 <defs>
                   <linearGradient id="colorCpu" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#f9ff00" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#f9ff00" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#e6c03b" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#e6c03b" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
@@ -483,9 +491,9 @@ const SystemApp = () => {
                 <YAxis hide domain={[0, 100]} />
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid rgba(255,255,255,0.1)', fontSize: '10px', fontFamily: 'monospace' }}
-                  itemStyle={{ color: '#f9ff00' }}
+                  itemStyle={{ color: '#e6c03b' }}
                 />
-                <Area type="monotone" dataKey="val" stroke="#f9ff00" strokeWidth={2} fillOpacity={1} fill="url(#colorCpu)" isAnimationActive={false} />
+                <Area type="monotone" dataKey="val" stroke="#e6c03b" strokeWidth={2} fillOpacity={1} fill="url(#colorCpu)" isAnimationActive={false} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -500,9 +508,9 @@ const SystemApp = () => {
                 <YAxis hide domain={[0, 100]} />
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid rgba(255,255,255,0.1)', fontSize: '10px', fontFamily: 'monospace' }}
-                  itemStyle={{ color: '#ff003c' }}
+                  itemStyle={{ color: '#ff4068' }}
                 />
-                <Line type="monotone" dataKey="val3" stroke="#ff003c" strokeWidth={2} dot={false} isAnimationActive={false} />
+                <Line type="monotone" dataKey="val3" stroke="#ff4068" strokeWidth={2} dot={false} isAnimationActive={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -536,14 +544,14 @@ const VaultApp = () => {
 const NetworkApp = () => {
   return (
     <div className="h-full w-full p-4 relative overflow-hidden flex flex-col">
-      <div className="font-mono text-[10px] text-crimson/50 mb-4 relative z-10 flex justify-between">
+      <div className="font-mono text-[10px] text-neon-pink/50 mb-4 relative z-10 flex justify-between">
         <span>GLOBAL_LATTICE_TOPOLOGY</span>
         <span className="animate-pulse">LIVE_FEED</span>
       </div>
       <div className="flex-1 relative border border-white/5 bg-black/20">
         <NeuralLatticeViz />
         
-        <div className="absolute bottom-4 left-4 font-mono text-[9px] text-crimson bg-black/60 p-2 backdrop-blur-sm border border-crimson/20">
+        <div className="absolute bottom-4 left-4 font-mono text-[9px] text-neon-pink bg-black/60 p-2 backdrop-blur-sm border border-neon-pink/20">
           ACTIVE_NODES: {Math.floor(Math.random() * 1000) + 5000}<br/>
           LATENCY: {Math.floor(Math.random() * 10) + 2}ms<br/>
           PACKET_LOSS: 0.00%
@@ -561,7 +569,7 @@ const MatrixApp = () => {
   }, []);
 
   return (
-    <div className="h-full w-full p-4 font-mono text-[10px] text-crimson overflow-hidden bg-black flex justify-between">
+    <div className="h-full w-full p-4 font-mono text-[10px] text-neon-pink overflow-hidden bg-black flex justify-between">
       {columns.map((start, i) => (
         <motion.div
           key={i}
@@ -597,16 +605,16 @@ const DiagnosticsApp = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="border border-white/5 p-4 bg-black/20">
           <div className="font-mono text-[8px] text-white/20 uppercase mb-2 tracking-widest">CPU_LOAD</div>
-          <div className="text-2xl font-black text-electric-gold">{cpuUsage.toFixed(1)}%</div>
+          <div className="text-2xl font-black text-gold">{cpuUsage.toFixed(1)}%</div>
           <div className="w-full h-1 bg-white/5 mt-2 overflow-hidden">
-            <motion.div className="h-full bg-electric-gold" animate={{ width: `${cpuUsage}%` }} />
+            <motion.div className="h-full bg-gold" animate={{ width: `${cpuUsage}%` }} />
           </div>
         </div>
         <div className="border border-white/5 p-4 bg-black/20">
           <div className="font-mono text-[8px] text-white/20 uppercase mb-2 tracking-widest">MEM_ALLOC</div>
-          <div className="text-2xl font-black text-crimson">{memUsage.toFixed(1)}%</div>
+          <div className="text-2xl font-black text-neon-pink">{memUsage.toFixed(1)}%</div>
           <div className="w-full h-1 bg-white/5 mt-2 overflow-hidden">
-            <motion.div className="h-full bg-crimson" animate={{ width: `${memUsage}%` }} />
+            <motion.div className="h-full bg-neon-pink" animate={{ width: `${memUsage}%` }} />
           </div>
         </div>
       </div>
@@ -620,7 +628,7 @@ const DiagnosticsApp = () => {
           </div>
           <div className="flex justify-between items-center font-mono text-[10px]">
             <span className="text-white/60">SIGNAL_LATENCY</span>
-            <span className="text-electric-gold">{latency.toFixed(4)}ms</span>
+            <span className="text-gold">{latency.toFixed(4)}ms</span>
           </div>
           <div className="flex justify-between items-center font-mono text-[10px]">
             <span className="text-white/60">UPTIME</span>
@@ -628,7 +636,7 @@ const DiagnosticsApp = () => {
           </div>
           <div className="flex justify-between items-center font-mono text-[10px]">
             <span className="text-white/60">ENCRYPTION_STRENGTH</span>
-            <span className="text-crimson">AES-4096-QUANTUM</span>
+            <span className="text-neon-pink">AES-4096-QUANTUM</span>
           </div>
         </div>
       </div>
@@ -663,7 +671,7 @@ const CommsApp = () => {
               <div className="font-mono text-[9px] md:text-[10px] text-white tracking-widest truncate">AGENT_{Math.random().toString(36).substring(2, 6).toUpperCase()}</div>
               <div className="font-mono text-[7px] md:text-[8px] text-white/30 tracking-widest truncate">STATUS: ONLINE // ENCRYPTED</div>
             </div>
-            <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-electric-gold animate-pulse shrink-0" />
+            <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-gold animate-pulse shrink-0" />
           </div>
         ))}
       </div>
@@ -713,7 +721,7 @@ const NeuralMapApp = () => {
       .force('center', d3.forceCenter(width / 2, height / 2));
 
     const link = svg.append('g')
-      .attr('stroke', '#f9ff00')
+      .attr('stroke', '#e6c03b')
       .attr('stroke-opacity', 0.4)
       .selectAll('line')
       .data(links)
@@ -727,7 +735,7 @@ const NeuralMapApp = () => {
 
     node.append('circle')
       .attr('r', 8)
-      .attr('fill', d => d.group === 1 ? '#f9ff00' : d.group === 2 ? '#ff003c' : '#ffffff')
+      .attr('fill', d => d.group === 1 ? '#e6c03b' : d.group === 2 ? '#ff4068' : '#ffffff')
       .attr('stroke', '#000')
       .attr('stroke-width', 2);
 
@@ -757,7 +765,7 @@ const NeuralMapApp = () => {
   return (
     <div className="h-full w-full relative bg-black overflow-hidden">
       <svg ref={svgRef} className="w-full h-full" />
-      <div className="absolute top-4 left-4 font-mono text-[10px] text-electric-gold bg-black/60 p-2 border border-electric-gold/20 backdrop-blur-md">
+      <div className="absolute top-4 left-4 font-mono text-[10px] text-gold bg-black/60 p-2 border border-gold/20 backdrop-blur-md">
         NEURAL_TOPOLOGY // SECTOR: GLOBAL
       </div>
     </div>
@@ -774,12 +782,18 @@ const AuthApp = () => {
 
 const QuantumTelemetry = () => {
   const { quantumEntanglement, neuralSync, updateMetrics } = useStore();
-  const [history, setHistory] = useState<any[]>([]);
+  const [history, setHistory] = useState<any[]>(
+    Array.from({ length: 20 }, (_, i) => ({
+      entanglement: 99.99 + Math.random() * 0.01,
+      sync: 0.98 + Math.random() * 0.02,
+      time: Date.now() - (20 - i) * 1000
+    }))
+  );
 
   useEffect(() => {
     const int = setInterval(() => {
       updateMetrics();
-      setHistory(prev => [...prev.slice(-20), { 
+      setHistory(prev => [...prev.slice(-19), { 
         entanglement: quantumEntanglement, 
         sync: neuralSync,
         time: Date.now() 
@@ -804,9 +818,10 @@ const QuantumTelemetry = () => {
           <div className="mt-4 h-24">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={history}>
+                <YAxis hide domain={[99, 100]} />
                 <Bar dataKey="entanglement">
                   {history.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.entanglement > 80 ? '#ff003c' : '#ffffff'} opacity={0.3 + (index / 20) * 0.7} />
+                    <Cell key={`cell-${index}`} fill={entry.entanglement > 80 ? '#ff4068' : '#ffffff'} opacity={0.3 + (index / 20) * 0.7} />
                   ))}
                 </Bar>
               </BarChart>
@@ -815,11 +830,12 @@ const QuantumTelemetry = () => {
         </GlassCard>
 
         <GlassCard title="NEURAL_SYNC" subtitle="Coherence_Level" className="p-4">
-          <div className="text-3xl font-black text-electric-gold font-mono">{(neuralSync * 100).toFixed(1)}%</div>
+          <div className="text-3xl font-black text-gold font-mono">{(neuralSync * 100).toFixed(1)}%</div>
           <div className="mt-4 h-24">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={history}>
-                <Area type="monotone" dataKey="sync" stroke="#f9ff00" fill="#f9ff00" fillOpacity={0.1} />
+                <YAxis hide domain={[0, 1]} />
+                <Area type="monotone" dataKey="sync" stroke="#e6c03b" fill="#e6c03b" fillOpacity={0.1} isAnimationActive={false} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -831,7 +847,7 @@ const QuantumTelemetry = () => {
         {history.slice(-5).reverse().map((h, i) => (
           <div key={i} className="flex justify-between py-1 border-b border-white/5 last:border-0">
             <span>[STABILITY_CHECK] ENTANGLEMENT_COHERENCE: {h.entanglement.toFixed(4)}%</span>
-            <span className="text-crimson/50">{new Date(h.time).toLocaleTimeString()}</span>
+            <span className="text-neon-pink/50">{new Date(h.time).toLocaleTimeString()}</span>
           </div>
         ))}
       </div>
@@ -872,7 +888,7 @@ const SettingsApp = () => {
               key={v.id} 
               title={v.name} 
               subtitle={v.id.toUpperCase()} 
-              className={`p-3 md:p-4 cursor-pointer transition-all border-2 ${logoVariant === v.id ? 'border-electric-gold bg-electric-gold/5' : 'border-white/5 hover:border-white/20'}`}
+              className={`p-3 md:p-4 cursor-pointer transition-all border-2 ${logoVariant === v.id ? 'border-gold bg-gold/5' : 'border-white/5 hover:border-white/20'}`}
               onClick={() => {
                 setLogoVariant(v.id as any);
                 addLog(`Logo variant changed to ${v.name}`, 'INFO');
@@ -880,7 +896,7 @@ const SettingsApp = () => {
             >
               <div className="font-mono text-[8px] md:text-[9px] text-white/40 mt-2 leading-relaxed">{v.description}</div>
               {logoVariant === v.id && (
-                <div className="mt-3 md:mt-4 flex items-center gap-2 text-electric-gold font-mono text-[9px] md:text-[10px]">
+                <div className="mt-3 md:mt-4 flex items-center gap-2 text-gold font-mono text-[9px] md:text-[10px]">
                   <CheckCircle2 className="w-2.5 h-2.5 md:w-3 h-3" />
                   <span>ACTIVE_CORE</span>
                 </div>
@@ -900,15 +916,15 @@ const SettingsApp = () => {
                 toggleEffect(e.id as any);
                 addLog(`Effect ${e.name} ${!e.active ? 'ENABLED' : 'DISABLED'}`, 'INFO');
               }}
-              className={`p-3 md:p-4 border border-white/10 bg-white/5 flex items-center justify-between group hover:bg-white/10 transition-all ${e.active ? 'border-crimson/50' : ''}`}
+              className={`p-3 md:p-4 border border-white/10 bg-white/5 flex items-center justify-between group hover:bg-white/10 transition-all ${e.active ? 'border-neon-pink/50' : ''}`}
             >
               <div className="flex flex-col items-start">
                 <span className="font-mono text-[9px] md:text-[10px] text-white tracking-widest text-left">{e.name}</span>
-                <span className={`font-mono text-[7px] md:text-[8px] mt-1 ${e.active ? 'text-crimson' : 'text-white/20'}`}>
+                <span className={`font-mono text-[7px] md:text-[8px] mt-1 ${e.active ? 'text-neon-pink' : 'text-white/20'}`}>
                   {e.active ? 'STATUS: ACTIVE' : 'STATUS: INACTIVE'}
                 </span>
               </div>
-              <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${e.active ? 'bg-crimson shadow-[0_0_10px_#ff003c]' : 'bg-white/10'}`} />
+              <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${e.active ? 'bg-neon-pink shadow-[0_0_10px_#ff4068]' : 'bg-white/10'}`} />
             </button>
           ))}
         </div>
@@ -1048,6 +1064,7 @@ const Pane: React.FC<PaneProps> = ({ node, onSplit, onClose, onChangeApp, isRoot
             {appType === 'neural' && <NeuralMapApp />}
             {appType === 'quantum' && <QuantumTelemetry />}
             {appType === 'settings' && <SettingsApp />}
+            {appType === 'tasks' && <TaskManager />}
           </motion.div>
         </AnimatePresence>
         
@@ -1218,11 +1235,11 @@ export default function OS() {
       <div className="h-12 border-b border-white/10 bg-obsidian/95 backdrop-blur-xl flex items-center justify-between px-3 md:px-8 z-50 relative group">
         <div className="flex items-center gap-3 md:gap-6">
           <div className="flex gap-1 group-hover:gap-2 transition-all duration-500">
-            <div className="w-1.5 h-1.5 bg-crimson rotate-45 shadow-[0_0_10px_#ff003c]" />
+            <div className="w-1.5 h-1.5 bg-neon-pink rotate-45 shadow-[0_0_10px_#ff4068]" />
             <div className="w-1.5 h-1.5 bg-white/10 rotate-45" />
           </div>
           <span className="font-display font-black text-base md:text-lg tracking-tighter text-white group-hover:glitch-text transition-all">
-            SAVANT<span className="text-crimson">_</span>OS
+            SAVANT<span className="text-neon-pink">_</span>OS
           </span>
           <div className="hidden md:block h-4 w-[1px] bg-white/10 mx-2" />
           <span className="font-mono text-[9px] text-white/30 tracking-[0.3em] hidden xl:inline-block uppercase">
@@ -1243,8 +1260,8 @@ export default function OS() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-1.5 bg-white/[0.03] border border-white/5 rounded-full hover:border-electric-gold/30 transition-colors cursor-help">
-            <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-electric-gold animate-pulse shadow-[0_0_10px_#f9ff00]" />
+          <div className="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-1.5 bg-white/[0.03] border border-white/5 rounded-full hover:border-gold/30 transition-colors cursor-help">
+            <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-gold animate-pulse shadow-[0_0_10px_#e6c03b]" />
             <span className="text-white/40 tracking-widest hidden lg:inline-block">UPLINK_STABLE</span>
           </div>
 
@@ -1253,7 +1270,7 @@ export default function OS() {
               <span className="text-[7px] text-white/20 uppercase tracking-tighter">System_Load</span>
               <div className="w-24 h-1 bg-white/5 rounded-full overflow-hidden">
                 <motion.div 
-                  className="h-full bg-crimson"
+                  className="h-full bg-neon-pink"
                   animate={{ width: `${systemLoad * 100}%` }}
                   transition={{ duration: 0.5 }}
                 />

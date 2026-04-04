@@ -30,10 +30,10 @@ export const Marquee: React.FC<MarqueeProps> = ({
         {/* Render items twice for seamless loop */}
         {[...items, ...items].map((item, i) => (
           <div key={i} className="flex items-center gap-24">
-            <span className="font-display font-black text-[clamp(4rem,15vw,12rem)] text-white/10 tracking-tighter uppercase hover:text-crimson transition-colors duration-500 cursor-default">
+            <span className="font-display font-black text-[clamp(4rem,15vw,12rem)] text-white/10 tracking-tighter uppercase hover:text-neon-pink transition-colors duration-500 cursor-default">
               {item}
             </span>
-            <div className="w-4 h-4 bg-crimson rotate-45" />
+            <div className="w-4 h-4 bg-neon-pink rotate-45" />
           </div>
         ))}
       </motion.div>

@@ -66,10 +66,10 @@ function FractalNode({ position, scale, depth, maxDepth }: FractalNodeProps) {
       >
         <boxGeometry args={[1, 1, 1]} />
         <MeshWobbleMaterial 
-          color={hovered ? BRANDING.colors.accent.DEFAULT : (depth % 2 === 0 ? BRANDING.colors.primary.DEFAULT : "#ffffff")}
+          color={hovered ? BRANDING.colors.gold.base : (depth % 2 === 0 ? BRANDING.colors.neonPink.base : "#ffffff")}
           factor={0.1}
           speed={1}
-          emissive={hovered ? BRANDING.colors.accent.DEFAULT : BRANDING.colors.primary.DEFAULT}
+          emissive={hovered ? BRANDING.colors.gold.base : BRANDING.colors.neonPink.base}
           emissiveIntensity={hovered ? 4 : 0.2}
           transparent
           opacity={1 - depth * 0.2}
@@ -93,8 +93,8 @@ function Scene({ zoom }: { zoom: number }) {
   return (
     <>
       <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} intensity={100} color={BRANDING.colors.accent.DEFAULT} />
-      <pointLight position={[-10, -10, -10]} intensity={100} color={BRANDING.colors.primary.DEFAULT} />
+      <pointLight position={[10, 10, 10]} intensity={100} color={BRANDING.colors.gold.base} />
+      <pointLight position={[-10, -10, -10]} intensity={100} color={BRANDING.colors.neonPink.base} />
       <FractalNode position={[0, 0, 0]} scale={10} depth={0} maxDepth={3} />
     </>
   );
@@ -116,13 +116,13 @@ export default function FractalExplorer() {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="absolute top-6 left-6 z-10 flex flex-col gap-2">
-        <div className="text-[10px] font-mono text-crimson tracking-[0.4em] uppercase font-bold">Fractal_Lattice_v2.0</div>
+        <div className="text-[10px] font-mono text-neon-pink tracking-[0.4em] uppercase font-bold">Fractal_Lattice_v2.0</div>
         <div className="text-2xl font-display text-white">RECURSIVE_EXPLORER</div>
       </div>
 
       <div className="absolute bottom-6 right-6 z-10 flex flex-col items-end gap-2">
         <div className="text-[9px] font-mono text-white/30 uppercase tracking-widest">Zoom_Depth</div>
-        <div className="text-xl font-mono text-electric-gold font-bold">{(zoom * 100).toFixed(0)}%</div>
+        <div className="text-xl font-mono text-gold font-bold">{(zoom * 100).toFixed(0)}%</div>
       </div>
 
       <Canvas dpr={[1, 2]}>
@@ -152,7 +152,7 @@ export default function FractalExplorer() {
           {[...Array(3)].map((_, i) => (
             <div key={i} className="w-1 h-8 bg-white/5 relative">
               <motion.div 
-                className="absolute bottom-0 left-0 w-full bg-crimson"
+                className="absolute bottom-0 left-0 w-full bg-neon-pink"
                 animate={{ height: ['20%', '80%', '40%'] }}
                 transition={{ duration: 2 + i, repeat: Infinity, ease: "easeInOut" }}
               />

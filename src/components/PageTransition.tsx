@@ -28,7 +28,7 @@ export function CurtainTransition() {
         animate={{ scaleY: 0 }}
         exit={{ scaleY: 0 }}
         transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1], delay: 0.1 }}
-        className="fixed inset-0 bg-crimson z-[10000] origin-bottom pointer-events-none"
+        className="fixed inset-0 bg-neon-pink z-[10000] origin-bottom pointer-events-none"
       />
     </>
   );

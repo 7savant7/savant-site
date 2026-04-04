@@ -57,7 +57,7 @@ const NeuralConnections = ({ count = 100, radius = 2.5 }) => {
     <group>
       <lineSegments ref={linesRef} geometry={lineGeometry}>
         <lineBasicMaterial 
-          color="#ff003c" 
+          color="#ff4068" 
           transparent 
           opacity={0.1 + systemLoad * 0.2} 
           blending={THREE.AdditiveBlending}
@@ -104,11 +104,11 @@ const CoreGeometry = () => {
       onPointerUp={() => setClicked(false)}
     >
       <MeshDistortMaterial
-        color={hovered ? "#f9ff00" : "#ffffff"}
+        color={hovered ? "#e6c03b" : "#ffffff"}
         speed={2 + systemLoad * 5}
         distort={0.3 + systemLoad * 0.4}
         radius={1}
-        emissive={hovered ? "#f9ff00" : "#ff003c"}
+        emissive={hovered ? "#e6c03b" : "#ff4068"}
         emissiveIntensity={0.5 + systemLoad * 2}
         wireframe
       />
@@ -125,8 +125,8 @@ export const Lattice3D = () => {
       <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 6], fov: 45 }}>
         <ambientLight intensity={0.2} />
         <pointLight position={[10, 10, 10]} intensity={1.5} color="#ffffff" />
-        <pointLight position={[-10, -10, -10]} intensity={1} color="#ff003c" />
-        <spotLight position={[0, 5, 0]} intensity={2} color="#f9ff00" />
+        <pointLight position={[-10, -10, -10]} intensity={1} color="#ff4068" />
+        <spotLight position={[0, 5, 0]} intensity={2} color="#e6c03b" />
         
         <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
           <NeuralConnections count={150} radius={3} />
@@ -161,11 +161,11 @@ export const Lattice3D = () => {
         </div>
       </div>
       
-      <div className="absolute bottom-8 right-8 font-mono text-[10px] text-crimson/40 tracking-[0.3em] uppercase flex flex-col items-end pointer-events-none">
+      <div className="absolute bottom-8 right-8 font-mono text-[10px] text-neon-pink/40 tracking-[0.3em] uppercase flex flex-col items-end pointer-events-none">
         <div className="flex items-center gap-4 mb-2">
           <div className="w-32 h-1 bg-white/5 rounded-full overflow-hidden">
             <motion.div 
-              className="h-full bg-crimson"
+              className="h-full bg-neon-pink"
               animate={{ width: `${cpuUsage}%` }}
             />
           </div>
@@ -177,11 +177,11 @@ export const Lattice3D = () => {
       {/* Interactive Legend */}
       <div className="absolute bottom-8 left-8 flex flex-col gap-4">
         <div className="flex items-center gap-4 group cursor-pointer" onClick={() => setActiveNode('CORE')}>
-          <div className="w-8 h-[1px] bg-white/20 group-hover:w-12 group-hover:bg-electric-gold transition-all" />
+          <div className="w-8 h-[1px] bg-white/20 group-hover:w-12 group-hover:bg-gold transition-all" />
           <span className="font-mono text-[9px] text-white/30 group-hover:text-white tracking-widest uppercase">Singularity_Core</span>
         </div>
         <div className="flex items-center gap-4 group cursor-pointer" onClick={() => setActiveNode('LATTICE')}>
-          <div className="w-8 h-[1px] bg-white/20 group-hover:w-12 group-hover:bg-crimson transition-all" />
+          <div className="w-8 h-[1px] bg-white/20 group-hover:w-12 group-hover:bg-neon-pink transition-all" />
           <span className="font-mono text-[9px] text-white/30 group-hover:text-white tracking-widest uppercase">Neural_Fabric</span>
         </div>
       </div>

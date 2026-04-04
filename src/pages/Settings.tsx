@@ -48,23 +48,23 @@ export default function Settings() {
             className="savant-stack !gap-8"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-[1px] bg-crimson" />
-              <span className="font-mono text-[10px] text-crimson tracking-[0.6em] uppercase font-bold">SYSTEM_CORE // CONFIG</span>
+              <div className="w-12 h-[1px] bg-neon-pink" />
+              <span className="font-mono text-[10px] text-neon-pink tracking-[0.6em] uppercase font-bold">SYSTEM_CORE // CONFIG</span>
             </div>
             <h1 className="text-massive font-display">
               SYSTEM_<br />
-              <span className="text-crimson italic font-serif font-light text-[0.7em]">Settings.</span>
+              <span className="text-neon-pink italic font-serif font-light text-[0.7em]">Settings.</span>
             </h1>
           </motion.div>
         </header>
 
         <div className="savant-grid grid-cols-1 lg:grid-cols-2 !gap-12">
           <section className="p-12 border border-white/5 bg-white/[0.01] backdrop-blur-3xl relative overflow-hidden group rounded-[3rem]">
-            <div className="absolute top-0 left-0 w-1 h-full bg-crimson opacity-50" />
+            <div className="absolute top-0 left-0 w-1 h-full bg-neon-pink opacity-50" />
             
             <div className="flex items-center gap-6 mb-10">
-              <div className="w-12 h-12 rounded-2xl bg-crimson/10 flex items-center justify-center">
-                <Key className="text-crimson" size={24} />
+              <div className="w-12 h-12 rounded-2xl bg-neon-pink/10 flex items-center justify-center">
+                <Key className="text-neon-pink" size={24} />
               </div>
               <h2 className="font-display text-3xl text-white tracking-tight">API_KEY_CONFIGURATION</h2>
             </div>
@@ -85,10 +85,10 @@ export default function Settings() {
                     value={apiKey}
                     onChange={(e) => setApiKey(e.target.value)}
                     placeholder="ENTER_SOVEREIGN_KEY..."
-                    className="w-full bg-white/[0.02] border border-white/10 p-6 font-mono text-sm text-white focus:outline-none focus:border-crimson transition-colors rounded-2xl"
+                    className="w-full bg-white/[0.02] border border-white/10 p-6 font-mono text-sm text-white focus:outline-none focus:border-neon-pink transition-colors rounded-2xl"
                   />
                   <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${apiKey ? 'bg-crimson animate-pulse' : 'bg-white/10'}`} />
+                    <div className={`w-2 h-2 rounded-full ${apiKey ? 'bg-neon-pink animate-pulse' : 'bg-white/10'}`} />
                   </div>
                 </div>
               </div>
@@ -126,19 +126,19 @@ export default function Settings() {
               <motion.div 
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-10 p-6 bg-white/[0.02] border-l-2 border-electric-gold font-mono text-[9px] text-white/40 tracking-widest uppercase rounded-r-2xl"
+                className="mt-10 p-6 bg-white/[0.02] border-l-2 border-gold font-mono text-[9px] text-white/40 tracking-widest uppercase rounded-r-2xl"
               >
-                <span className="text-electric-gold">STATUS:</span> KEY_DETECTED_IN_BUFFER // {debouncedKey.substring(0, 4)}****{debouncedKey.substring(debouncedKey.length - 4)}
+                <span className="text-gold">STATUS:</span> KEY_DETECTED_IN_BUFFER // {debouncedKey.substring(0, 4)}****{debouncedKey.substring(debouncedKey.length - 4)}
               </motion.div>
             )}
           </section>
 
           <section className="p-12 border border-white/5 bg-white/[0.01] backdrop-blur-3xl relative overflow-hidden group rounded-[3rem]">
-            <div className="absolute top-0 left-0 w-1 h-full bg-electric-gold opacity-50" />
+            <div className="absolute top-0 left-0 w-1 h-full bg-gold opacity-50" />
             
             <div className="flex items-center gap-6 mb-10">
-              <div className="w-12 h-12 rounded-2xl bg-electric-gold/10 flex items-center justify-center">
-                <Save className="text-electric-gold" size={24} />
+              <div className="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center">
+                <Save className="text-gold" size={24} />
               </div>
               <h2 className="font-display text-3xl text-white tracking-tight">SOURCE_EXTRACTION_v80</h2>
             </div>
@@ -164,7 +164,7 @@ export default function Settings() {
                   }
                 }}
                 variant="primary"
-                className="w-full h-20 bg-electric-gold border-electric-gold text-black"
+                className="w-full h-20 bg-gold border-gold text-black"
               >
                 <span className="flex items-center gap-3">
                   <Save size={18} />
@@ -179,15 +179,15 @@ export default function Settings() {
             <div className="savant-grid grid-cols-2 md:grid-cols-4 !gap-12 font-mono text-[9px] text-white/30 tracking-[0.4em] uppercase">
               <div>
                 <div className="text-white mb-2">LOCAL_STORAGE</div>
-                <div className="text-electric-gold">ENABLED</div>
+                <div className="text-gold">ENABLED</div>
               </div>
               <div>
                 <div className="text-white mb-2">ENCRYPTION</div>
-                <div className="text-electric-gold">AES_256_LOCAL</div>
+                <div className="text-gold">AES_256_LOCAL</div>
               </div>
               <div>
                 <div className="text-white mb-2">SYNC_STATUS</div>
-                <div className="text-electric-gold">OFFLINE_ONLY</div>
+                <div className="text-gold">OFFLINE_ONLY</div>
               </div>
               <div>
                 <div className="text-white mb-2">NODE_ID</div>

@@ -6,7 +6,7 @@ export const LoadingLattice = () => {
       <div className="relative w-24 h-24 mb-8">
         {/* Outer Fractal Ring */}
         <motion.div 
-          className="absolute inset-0 border border-crimson/30"
+          className="absolute inset-0 border border-neon-pink/30"
           style={{ clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }}
           animate={{ 
             rotate: 360,
@@ -18,7 +18,7 @@ export const LoadingLattice = () => {
         
         {/* Middle Fractal Ring */}
         <motion.div 
-          className="absolute inset-4 border border-electric-gold/40"
+          className="absolute inset-4 border border-gold/40"
           style={{ clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }}
           animate={{ 
             rotate: -360,
@@ -54,7 +54,7 @@ export const LoadingLattice = () => {
       </div>
       
       <div className="flex flex-col items-center gap-2">
-        <div className="font-mono text-[10px] text-crimson tracking-[0.6em] font-bold uppercase animate-pulse">
+        <div className="font-mono text-[10px] text-neon-pink tracking-[0.6em] font-bold uppercase animate-pulse">
           Syncing_Lattice_Data
         </div>
         <div className="flex gap-1">

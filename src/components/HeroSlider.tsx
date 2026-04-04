@@ -18,17 +18,17 @@ const getUserDataString = () => {
 };
 
 const THEMES = [
-  "A dynamic, high-energy close-up of a designer's hands manipulating vibrant liquid-ink branding elements on a large glass surface, splashes of electric gold and crimson, kinetic motion blur, professional studio lighting, no text, no words, 8k cinematic",
+  "A dynamic, high-energy close-up of a designer's hands manipulating vibrant liquid-ink branding elements on a large glass surface, splashes of gold and neon pink, kinetic motion blur, professional studio lighting, no text, no words, 8k cinematic",
   "A wide-angle shot of a sun-drenched, high-end creative studio, designers collaborating with joy, large-scale physical branding mockups, vibrant color swatches, kinetic energy, industrial-chic aesthetic, no text, no words, 8k cinematic",
   "A kinetic, fast-paced montage of high-impact advertising campaigns on digital billboards in a modern metropolis, vibrant colors, motion trails, reflecting the power of Savant's branding pipeline, no text, no words, 8k cinematic",
-  "A macro shot of premium brand materials—embossed paper, metallic foils, and glass—being assembled with precision and care, representing the tactile joy of physical branding, electric gold accents, no text, no words, 8k cinematic",
+  "A macro shot of premium brand materials—embossed paper, metallic foils, and glass—being assembled with precision and care, representing the tactile joy of physical branding, gold accents, no text, no words, 8k cinematic",
   "A kinetic visualization of human and synthetic minds collaborating on a complex branding project, glowing data streams merging with physical sketches, vibrant energy, professional atmosphere, no text, no words, 8k cinematic"
 ];
 
 const getDynamicPrompts = () => {
   const userData = getUserDataString();
   return THEMES.map(theme => 
-    `${theme}. Context: ${userData}. High-fidelity, sleek, modern, powerful, proprietary corporate aesthetic. Palette: blacks, whites, gunmetal, crimson, electric gold.`
+    `${theme}. Context: ${userData}. High-fidelity, sleek, modern, powerful, proprietary corporate aesthetic. Palette: blacks, whites, gunmetal, neon-pink, gold.`
   );
 };
 
@@ -242,7 +242,7 @@ export const HeroSlider = () => {
           <p className="font-mono text-xs text-white/50 mb-12 leading-relaxed">
             A valid Gemini API key (with billing enabled) is required to generate the high-fidelity sovereign lattice visualizations using nano banana pro.
           </p>
-          <TechButton onClick={handleSelectKey} width="w-72" height="h-16" colorClass="bg-electric-gold" borderClass="bg-electric-gold">
+          <TechButton onClick={handleSelectKey} width="w-72" height="h-16" colorClass="bg-gold" borderClass="bg-gold">
             AUTHENTICATE_API_KEY
           </TechButton>
         </div>
@@ -252,11 +252,11 @@ export const HeroSlider = () => {
 
   if (loading && images.length === 0) {
     return (
-      <div className="w-full aspect-[4/5] sm:aspect-square md:aspect-[21/9] border border-white/10 bg-obsidian/50 flex flex-col items-center justify-center p-8 text-center">
-        <div className="w-16 h-16 border border-electric-gold flex items-center justify-center rotate-45 mb-8">
-          <div className="w-8 h-8 bg-electric-gold rotate-45 animate-pulse" />
+      <div className="w-full aspect-[4/5] sm:aspect-square md:aspect-[21/9] border border-gold flex items-center justify-center p-8 text-center">
+        <div className="w-16 h-16 border border-gold flex items-center justify-center rotate-45 mb-8">
+          <div className="w-8 h-8 bg-gold rotate-45 animate-pulse" />
         </div>
-        <div className="font-mono text-xs text-electric-gold tracking-widest animate-pulse">
+        <div className="font-mono text-xs text-gold tracking-widest animate-pulse">
           SYNTHESIZING_FRACTAL_IMAGERY...
         </div>
         <div className="font-mono text-[9px] text-white/30 mt-4">
@@ -268,8 +268,8 @@ export const HeroSlider = () => {
 
   if (error && images === FALLBACK_IMAGES) {
     return (
-      <div className="w-full aspect-[4/5] sm:aspect-square md:aspect-[21/9] border border-crimson/30 bg-obsidian/50 flex flex-col items-center justify-center p-8 text-center">
-        <div className="font-mono text-xs text-crimson tracking-widest mb-4 uppercase">
+      <div className="w-full aspect-[4/5] sm:aspect-square md:aspect-[21/9] border border-neon-pink/30 bg-obsidian/50 flex flex-col items-center justify-center p-8 text-center">
+        <div className="font-mono text-xs text-neon-pink tracking-widest mb-4 uppercase">
           Neural_Synthesis_Failed
         </div>
         <div className="font-mono text-[10px] text-white/50 mb-8 max-w-lg leading-relaxed">
@@ -278,7 +278,7 @@ export const HeroSlider = () => {
             : error}
         </div>
         <div className="flex gap-4">
-          <TechButton onClick={handleSelectKey} width="w-48" height="h-12" colorClass="bg-electric-gold" borderClass="bg-electric-gold">
+          <TechButton onClick={handleSelectKey} width="w-48" height="h-12" colorClass="bg-gold" borderClass="bg-gold">
             CHANGE_API_KEY
           </TechButton>
           <TechButton onClick={() => setError(null)} width="w-48" height="h-12" colorClass="bg-white/10" borderClass="bg-white/20">
@@ -346,7 +346,7 @@ export const HeroSlider = () => {
             key={`meta-${currentIndex}`}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="font-mono text-[clamp(8px,1.5vw,10px)] text-crimson tracking-[0.5em] uppercase"
+            className="font-mono text-[clamp(8px,1.5vw,10px)] text-neon-pink tracking-[0.5em] uppercase"
           >
             Savant_Canon // Segment_{String(currentIndex + 1).padStart(2, '0')}
           </motion.div>
@@ -360,10 +360,10 @@ export const HeroSlider = () => {
             {slides[currentIndex].title.split('_').map((word, i) => (
               <span key={i} className="inline-block mr-[0.2em] relative group/word">
                 <span className="relative z-10">{word}</span>
-                <span className="absolute inset-0 text-crimson opacity-0 group-hover/word:opacity-50 group-hover/word:translate-x-1 group-hover/word:translate-y-1 transition-all duration-75 select-none pointer-events-none">
+                <span className="absolute inset-0 text-neon-pink opacity-0 group-hover/word:opacity-50 group-hover/word:translate-x-1 group-hover/word:translate-y-1 transition-all duration-75 select-none pointer-events-none">
                   {word}
                 </span>
-                <span className="absolute inset-0 text-electric-gold opacity-0 group-hover/word:opacity-50 group-hover/word:-translate-x-1 group-hover/word:-translate-y-1 transition-all duration-75 select-none pointer-events-none">
+                <span className="absolute inset-0 text-gold opacity-0 group-hover/word:opacity-50 group-hover/word:-translate-x-1 group-hover/word:-translate-y-1 transition-all duration-75 select-none pointer-events-none">
                   {word}
                 </span>
               </span>
@@ -404,9 +404,9 @@ export const HeroSlider = () => {
               <button
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
-                className={`group relative h-1.5 transition-all duration-700 ease-out ${idx === currentIndex ? 'w-24 bg-crimson' : 'w-8 bg-white/10 hover:bg-electric-gold/50'}`}
+                className={`group relative h-1.5 transition-all duration-700 ease-out ${idx === currentIndex ? 'w-24 bg-neon-pink' : 'w-8 bg-white/10 hover:bg-gold/50'}`}
               >
-                <span className={`absolute -top-8 left-0 font-mono text-[10px] transition-all duration-300 ${idx === currentIndex ? 'text-crimson opacity-100' : 'text-white/0 group-hover:text-white/40'}`}>
+                <span className={`absolute -top-8 left-0 font-mono text-[10px] transition-all duration-300 ${idx === currentIndex ? 'text-neon-pink opacity-100' : 'text-white/0 group-hover:text-white/40'}`}>
                   0{idx + 1}
                 </span>
               </button>
@@ -416,13 +416,13 @@ export const HeroSlider = () => {
           <div className="flex gap-3">
             <button 
               onClick={handlePrev} 
-              className="w-14 h-14 flex items-center justify-center bg-white/5 border border-white/10 text-white/40 hover:text-crimson hover:border-crimson hover:bg-crimson/10 backdrop-blur-xl transition-all font-mono text-2xl"
+              className="w-14 h-14 flex items-center justify-center bg-white/5 border border-white/10 text-white/40 hover:text-neon-pink hover:border-neon-pink hover:bg-neon-pink/10 backdrop-blur-xl transition-all font-mono text-2xl"
             >
               &#10094;
             </button>
             <button 
               onClick={handleNext} 
-              className="w-14 h-14 flex items-center justify-center bg-white/5 border border-white/10 text-white/40 hover:text-crimson hover:border-crimson hover:bg-crimson/10 backdrop-blur-xl transition-all font-mono text-2xl"
+              className="w-14 h-14 flex items-center justify-center bg-white/5 border border-white/10 text-white/40 hover:text-neon-pink hover:border-neon-pink hover:bg-neon-pink/10 backdrop-blur-xl transition-all font-mono text-2xl"
             >
               &#10095;
             </button>
@@ -443,8 +443,8 @@ export const HeroSlider = () => {
           disabled={loading}
           width="w-auto px-6"
           height="h-10"
-          colorClass="bg-crimson"
-          borderClass="border-crimson"
+          colorClass="bg-neon-pink"
+          borderClass="border-neon-pink"
           className="opacity-70 hover:opacity-100"
         >
           {loading ? 'ITERATING...' : 'REGENERATE_VISION'}

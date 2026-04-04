@@ -6,11 +6,18 @@ import { ZoomBlock } from '../components/ZoomBlock';
 import { MagneticButton } from '../components/MagneticButton';
 import { SavantButton } from '../components/ui/SavantButton';
 import { GlassCard } from '../components/ui/GlassCard';
+import { BrandTerminal } from '../components/apps/BrandTerminal';
+import { NeuralLattice } from '../components/apps/NeuralLattice';
+import { TelemetryDashboard } from '../components/apps/TelemetryDashboard';
+import { LatticeGraph } from '../components/apps/LatticeGraph';
+import { SovereignVault } from '../components/apps/SovereignVault';
 
 const APPS = [
-  { id: '01', title: 'BRAND_TERMINAL', desc: 'A high-impact branding interface built on recursive creative logic. Real-time identity visualization and predictive market modeling.', img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2670&auto=format&fit=crop', color: 'electric-gold', hex: '#f9ff00', colorClass: 'bg-electric-gold' },
-  { id: '02', title: 'CAMPAIGN_VAULT', desc: 'Centralized campaign and asset management matrix. Secure storage with sovereign creative control.', img: 'https://images.unsplash.com/photo-1614064641913-a53b14683186?q=80&w=2574&auto=format&fit=crop', color: 'crimson', hex: '#ff003c', colorClass: 'bg-crimson' },
-  { id: '03', title: 'CREATIVE_DASHBOARD', desc: 'Studio telemetry and brand monitoring. Observe the flow of ideas across the sovereign network.', img: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=2668&auto=format&fit=crop', color: 'white', hex: '#ffffff', colorClass: 'bg-white' }
+  { id: '01', title: 'BRAND_TERMINAL', desc: 'A high-impact branding interface built on recursive creative logic. Real-time identity visualization and predictive market modeling.', img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2670&auto=format&fit=crop', color: 'gold', hex: '#e6c03b', colorClass: 'bg-gold', component: BrandTerminal },
+  { id: '02', title: 'NEURAL_LATTICE', desc: 'Generative visualizer and neural network simulation. Observe the flow of creative energy across the sovereign lattice.', img: 'https://images.unsplash.com/photo-1614064641913-a53b14683186?q=80&w=2574&auto=format&fit=crop', color: 'neon-pink', hex: '#ff4068', colorClass: 'bg-neon-pink', component: NeuralLattice },
+  { id: '03', title: 'TELEMETRY_DASHBOARD', desc: 'Studio telemetry and brand monitoring. Real-time data visualization of global Savant nodes and system health.', img: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=2668&auto=format&fit=crop', color: 'white', hex: '#ffffff', colorClass: 'bg-white', component: TelemetryDashboard },
+  { id: '04', title: 'LATTICE_GRAPH', desc: '3D topology mapping of brand connections and neural nodes. Visualize the structural integrity of the sovereign network.', img: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2670&auto=format&fit=crop', color: 'gold', hex: '#e6c03b', colorClass: 'bg-gold', component: LatticeGraph },
+  { id: '05', title: 'SOVEREIGN_VAULT', desc: 'Secure asset explorer and file management matrix. Encrypted storage for high-value creative artifacts.', img: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=2670&auto=format&fit=crop', color: 'neon-pink', hex: '#ff4068', colorClass: 'bg-neon-pink', component: SovereignVault }
 ];
 
 const AppInterface = ({ app, onClose }: { app: typeof APPS[0], onClose: () => void }) => {
@@ -36,17 +43,19 @@ const AppInterface = ({ app, onClose }: { app: typeof APPS[0], onClose: () => vo
         clearInterval(interval);
         setTimeout(() => setIsBooted(true), 500);
       }
-    }, 300);
+    }, 200);
 
     return () => clearInterval(interval);
   }, [app.title]);
+
+  const AppComponent = app.component;
 
   return (
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-20 bg-obsidian/98 backdrop-blur-3xl"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 bg-obsidian/98 backdrop-blur-3xl"
     >
       <div className="absolute inset-0 neural-lattice-overlay opacity-10" />
       <div className="absolute inset-0 scanlines-overlay opacity-5" />
@@ -62,69 +71,51 @@ const AppInterface = ({ app, onClose }: { app: typeof APPS[0], onClose: () => vo
           </div>
           <button 
             onClick={onClose}
-            className="group flex items-center gap-4 font-mono text-[10px] text-white/30 hover:text-crimson transition-colors"
+            className="group flex items-center gap-4 font-mono text-[10px] text-white/30 hover:text-neon-pink transition-colors"
           >
             TERMINATE_SESSION [ESC]
-            <div className="w-8 h-8 border border-white/10 flex items-center justify-center rounded-lg group-hover:border-crimson transition-colors">
+            <div className="w-8 h-8 border border-white/10 flex items-center justify-center rounded-lg group-hover:border-neon-pink transition-colors">
               X
             </div>
           </button>
         </div>
 
         {/* Content */}
-        <div className="flex-1 p-12 overflow-y-auto custom-scrollbar">
-          <div className="max-w-4xl mx-auto space-y-4">
-            {lines.map((line, idx) => (
+        <div className="flex-1 p-6 md:p-12 overflow-y-auto custom-scrollbar">
+          <AnimatePresence mode="wait">
+            {!isBooted ? (
               <motion.div 
-                key={idx}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="font-mono text-xs tracking-widest"
-                style={{ color: idx === lines.length - 1 ? app.hex : 'rgba(255,255,255,0.4)' }}
+                key="boot"
+                initial={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="max-w-4xl mx-auto space-y-4 pt-20"
               >
-                {line}
+                {lines.map((line, idx) => (
+                  <motion.div 
+                    key={idx}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="font-mono text-xs tracking-widest"
+                    style={{ color: idx === lines.length - 1 ? app.hex : 'rgba(255,255,255,0.4)' }}
+                  >
+                    {line}
+                  </motion.div>
+                ))}
               </motion.div>
-            ))}
-            
-            <AnimatePresence>
-              {isBooted && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="pt-20 grid grid-cols-1 md:grid-cols-2 gap-10"
-                >
-                  <div className="space-y-10">
-                    <h2 className="text-4xl md:text-6xl font-display text-white">{app.title}</h2>
-                    <p className="text-lg md:text-xl text-white/50 leading-relaxed font-light">{app.desc}</p>
-                    <div className="pt-10">
-                      <MagneticButton strength={0.2}>
-                        <SavantButton 
-                          variant="secondary"
-                          className="w-64 h-16"
-                        >
-                          INITIALIZE_OPERATIONS
-                        </SavantButton>
-                      </MagneticButton>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-6">
-                    {[
-                      { label: "LATENCY", val: "0.001ms" },
-                      { label: "SYNC_RATE", val: "99.9%" },
-                      { label: "UPTIME", val: "∞" },
-                      { label: "SECURITY", val: "MAX" }
-                    ].map((stat, i) => (
-                      <div key={i} className="p-8 border border-white/5 bg-white/[0.01] rounded-2xl">
-                        <div className="text-[9px] font-mono text-white/20 mb-2 tracking-widest">{stat.label}</div>
-                        <div className="text-2xl font-tech font-bold" style={{ color: app.hex }}>{stat.val}</div>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+            ) : (
+              <motion.div 
+                key="app"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
+                className="w-full h-full flex flex-col"
+              >
+                <div className="flex-1 min-h-[500px]">
+                  <AppComponent />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Footer */}
@@ -157,10 +148,10 @@ export default function Apps() {
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
-            className="text-massive font-display"
+            className="text-massive title-serif"
           >
             SOVEREIGN<br/>
-            <span className="text-crimson">APPLICATIONS</span>
+            <span className="text-neon-pink">APPLICATIONS</span>
           </motion.h1>
           <div className="absolute top-0 right-0 rail-text h-full opacity-30">
             SAVANT_OS_APP_ECOSYSTEM_v80.0.0_MANIFEST

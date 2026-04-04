@@ -21,7 +21,7 @@ export const Breadcrumbs = () => {
           <div key={to} className="flex items-center space-x-2">
             <ChevronRight size={10} className="text-white/20" />
             {last ? (
-              <span className="text-crimson uppercase">{value.replace(/-/g, '_')}</span>
+              <span className="text-neon-pink uppercase">{value.replace(/-/g, '_')}</span>
             ) : (
               <Link to={to} className="hover:text-white transition-colors uppercase">
                 {value.replace(/-/g, '_')}

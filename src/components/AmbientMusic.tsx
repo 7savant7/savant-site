@@ -49,7 +49,7 @@ export const AmbientMusic: React.FC = () => {
         whileTap={{ scale: 0.9 }}
         className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all duration-700 ${
           isPlaying 
-            ? 'bg-crimson border-crimson text-white shadow-[0_0_20px_rgba(255,0,60,0.4)]' 
+            ? 'bg-neon-pink border-neon-pink text-white shadow-[0_0_20px_rgba(255,64,104,0.4)]' 
             : 'bg-white/5 border-white/10 text-white/40 hover:border-white/30'
         }`}
       >
@@ -70,7 +70,7 @@ export const AmbientMusic: React.FC = () => {
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
-                className="w-[2px] bg-crimson/60"
+                className="w-[2px] bg-neon-pink/60"
               />
             ))}
           </div>
@@ -82,7 +82,7 @@ export const AmbientMusic: React.FC = () => {
             </div>
             <div className="h-[1px] w-full bg-white/10 overflow-hidden">
               <motion.div 
-                className="h-full bg-crimson" 
+                className="h-full bg-neon-pink" 
                 animate={{ width: `${energy * 100}%` }}
               />
             </div>
@@ -93,7 +93,7 @@ export const AmbientMusic: React.FC = () => {
             </div>
             <div className="h-[1px] w-full bg-white/10 overflow-hidden">
               <motion.div 
-                className="h-full bg-electric-gold" 
+                className="h-full bg-gold" 
                 animate={{ width: `${focus * 100}%` }}
               />
             </div>
@@ -101,11 +101,11 @@ export const AmbientMusic: React.FC = () => {
             <div className="flex flex-col gap-0.5 mt-2 border-t border-white/5 pt-2">
               <div className="flex justify-between text-[7px] font-mono uppercase tracking-widest">
                 <span className="text-white/30">Tree:</span>
-                <span className={treeState === 'alert' ? 'text-crimson' : 'text-white/60'}>{treeState}</span>
+                <span className={treeState === 'alert' ? 'text-neon-pink' : 'text-white/60'}>{treeState}</span>
               </div>
               <div className="flex justify-between text-[7px] font-mono uppercase tracking-widest">
                 <span className="text-white/30">Mode:</span>
-                <span className={projectMode === 'forensic' ? 'text-electric-gold' : 'text-white/60'}>{projectMode}</span>
+                <span className={projectMode === 'forensic' ? 'text-gold' : 'text-white/60'}>{projectMode}</span>
               </div>
               <div className="flex justify-between text-[7px] font-mono uppercase tracking-widest mt-1">
                 <span className="text-white/30">Mood:</span>
