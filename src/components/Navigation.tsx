@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { uiSound } from '../utils/audio';
 import { Menu, X, ArrowRight } from 'lucide-react';
-import Magnetic from './Magnetic';
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,104 +10,92 @@ export default function Navigation() {
 
   const items = [
     { path: '/', label: 'HOME' },
-    { path: '/work', label: 'WORK' },
-    { path: '/services', label: 'SERVICES' },
+    { path: '/work', label: 'ARCHIVE' },
+    { path: '/services', label: 'METHODOLOGY' },
     { path: '/journal', label: 'JOURNAL' },
-    { path: '/branding', label: 'BRANDING' },
-    { path: '/contact', label: 'CONTACT' },
+    { path: '/contact', label: 'UPLINK' },
   ];
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
-    uiSound.playClick();
   };
 
   const handleNavigate = (path: string) => {
     setIsOpen(false);
-    uiSound.playClick();
     navigate(path);
   };
 
   return (
     <div className="pointer-events-auto">
       {/* Burger Button */}
-      <Magnetic strength={0.2}>
-        <button 
-          onClick={toggleMenu}
-          onMouseEnter={() => uiSound.playHover()}
-          className="relative z-[1000] w-12 h-12 flex flex-col items-center justify-center gap-1.5 focus:outline-none group"
-        >
-          <motion.div 
-            animate={{ 
-              rotate: isOpen ? 45 : 0, 
-              y: isOpen ? 7.5 : 0,
-              width: isOpen ? '100%' : '60%'
-            }}
-            className="h-[2px] bg-white group-hover:bg-neon-pink transition-colors"
-          />
-          <motion.div 
-            animate={{ 
-              opacity: isOpen ? 0 : 1,
-              width: '100%'
-            }}
-            className="h-[2px] bg-white group-hover:bg-neon-pink transition-colors"
-          />
-          <motion.div 
-            animate={{ 
-              rotate: isOpen ? -45 : 0, 
-              y: isOpen ? -7.5 : 0,
-              width: isOpen ? '100%' : '60%'
-            }}
-            className="h-[2px] bg-white group-hover:bg-neon-pink transition-colors"
-          />
-        </button>
-      </Magnetic>
+      <button 
+        onClick={toggleMenu}
+        className="relative z-[10000] w-12 h-12 flex flex-col items-center justify-center gap-2 focus:outline-none group mix-blend-difference"
+      >
+        <motion.div 
+          animate={{ 
+            rotate: isOpen ? 45 : 0, 
+            y: isOpen ? 9 : 0,
+          }}
+          className="h-[1px] w-8 bg-white group-hover:bg-gold transition-colors"
+        />
+        <motion.div 
+          animate={{ 
+            opacity: isOpen ? 0 : 1,
+          }}
+          className="h-[1px] w-8 bg-white group-hover:bg-gold transition-colors"
+        />
+        <motion.div 
+          animate={{ 
+            rotate: isOpen ? -45 : 0, 
+            y: isOpen ? -9 : 0,
+          }}
+          className="h-[1px] w-8 bg-white group-hover:bg-gold transition-colors"
+        />
+      </button>
 
       {/* Fullscreen Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 bg-obsidian z-[999] flex flex-col items-center justify-center p-12"
+            initial={{ opacity: 0, clipPath: 'polygon(0 0, 100% 0, 100% 0, 0 0)' }}
+            animate={{ opacity: 1, clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)' }}
+            exit={{ opacity: 0, clipPath: 'polygon(0 100%, 100% 100%, 100% 100%, 0 100%)' }}
+            transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
+            className="fixed inset-0 bg-obsidian z-[9999] flex flex-col justify-center px-6 md:px-24"
           >
-            {/* Background Text */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.02] flex items-center justify-center">
-              <span className="title-serif font-black text-[40vw] tracking-tighter uppercase select-none">MENU</span>
+            <div className="absolute inset-0 noise-overlay opacity-10" />
+            
+            <div className="absolute top-12 left-12 font-mono text-xs text-gold tracking-[1em] uppercase">
+              Savant_OS // Navigation
             </div>
 
-            <nav className="relative z-10 flex flex-col items-center gap-8 md:gap-12">
+            <nav className="relative z-10 flex flex-col gap-4 md:gap-8 max-w-5xl">
               {items.map((item, index) => (
                 <motion.button
                   key={item.path}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 + index * 0.1, duration: 0.8 }}
+                  transition={{ delay: 0.2 + index * 0.1, duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
                   onClick={() => handleNavigate(item.path)}
-                  onMouseEnter={() => uiSound.playHover()}
-                  className="group flex items-center gap-6 focus:outline-none"
+                  className="group flex items-center gap-8 focus:outline-none w-fit"
                 >
-                  <span className="font-mono text-[10px] text-white/20 group-hover:text-neon-pink transition-colors">0{index + 1}</span>
-                  <h2 className={`text-5xl md:text-8xl title-serif tracking-tighter uppercase transition-all duration-500 ${location.pathname === item.path ? 'text-neon-pink' : 'text-white group-hover:text-neon-pink group-hover:italic group-hover:translate-x-4'}`}>
+                  <span className="font-mono text-sm text-white/20 group-hover:text-gold transition-colors">0{index + 1}</span>
+                  <h2 className={`text-6xl md:text-8xl title-serif tracking-tighter uppercase transition-all duration-500 ${location.pathname === item.path ? 'text-gold italic' : 'text-white group-hover:text-white group-hover:italic group-hover:translate-x-8'}`}>
                     {item.label}
                   </h2>
-                  <ArrowRight className={`opacity-0 group-hover:opacity-100 transition-all duration-500 text-neon-pink ${location.pathname === item.path ? 'opacity-100' : ''}`} size={48} />
                 </motion.button>
               ))}
             </nav>
 
-            {/* Footer Info in Menu */}
-            <div className="absolute bottom-12 left-12 right-12 flex justify-between items-end font-mono text-[8px] tracking-[0.5em] text-white/20 uppercase">
+            <div className="absolute bottom-12 left-12 right-12 flex justify-between items-end font-mono text-[10px] tracking-[0.5em] text-white/40 uppercase border-t border-white/10 pt-8">
               <div className="flex flex-col gap-2">
-                <span>SAVANT_LATTICE_NODE</span>
-                <span>EST_2026</span>
+                <span>SYSTEM_STATUS: NOMINAL</span>
+                <span>ENCRYPTION: ACTIVE</span>
               </div>
-              <div className="flex gap-8">
-                <a href="#" className="hover:text-white transition-colors">TWITTER</a>
-                <a href="#" className="hover:text-white transition-colors">INSTAGRAM</a>
-                <a href="#" className="hover:text-white transition-colors">LINKEDIN</a>
+              <div className="flex gap-12">
+                <a href="#" className="hover:text-gold transition-colors">TWITTER</a>
+                <a href="#" className="hover:text-gold transition-colors">LINKEDIN</a>
               </div>
             </div>
           </motion.div>

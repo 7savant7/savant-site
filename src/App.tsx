@@ -18,6 +18,7 @@ import { MoodProvider } from './contexts/MoodContext';
 import { Toaster } from 'sonner';
 import { SmoothScroll } from './components/SmoothScroll';
 import { Preloader } from './components/Preloader';
+import { PersistentLogoSystem } from './components/PersistentLogoSystem';
 import { CustomCursor } from './components/CustomCursor';
 import { AmbientMusic } from './components/AmbientMusic';
 
@@ -29,6 +30,7 @@ export default function App() {
           <BlogProvider>
             <CustomCursor />
             <SmoothScroll>
+              <PersistentLogoSystem />
               <Preloader />
               <AmbientMusic />
               <Router>
