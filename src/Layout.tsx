@@ -63,7 +63,7 @@ export default function Layout() {
   });
 
   return (
-    <div className="min-h-screen bg-obsidian text-white selection:bg-neon-pink selection:text-white antialiased">
+    <div className="min-h-screen bg-transparent text-white selection:bg-neon-pink selection:text-white antialiased relative z-10">
       {/* Immersive Overlays */}
       <div className="fixed inset-0 pointer-events-none z-[9999]">
         <div className="noise-overlay" />

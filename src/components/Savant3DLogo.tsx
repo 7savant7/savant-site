@@ -90,24 +90,24 @@ function LogoMesh() {
         {shapes.map((shape, i) => (
           <mesh key={i} castShadow receiveShadow>
             <extrudeGeometry args={[shape, extrudeSettings]} />
-            <meshPhysicalMaterial 
-              color="#0b0c0e"
-              metalness={1}
-              roughness={0.07}
-              transmission={0}
-              thickness={10}
-              ior={3}
-              clearcoat={1}
-              clearcoatRoughness={0.02}
-              envMapIntensity={8.5}
-              emissive="#120604"
-              emissiveIntensity={0.55}
+            <MeshTransmissionMaterial 
+              backside
+              samples={4}
+              thickness={15}
+              chromaticAberration={0.05}
+              anisotropy={0.1}
+              distortion={0.2}
+              distortionScale={0.5}
+              temporalDistortion={0.1}
+              ior={1.5}
+              color="#ffffff"
+              resolution={1024}
             />
           </mesh>
         ))}
         
-        {/* Neon Pink Accent Light inside the logo */}
-        <pointLight position={[0, 0, 5]} color={BRANDING.colors.neonPink.base} intensity={2} distance={20} />
+        {/* Subtle Gold Accent Light inside the logo */}
+        <pointLight position={[0, 0, 5]} color={BRANDING.colors.gold.base} intensity={1.5} distance={30} />
       </group>
     </Center>
   );

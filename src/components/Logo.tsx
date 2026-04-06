@@ -1,7 +1,6 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
-import Savant3DLogo from './Savant3DLogo';
 
 export default function Logo() {
   return (
@@ -10,11 +9,8 @@ export default function Logo() {
       className="relative group block pointer-events-auto"
     >
       <div className="flex items-center gap-4">
-        <div className="w-12 h-12 relative">
-          <Suspense fallback={<div className="w-full h-full bg-white/5 rounded-full animate-pulse" />}>
-            <Savant3DLogo className="w-full h-full scale-150" />
-          </Suspense>
-        </div>
+        {/* Anchor for the Persistent 3D Logo */}
+        <div id="logo-anchor" className="w-12 h-12 relative" />
 
         <div className="flex flex-col">
           <div className="font-display font-black text-xl md:text-2xl text-white tracking-tighter leading-none uppercase">
