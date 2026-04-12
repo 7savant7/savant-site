@@ -465,7 +465,7 @@ export const TimePortalScene: React.FC = () => (
 
     <PortalDisc />
 
-    {/* Three helical spiral arms at 120° offsets, slightly different speeds */}
+    {/* Four helical spiral arms at 90° offsets, slightly different speeds */}
     <SpiralArm offset={0}                    color="#00e5ff" turns={3}   speed={-0.12} />
     <SpiralArm offset={Math.PI}              color="#a040ff" turns={3}   speed={-0.10} />
     <SpiralArm offset={Math.PI / 2}          color="#00ff9d" turns={2.5} speed={-0.14} />
