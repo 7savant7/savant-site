@@ -276,3 +276,28 @@ html.lenis, html.lenis body {
 .mask-reveal-y {
   clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
 }
+
+html,
+body {
+  overscroll-behavior: none;
+}
+
+[data-snap-section="true"] {
+  scroll-margin-top: 24px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .glass-panel {
+    transition:
+      background-color 500ms ease,
+      border-color 500ms ease,
+      transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .glass-panel:hover {
+    transform: translateY(-4px);
+    border-color: rgba(212, 175, 55, 0.18);
+    box-shadow: 0 18px 70px rgba(0, 0, 0, 0.28);
+  }
+}

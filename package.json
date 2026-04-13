@@ -27,7 +27,6 @@
     "@types/howler": "^2.2.12",
     "@types/three": "^0.183.1",
     "@vitejs/plugin-react": "^5.0.4",
-    "better-sqlite3": "^12.4.1",
     "clsx": "^2.1.1",
     "d3": "^7.9.0",
     "date-fns": "^4.1.0",

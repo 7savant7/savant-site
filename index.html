@@ -1,13 +1,505 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Google AI Studio App</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>savant preloader</title>
+<style>
+  :root{
+    --bg0:#010103;
+    --bg1:#04060b;
+    --bg2:#0a1020;
+    --bg3:#16070d;
+    --cyan:#43ddff;
+    --mag:#ff32c1;
+    --gold:#ffb400;
+    --goldHot:#fff3c4;
+    --goldDeep:#ff8400;
+    --obs0:#020202;
+    --obs1:#08090b;
+    --obs2:#12151a;
+    --obs3:#20252e;
+    --obs4:#3a4351;
+    --steel:#dce6f2;
+  }
 
+  *{box-sizing:border-box}
+  html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:Arial,Helvetica,sans-serif;
+    color:#fff;
+    background:
+      radial-gradient(circle at 50% 52%, rgba(255,180,0,.10), transparent 10%),
+      radial-gradient(circle at 50% 48%, rgba(255,40,120,.12), transparent 18%),
+      radial-gradient(circle at 50% 51%, rgba(67,221,255,.09), transparent 16%),
+      radial-gradient(circle at 50% 40%, var(--bg2) 0%, var(--bg1) 38%, var(--bg0) 86%);
+  }
+
+  .scene,
+  .grid,
+  .streaks,
+  .particles,
+  .vignette{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+  }
+
+  .grid{
+    opacity:.16;
+    background:
+      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+    background-size:25vw 25vh, 25vw 25vh;
+    mask:radial-gradient(circle at 50% 50%, rgba(0,0,0,.25) 0 10%, rgba(0,0,0,.9) 45%, transparent 90%);
+  }
+
+  .streaks{
+    background:
+      repeating-linear-gradient(102deg,
+        transparent 0 82px,
+        rgba(255,40,120,.14) 82px 84px,
+        transparent 84px 170px,
+        rgba(67,221,255,.16) 170px 172px,
+        transparent 172px 260px,
+        rgba(255,255,255,.06) 260px 261px,
+        transparent 261px 360px);
+    opacity:.46;
+    transform:perspective(1000px) rotateX(78deg) scale(1.65) translateY(-12%);
+    transform-origin:center;
+    mask:radial-gradient(circle at 50% 56%, transparent 0 13%, #000 42%, transparent 88%);
+  }
+
+  .particles{
+    overflow:hidden;
+  }
+  .particles::before,
+  .particles::after{
+    content:"";
+    position:absolute;
+    inset:-20%;
+    background:
+      radial-gradient(circle at 12% 34%, rgba(255,205,120,.95) 0 2px, transparent 3px),
+      radial-gradient(circle at 68% 21%, rgba(255,255,255,.65) 0 2px, transparent 3px),
+      radial-gradient(circle at 74% 66%, rgba(255,185,20,.8) 0 2px, transparent 3px),
+      radial-gradient(circle at 43% 72%, rgba(255,215,150,.7) 0 1.6px, transparent 3px),
+      radial-gradient(circle at 22% 61%, rgba(255,255,255,.45) 0 1.5px, transparent 3px),
+      radial-gradient(circle at 53% 44%, rgba(255,175,0,.55) 0 1.5px, transparent 3px);
+    background-size: 360px 360px, 420px 420px, 500px 500px, 440px 440px, 380px 380px, 520px 520px;
+    opacity:.45;
+    filter:blur(.2px);
+    animation:drift 14s linear infinite;
+  }
+  .particles::after{
+    transform:scale(1.15);
+    opacity:.22;
+    filter:blur(1.2px);
+    animation-duration:22s;
+  }
+
+  .vignette{
+    background:radial-gradient(circle at 50% 50%, transparent 0 42%, rgba(0,0,0,.22) 68%, rgba(0,0,0,.78) 100%);
+  }
+
+  .wrap{
+    position:relative;
+    z-index:2;
+    width:100%;
+    height:100%;
+    display:grid;
+    place-items:center;
+  }
+
+  .stack{
+    width:min(88vw, 640px);
+    display:grid;
+    place-items:center;
+    gap:2.4rem;
+    transform:translateY(-2vh);
+  }
+
+  .preloader{
+    position:relative;
+    width:min(74vw, 440px);
+    aspect-ratio:1/1;
+    display:grid;
+    place-items:center;
+  }
+
+  .ring-shell{
+    position:absolute;
+    inset:0;
+    overflow:visible;
+    filter:
+      drop-shadow(0 0 18px rgba(255,185,20,.10))
+      drop-shadow(0 0 40px rgba(255,185,20,.06))
+      drop-shadow(0 0 20px rgba(67,221,255,.04));
+  }
+
+  .logo-shell{
+    position:relative;
+    width:46%;
+    aspect-ratio:1/1;
+    display:grid;
+    place-items:center;
+    transform-origin:50% 50%;
+    animation:logoSpinZ 12s linear infinite;
+    filter:
+      drop-shadow(0 14px 24px rgba(0,0,0,.5))
+      drop-shadow(0 0 24px rgba(255,180,0,.09));
+  }
+
+  .logo-shell svg{
+    width:100%;
+    height:auto;
+    overflow:visible;
+    display:block;
+  }
+
+  .btn{
+    min-width:min(78vw, 540px);
+    padding:1.15rem 2rem;
+    text-align:center;
+    letter-spacing:.7em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.96);
+    font-size:clamp(14px,2.4vw,20px);
+    background:linear-gradient(180deg, rgba(8,10,16,.38), rgba(5,6,12,.74));
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.025),
+      0 0 0 1px rgba(0,0,0,.35);
+    backdrop-filter:blur(6px);
+    animation:buttonPulse 1.4s ease-in-out infinite alternate;
+  }
+
+  .pct{
+    position:absolute;
+    top:calc(100% + 12px);
+    font-size:12px;
+    letter-spacing:.32em;
+    color:rgba(255,255,255,.42);
+    text-transform:uppercase;
+  }
+
+  .wordmark{
+    position:absolute;
+    bottom:-58px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:18px;
+    letter-spacing:.44em;
+    text-transform:lowercase;
+    color:rgba(255,255,255,.88);
+    opacity:.0;
+  }
+
+  @keyframes logoSpinZ{
+    from{transform:rotateZ(0deg)}
+    to{transform:rotateZ(360deg)}
+  }
+
+  @keyframes hotTravel{
+    from{stroke-dashoffset:220}
+    to{stroke-dashoffset:0}
+  }
+
+  @keyframes pulseGold{
+    0%,100%{opacity:.72}
+    50%{opacity:1}
+  }
+
+  @keyframes drift{
+    from{transform:translateY(0)}
+    to{transform:translateY(-30px)}
+  }
+
+  @keyframes buttonPulse{
+    from{opacity:.76}
+    to{opacity:1}
+  }
+
+  @media (max-width:700px){
+    .preloader{ width:min(76vw, 390px); }
+    .logo-shell{ width:44%; }
+  }
+</style>
+</head>
+<body>
+<div class="scene"></div>
+<div class="grid"></div>
+<div class="streaks"></div>
+<div class="particles"></div>
+<div class="vignette"></div>
+
+<div class="wrap">
+  <div class="stack">
+    <div class="preloader">
+      <svg class="ring-shell" viewBox="0 0 500 500" aria-hidden="true">
+        <defs>
+          <linearGradient id="ringMetal" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#f1f6fb"/>
+            <stop offset="12%" stop-color="#7d8795"/>
+            <stop offset="28%" stop-color="#1b2028"/>
+            <stop offset="46%" stop-color="#0f1319"/>
+            <stop offset="68%" stop-color="#68717e"/>
+            <stop offset="85%" stop-color="#edf2f8"/>
+            <stop offset="100%" stop-color="#98a3b1"/>
+          </linearGradient>
+
+          <linearGradient id="ringShadow" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#07090d"/>
+            <stop offset="100%" stop-color="#181d26"/>
+          </linearGradient>
+
+          <linearGradient id="ringGold" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#fff4bf"/>
+            <stop offset="18%" stop-color="#ffd66a"/>
+            <stop offset="55%" stop-color="#ffb100"/>
+            <stop offset="100%" stop-color="#ff8a00"/>
+          </linearGradient>
+
+          <linearGradient id="ringColorArc1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ff8a00"/>
+            <stop offset="100%" stop-color="#ffd14a"/>
+          </linearGradient>
+          <linearGradient id="ringColorArc2" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#7a1b7d"/>
+            <stop offset="100%" stop-color="#ff35c1"/>
+          </linearGradient>
+          <linearGradient id="ringColorArc3" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#0f4362"/>
+            <stop offset="100%" stop-color="#45ddff"/>
+          </linearGradient>
+
+          <filter id="ringGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="5" result="b"/>
+            <feMerge>
+              <feMergeNode in="b"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+
+          <filter id="flare" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="8" result="blur"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- ring -->
+        <circle cx="250" cy="250" r="145"
+          fill="none"
+          stroke="url(#ringMetal)"
+          stroke-width="28"
+          opacity=".98"/>
+
+        <circle cx="250" cy="250" r="145"
+          fill="none"
+          stroke="url(#ringShadow)"
+          stroke-width="12"
+          opacity=".95"/>
+
+        <circle cx="250" cy="250" r="130"
+          fill="none"
+          stroke="rgba(255,255,255,.05)"
+          stroke-width="3"/>
+
+        <!-- legacy color arcs preserved -->
+        <path d="M146 272 A108 108 0 0 1 235 150"
+          fill="none" stroke="url(#ringColorArc1)" stroke-width="10" stroke-linecap="round" opacity=".95"/>
+        <path d="M356 206 A110 110 0 0 1 360 348"
+          fill="none" stroke="url(#ringColorArc2)" stroke-width="10" stroke-linecap="round" opacity=".95"/>
+        <path d="M228 356 A72 72 0 0 1 314 274"
+          fill="none" stroke="url(#ringColorArc3)" stroke-width="10" stroke-linecap="round" opacity=".95"/>
+
+        <!-- gold loading groove -->
+        <circle id="progressTrack"
+          cx="250" cy="250" r="145"
+          fill="none"
+          stroke="url(#ringGold)"
+          stroke-width="10"
+          stroke-linecap="round"
+          stroke-dasharray="911"
+          stroke-dashoffset="911"
+          transform="rotate(-90 250 250)"
+          filter="url(#ringGlow)"/>
+
+        <!-- flare -->
+        <g id="ringFlare" transform="translate(250 105)">
+          <circle r="10" fill="#ffb100" opacity=".98" filter="url(#flare)"/>
+          <rect x="-84" y="-2.2" width="168" height="4.4" rx="2.2" fill="rgba(216,239,255,.72)" filter="url(#flare)"/>
+        </g>
+
+        <circle cx="250" cy="250" r="166" fill="none" stroke="rgba(255,170,20,.08)" stroke-width="1.4"/>
+      </svg>
+
+      <div class="logo-shell">
+        <svg id="logoSvg" viewBox="0 0 64 84" aria-label="savant logo">
+          <defs>
+            <clipPath id="logoClip">
+              <path d="m47.67,37.07l-2.67,1.54a0.62,0.62 0 0 1 -0.89,-0.75q1.43,-3.96 1.47,-5.02c0.34,-10.74 -15.97,-7.15 -11.12,2.26q0.99,1.9 4.64,6.77a1.35,1.35 0 0 1 -0.06,1.69l-1.2,1.39a0.86,0.85 47.6 0 1 -1.35,-0.07c-4.32,-6.16 -10.05,-11.78 -4.62,-18.81c6.72,-8.71 20.69,-1.03 17.23,9.25a3.23,3.18 84.7 0 1 -1.43,1.75z"/>
+              <path d="m30.29,41.13q-2.55,-0.05 -3.6,0.11c-6.01,0.9 -6.62,8.78 -1.66,11.21q4.03,1.96 7.59,-1.57q8.7,-8.65 9.6,-9.62q3.72,-3.99 8.93,-3.91c8.35,0.13 12.15,10 6.99,16.13c-4.55,5.4 -12.91,4.27 -16.55,-1.84a0.2,0.2 0 0 1 0,-0.22q1.08,-1.68 2.55,-2.86a0.11,0.11 0 0 1 0.16,0.03q2,3.44 3.83,4.1q3.88,1.38 6.54,-1.15c5.86,-5.59 -2.23,-14.35 -8.51,-8.58q-3.54,3.26 -10.92,10.77c-4.56,4.64 -12.2,4.14 -15.81,-1.33c-2.46,-3.73 -1.98,-9.15 1.32,-12.34q2.79,-2.71 7.11,-2.89a1.51,1.5 73.4 0 1 1.36,0.74l1.46,2.55a0.45,0.44 -14.8 0 1 -0.39,0.67z"/>
+            </clipPath>
+
+            <linearGradient id="obsidianBody" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#2f3640"/>
+              <stop offset="10%" stop-color="#0c0d11"/>
+              <stop offset="24%" stop-color="#020202"/>
+              <stop offset="46%" stop-color="#1a1d22"/>
+              <stop offset="70%" stop-color="#060607"/>
+              <stop offset="100%" stop-color="#303743"/>
+            </linearGradient>
+
+            <linearGradient id="obsidianBevel" x1="12%" y1="0%" x2="88%" y2="100%">
+              <stop offset="0%" stop-color="#96a1af"/>
+              <stop offset="16%" stop-color="#1f232a"/>
+              <stop offset="38%" stop-color="#040404"/>
+              <stop offset="63%" stop-color="#15191e"/>
+              <stop offset="100%" stop-color="#95a0ae"/>
+            </linearGradient>
+
+            <linearGradient id="goldLine" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fff8d8"/>
+              <stop offset="15%" stop-color="#ffe28b"/>
+              <stop offset="45%" stop-color="#ffbc18"/>
+              <stop offset="100%" stop-color="#ff8800"/>
+            </linearGradient>
+
+            <filter id="goldGlow" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="1.6" result="b"/>
+              <feMerge>
+                <feMergeNode in="b"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+
+            <filter id="logoShadow" x="-80%" y="-80%" width="260%" height="260%">
+              <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#000" flood-opacity=".46"/>
+              <feDropShadow dx="0" dy="0" stdDeviation="1.4" flood-color="#ffffff" flood-opacity=".14"/>
+            </filter>
+          </defs>
+
+          <!-- main black chrome body -->
+          <g filter="url(#logoShadow)">
+            <path fill="url(#obsidianBody)" d="m47.67,37.07l-2.67,1.54a0.62,0.62 0 0 1 -0.89,-0.75q1.43,-3.96 1.47,-5.02c0.34,-10.74 -15.97,-7.15 -11.12,2.26q0.99,1.9 4.64,6.77a1.35,1.35 0 0 1 -0.06,1.69l-1.2,1.39a0.86,0.85 47.6 0 1 -1.35,-0.07c-4.32,-6.16 -10.05,-11.78 -4.62,-18.81c6.72,-8.71 20.69,-1.03 17.23,9.25a3.23,3.18 84.7 0 1 -1.43,1.75z"/>
+            <path fill="url(#obsidianBody)" d="m30.29,41.13q-2.55,-0.05 -3.6,0.11c-6.01,0.9 -6.62,8.78 -1.66,11.21q4.03,1.96 7.59,-1.57q8.7,-8.65 9.6,-9.62q3.72,-3.99 8.93,-3.91c8.35,0.13 12.15,10 6.99,16.13c-4.55,5.4 -12.91,4.27 -16.55,-1.84a0.2,0.2 0 0 1 0,-0.22q1.08,-1.68 2.55,-2.86a0.11,0.11 0 0 1 0.16,0.03q2,3.44 3.83,4.1q3.88,1.38 6.54,-1.15c5.86,-5.59 -2.23,-14.35 -8.51,-8.58q-3.54,3.26 -10.92,10.77c-4.56,4.64 -12.2,4.14 -15.81,-1.33c-2.46,-3.73 -1.98,-9.15 1.32,-12.34q2.79,-2.71 7.11,-2.89a1.51,1.5 73.4 0 1 1.36,0.74l1.46,2.55a0.45,0.44 -14.8 0 1 -0.39,0.67z"/>
+          </g>
+
+          <!-- chipped obsidian facets -->
+          <g id="facetGroup" clip-path="url(#logoClip)"></g>
+
+          <!-- bevel -->
+          <g opacity=".96">
+            <path fill="none" stroke="url(#obsidianBevel)" stroke-width=".7" d="m47.67,37.07l-2.67,1.54a0.62,0.62 0 0 1 -0.89,-0.75q1.43,-3.96 1.47,-5.02c0.34,-10.74 -15.97,-7.15 -11.12,2.26q0.99,1.9 4.64,6.77a1.35,1.35 0 0 1 -0.06,1.69l-1.2,1.39a0.86,0.85 47.6 0 1 -1.35,-0.07c-4.32,-6.16 -10.05,-11.78 -4.62,-18.81c6.72,-8.71 20.69,-1.03 17.23,9.25a3.23,3.18 84.7 0 1 -1.43,1.75z"/>
+            <path fill="none" stroke="url(#obsidianBevel)" stroke-width=".7" d="m30.29,41.13q-2.55,-0.05 -3.6,0.11c-6.01,0.9 -6.62,8.78 -1.66,11.21q4.03,1.96 7.59,-1.57q8.7,-8.65 9.6,-9.62q3.72,-3.99 8.93,-3.91c8.35,0.13 12.15,10 6.99,16.13c-4.55,5.4 -12.91,4.27 -16.55,-1.84a0.2,0.2 0 0 1 0,-0.22q1.08,-1.68 2.55,-2.86a0.11,0.11 0 0 1 0.16,0.03q2,3.44 3.83,4.1q3.88,1.38 6.54,-1.15c5.86,-5.59 -2.23,-14.35 -8.51,-8.58q-3.54,3.26 -10.92,10.77c-4.56,4.64 -12.2,4.14 -15.81,-1.33c-2.46,-3.73 -1.98,-9.15 1.32,-12.34q2.79,-2.71 7.11,-2.89a1.51,1.5 73.4 0 1 1.36,0.74l1.46,2.55a0.45,0.44 -14.8 0 1 -0.39,0.67z"/>
+          </g>
+
+          <!-- gold neon channels -->
+          <g filter="url(#goldGlow)">
+            <path id="goldA" fill="none" stroke="url(#goldLine)" stroke-width="1.08" stroke-linecap="round"
+              d="m47.67,37.07l-2.67,1.54a0.62,0.62 0 0 1 -0.89,-0.75q1.43,-3.96 1.47,-5.02c0.34,-10.74 -15.97,-7.15 -11.12,2.26q0.99,1.9 4.64,6.77a1.35,1.35 0 0 1 -0.06,1.69l-1.2,1.39a0.86,0.85 47.6 0 1 -1.35,-0.07c-4.32,-6.16 -10.05,-11.78 -4.62,-18.81c6.72,-8.71 20.69,-1.03 17.23,9.25a3.23,3.18 84.7 0 1 -1.43,1.75z"
+              opacity=".74"/>
+            <path id="goldB" fill="none" stroke="url(#goldLine)" stroke-width="1.08" stroke-linecap="round"
+              d="m30.29,41.13q-2.55,-0.05 -3.6,0.11c-6.01,0.9 -6.62,8.78 -1.66,11.21q4.03,1.96 7.59,-1.57q8.7,-8.65 9.6,-9.62q3.72,-3.99 8.93,-3.91c8.35,0.13 12.15,10 6.99,16.13c-4.55,5.4 -12.91,4.27 -16.55,-1.84a0.2,0.2 0 0 1 0,-0.22q1.08,-1.68 2.55,-2.86a0.11,0.11 0 0 1 0.16,0.03q2,3.44 3.83,4.1q3.88,1.38 6.54,-1.15c5.86,-5.59 -2.23,-14.35 -8.51,-8.58q-3.54,3.26 -10.92,10.77c-4.56,4.64 -12.2,4.14 -15.81,-1.33c-2.46,-3.73 -1.98,-9.15 1.32,-12.34q2.79,-2.71 7.11,-2.89a1.51,1.5 73.4 0 1 1.36,0.74l1.46,2.55a0.45,0.44 -14.8 0 1 -0.39,0.67z"
+              opacity=".74"/>
+
+            <path id="hotA" fill="none" stroke="#fff4c9" stroke-width=".36" stroke-linecap="round"
+              d="m47.67,37.07l-2.67,1.54a0.62,0.62 0 0 1 -0.89,-0.75q1.43,-3.96 1.47,-5.02c0.34,-10.74 -15.97,-7.15 -11.12,2.26q0.99,1.9 4.64,6.77a1.35,1.35 0 0 1 -0.06,1.69l-1.2,1.39a0.86,0.85 47.6 0 1 -1.35,-0.07c-4.32,-6.16 -10.05,-11.78 -4.62,-18.81c6.72,-8.71 20.69,-1.03 17.23,9.25a3.23,3.18 84.7 0 1 -1.43,1.75z"/>
+            <path id="hotB" fill="none" stroke="#fff4c9" stroke-width=".36" stroke-linecap="round"
+              d="m30.29,41.13q-2.55,-0.05 -3.6,0.11c-6.01,0.9 -6.62,8.78 -1.66,11.21q4.03,1.96 7.59,-1.57q8.7,-8.65 9.6,-9.62q3.72,-3.99 8.93,-3.91c8.35,0.13 12.15,10 6.99,16.13c-4.55,5.4 -12.91,4.27 -16.55,-1.84a0.2,0.2 0 0 1 0,-0.22q1.08,-1.68 2.55,-2.86a0.11,0.11 0 0 1 0.16,0.03q2,3.44 3.83,4.1q3.88,1.38 6.54,-1.15c5.86,-5.59 -2.23,-14.35 -8.51,-8.58q-3.54,3.26 -10.92,10.77c-4.56,4.64 -12.2,4.14 -15.81,-1.33c-2.46,-3.73 -1.98,-9.15 1.32,-12.34q2.79,-2.71 7.11,-2.89a1.51,1.5 73.4 0 1 1.36,0.74l1.46,2.55a0.45,0.44 -14.8 0 1 -0.39,0.67z"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="pct"><span id="pct">000</span>%</div>
+    </div>
+
+    <div class="btn">[ INITIALIZE ]</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const pctEl = document.getElementById('pct');
+  const track = document.getElementById('progressTrack');
+  const flare = document.getElementById('ringFlare');
+  const facetGroup = document.getElementById('facetGroup');
+  const hotA = document.getElementById('hotA');
+  const hotB = document.getElementById('hotB');
+  const goldA = document.getElementById('goldA');
+  const goldB = document.getElementById('goldB');
+
+  // denser chipped-obsidian facets for more photorealistic faceting
+  const ns = 'http://www.w3.org/2000/svg';
+  function rand(a,b){ return a + Math.random()*(b-a); }
+  const fills = ['#030303','#070708','#0d0f12','#12161b','#191d23','#232832','#2b3340','#111318'];
+  const edges = ['#353c48','#262c35','#495263','#1c2027'];
+  for(let i=0;i<420;i++){
+    const x = rand(8,56);
+    const y = rand(10,76);
+    const s = rand(1.8,5.8);
+    const tilt = rand(-1.5,1.5);
+    const p = document.createElementNS(ns,'polygon');
+    const pts = [
+      [x, y],
+      [x + s, y + tilt],
+      [x + rand(-.8,1.1), y + s],
+      [x - rand(.4,1.4), y + rand(.9,s*.9)]
+    ].map(v=>v.join(',')).join(' ');
+    p.setAttribute('points', pts);
+    p.setAttribute('fill', fills[(Math.random()*fills.length)|0]);
+    p.setAttribute('opacity', rand(.28,.96));
+    facetGroup.appendChild(p);
+
+    if(Math.random() > 0.36){
+      const line = document.createElementNS(ns,'polyline');
+      line.setAttribute('points', pts);
+      line.setAttribute('fill', 'none');
+      line.setAttribute('stroke', edges[(Math.random()*edges.length)|0]);
+      line.setAttribute('stroke-width', rand(.08,.22));
+      line.setAttribute('opacity', rand(.25,.78));
+      facetGroup.appendChild(line);
+    }
+  }
+
+  // static base neon, animated hot streak
+  const circumference = 911;
+  let p = 0;
+  function tick(){
+    p += 0.0044;
+    if(p > 1) p = 1;
+
+    pctEl.textContent = String(Math.floor(p*100)).padStart(3,'0');
+    track.setAttribute('stroke-dashoffset', String(circumference * (1 - p)));
+
+    const a = (-90 + p * 360) * Math.PI / 180;
+    const r = 145;
+    const x = 250 + Math.cos(a) * r;
+    const y = 250 + Math.sin(a) * r;
+    flare.setAttribute('transform', 'translate(' + x + ' ' + y + ') rotate(' + (-90 + p*360) + ')');
+
+    requestAnimationFrame(tick);
+  }
+  tick();
+
+  function setupHot(path){
+    const len = path.getTotalLength();
+    path.style.strokeDasharray = '11 ' + (len - 11);
+    path.style.strokeDashoffset = String(len);
+    path.style.animation = 'hotTravel 1.6s linear infinite, pulseGold 1.0s ease-in-out infinite';
+  }
+  setupHot(hotA);
+  setupHot(hotB);
+
+  goldA.style.animation = 'pulseGold 1.8s ease-in-out infinite';
+  goldB.style.animation = 'pulseGold 1.8s ease-in-out infinite';
+})();
+</script>
+</body>
+</html>

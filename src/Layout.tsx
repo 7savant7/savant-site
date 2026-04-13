@@ -1,7 +1,6 @@
 import { Outlet, useLocation, Link } from 'react-router-dom';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useSpring, AnimatePresence } from 'motion/react';
-import Lenis from 'lenis';
 import Navigation from './components/Navigation';
 import Logo from './components/Logo';
 import { HUD } from './components/HUD';
@@ -14,7 +13,6 @@ export default function Layout() {
   const { booted, setBooted, scanlines, neuralOverlay } = useStore();
   const { isLoading } = useLoading();
   const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
-  const lenisRef = useRef<Lenis | null>(null);
   const location = useLocation();
   const isOS = location.pathname === '/os';
 
@@ -24,57 +22,24 @@ export default function Layout() {
     }
   }, [isLoading, booted, setBooted]);
 
-  useEffect(() => {
-    if (isOS) {
-      if (lenisRef.current) {
-        lenisRef.current.destroy();
-        lenisRef.current = null;
-      }
-      return;
-    }
-
-    const lenis = new Lenis({
-      duration: 1.5,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 2,
-    });
-
-    lenisRef.current = lenis;
-
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
-
-    return () => {
-      lenis.destroy();
-    };
-  }, [isOS]);
-
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
+    stiffness: 110,
+    damping: 28,
+    restDelta: 0.001,
   });
 
   return (
-    <div className="min-h-screen bg-transparent text-white selection:bg-neon-pink selection:text-white antialiased relative z-10">
-      {/* Immersive Overlays */}
+    <div className="min-h-screen bg-transparent text-white selection:bg-gold/30 selection:text-white antialiased relative z-10">
       <div className="fixed inset-0 pointer-events-none z-[9999]">
         <div className="noise-overlay" />
         {scanlines && <div className="scanlines-overlay" />}
         {neuralOverlay && <div className="neural-lattice-overlay opacity-10" />}
         <div className="vignette-heavy" />
       </div>
-      
-      {/* Global UI Elements */}
+
       <div className={`anamorphic-flare ${booted ? 'active' : ''}`} />
-      
+
       <div className={`grid-overlay ${booted ? 'active' : ''}`}>
         <div className="grid-line horizontal top-1/4" />
         <div className="grid-line horizontal top-1/2" />
@@ -90,92 +55,113 @@ export default function Layout() {
       <div className={`corner-accent br ${booted ? 'active' : ''}`} />
 
       <div className={`telemetry-hud left ${booted ? 'active' : ''}`}>
-        SYS_STATUS: OPTIMAL // LATENCY: 0.001ms // SYNC: ACTIVE
+        signal integrity // recursive field // live
       </div>
       <div className={`telemetry-hud right ${booted ? 'active' : ''}`}>
-        SAVANT_OS_v80.0.0 // COORD: 34.0522° N, 118.2437° W
+        savant // sovereign interface lattice
       </div>
 
-      {/* Progress Bar */}
-      <motion.div 
-        className="fixed top-0 left-0 right-0 h-[2px] bg-neon-pink z-[10000] origin-left"
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-[2px] bg-gold z-[10000] origin-left"
         style={{ scaleX }}
       />
 
-      {/* Header */}
       {!isOS && (
-        <header className="fixed top-0 left-0 w-full p-8 md:p-12 z-[5000] flex justify-between items-center pointer-events-none">
+        <header className="fixed top-0 left-0 w-full p-6 md:p-10 z-[5000] flex justify-between items-center pointer-events-none">
           <div className="flex items-center gap-8 pointer-events-auto">
             <Logo />
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: booted ? 1 : 0, x: booted ? 0 : -20 }}
-              transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-              className="font-black text-2xl tracking-[0.8em] uppercase text-white hidden md:block"
-            >
-              SAVANT
-            </motion.div>
           </div>
 
-          <div className="flex items-center gap-12 pointer-events-auto">
+          <div className="flex items-center gap-8 pointer-events-auto">
             <Navigation />
           </div>
         </header>
       )}
 
-      {/* HUD & Admin */}
-      <div className="fixed bottom-12 right-12 z-[5000] pointer-events-auto flex flex-col items-end gap-6">
+      <div className="fixed bottom-8 right-8 z-[5000] pointer-events-auto flex flex-col items-end gap-4">
         <HUD />
         <AdminTrigger onClick={() => setIsAdminPanelOpen(true)} />
       </div>
 
-      <AdminPanel isOpen={isAdminPanelOpen} onClose={() => setIsAdminPanelOpen(false)} />
+      <AdminPanel
+        isOpen={isAdminPanelOpen}
+        onClose={() => setIsAdminPanelOpen(false)}
+      />
 
-      {/* Main Content */}
       <AnimatePresence mode="wait">
         <motion.main
           key={location.pathname}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
-          className={`relative z-10 ${isOS ? 'h-screen overflow-hidden' : 'pt-48'}`}
+          initial={{ opacity: 0, y: 18, filter: 'blur(10px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          exit={{ opacity: 0, y: -12, filter: 'blur(10px)' }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className={`relative z-10 ${isOS ? 'h-screen overflow-hidden' : 'pt-32 md:pt-36'}`}
         >
           <Outlet />
         </motion.main>
       </AnimatePresence>
 
-      {/* Footer */}
       {!isOS && (
-        <footer className="relative z-10 border-t border-white/[0.03] bg-obsidian py-32 px-8 md:px-24 overflow-hidden">
-          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-start lg:items-end gap-20">
-            <div className="flex flex-col gap-12">
-              <div className="text-5xl font-black tracking-tighter uppercase">SAVANT<span className="text-neon-pink">_</span></div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-16">
-                <div className="flex flex-col gap-4">
-                  <span className="font-mono text-[9px] text-white/20 tracking-widest uppercase">Navigation</span>
-                  <Link to="/work" className="text-sm text-white/40 hover:text-neon-pink transition-colors">Work</Link>
-                  <Link to="/services" className="text-sm text-white/40 hover:text-neon-pink transition-colors">Services</Link>
-                  <Link to="/journal" className="text-sm text-white/40 hover:text-neon-pink transition-colors">Journal</Link>
+        <footer className="relative z-10 border-t border-white/[0.04] bg-obsidian py-24 px-6 md:px-12 overflow-hidden">
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-start lg:items-end gap-16">
+            <div className="flex flex-col gap-10">
+              <div className="text-4xl md:text-6xl font-black tracking-tighter lowercase">
+                savant<span className="text-gold">.</span>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-12">
+                <div className="flex flex-col gap-3">
+                  <span className="font-mono text-[9px] text-white/20 tracking-widest lowercase">
+                    navigation
+                  </span>
+                  <Link to="/cognition" className="text-sm text-white/50 hover:text-gold transition-colors lowercase">
+                    cognition
+                  </Link>
+                  <Link to="/systems" className="text-sm text-white/50 hover:text-gold transition-colors lowercase">
+                    systems
+                  </Link>
+                  <Link to="/interface" className="text-sm text-white/50 hover:text-gold transition-colors lowercase">
+                    interface
+                  </Link>
                 </div>
-                <div className="flex flex-col gap-4">
-                  <span className="font-mono text-[9px] text-white/20 tracking-widest uppercase">Connect</span>
-                  <a href="#" className="text-sm text-white/40 hover:text-neon-pink transition-colors">Twitter</a>
-                  <a href="#" className="text-sm text-white/40 hover:text-neon-pink transition-colors">GitHub</a>
-                  <a href="#" className="text-sm text-white/40 hover:text-neon-pink transition-colors">Discord</a>
+
+                <div className="flex flex-col gap-3">
+                  <span className="font-mono text-[9px] text-white/20 tracking-widest lowercase">
+                    exploratory
+                  </span>
+                  <Link to="/lab" className="text-sm text-white/50 hover:text-gold transition-colors lowercase">
+                    lab
+                  </Link>
+                  <Link to="/signal" className="text-sm text-white/50 hover:text-gold transition-colors lowercase">
+                    signal
+                  </Link>
+                  <Link to="/archive" className="text-sm text-white/50 hover:text-gold transition-colors lowercase">
+                    archive
+                  </Link>
                 </div>
-                <div className="flex flex-col gap-4">
-                  <span className="font-mono text-[9px] text-white/20 tracking-widest uppercase">Legal</span>
-                  <Link to="/privacy" className="text-sm text-white/40 hover:text-neon-pink transition-colors">Privacy</Link>
-                  <Link to="/terms" className="text-sm text-white/40 hover:text-neon-pink transition-colors">Terms</Link>
+
+                <div className="flex flex-col gap-3">
+                  <span className="font-mono text-[9px] text-white/20 tracking-widest lowercase">
+                    connect
+                  </span>
+                  <Link to="/contact" className="text-sm text-white/50 hover:text-gold transition-colors lowercase">
+                    uplink
+                  </Link>
+                  <Link to="/journal" className="text-sm text-white/50 hover:text-gold transition-colors lowercase">
+                    journal
+                  </Link>
+                  <Link to="/branding" className="text-sm text-white/50 hover:text-gold transition-colors lowercase">
+                    branding
+                  </Link>
                 </div>
               </div>
             </div>
-            
-            <div className="flex flex-col items-end gap-8">
-              <div className="font-mono text-[10px] text-white/20 text-right uppercase tracking-[0.2em] leading-relaxed">
-                © 2026 SAVANT_RECURSIVE_LOGIC <br />
-                ALL_RIGHTS_RESERVED // BUILT_FOR_SOVEREIGNTY
+
+            <div className="flex flex-col items-start lg:items-end gap-6">
+              <div className="font-mono text-[10px] text-white/25 text-left lg:text-right lowercase tracking-[0.18em] leading-relaxed">
+                savant builds perception systems, interface atmospheres,
+                and recursive identities for projects that need more
+                than surface polish.
               </div>
               <div className="w-32 h-[1px] bg-white/10" />
             </div>
